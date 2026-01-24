@@ -12,7 +12,8 @@ import TerrainSlope from "../TerrainSlope/TerrainSlope";
 import WeatherCard from "../Weather/WeatherCard";
 import SnapshotGeo from "../SnapshotGeo/SnapshotGeo";
 import { API_BASE } from "../../config/api";
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -1144,7 +1145,9 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
                   <button className="close-gpt">×</button>
                 </div>
                 <div className="geogpt-messages">
-                  {chatHistory.map((msg, i) => <div key={i} className={`chat-msg ${msg.role}`}><div className="msg-bubble">{msg.content}</div></div>)}
+                  {chatHistory.map((msg, i) => <div key={i} className={`chat-msg ${msg.role}`}><div className="msg-bubble"><ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {msg.content}
+        </ReactMarkdown></div></div>)}
                   {gptLoading && <div className="chat-msg assistant"><div className="msg-bubble thinking-bubble">Thinking...</div></div>}
                   <div ref={chatEndRef} />
                 </div>
