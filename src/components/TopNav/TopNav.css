@@ -2034,3 +2034,53 @@
 .view-btn-pro:hover {
   background: var(--accent-color);
 }
+
+
+
+
+/* ============================================================
+   LIGHT THEME: HISTORY TABLE TEXT VISIBILITY FIX
+   ============================================================ */
+
+/* Force Site Name (Location A) to be dark in Light Mode */
+[data-theme="light"] .history-table td .name-primary,
+[data-theme="light"] .history-table td .site-name span:first-child,
+[data-theme="light"] .history-table .site-name {
+    color: #0f172a !important; /* Deep Navy/Black */
+    font-weight: 700 !important;
+}
+
+/* Ensure the "vs Site B" text remains legible but distinct */
+[data-theme="light"] .history-table td .name-vs,
+[data-theme="light"] .history-table td span[style*="color: var(--accent-color)"] {
+    opacity: 1 !important;
+    filter: brightness(0.8); /* Slightly darkens the accent color for better contrast on white */
+}
+
+/* Ensure coordinates are also visible */
+[data-theme="light"] .history-table td div[style*="font-family: monospace"] {
+    color: #334155 !important;
+}
+
+/* ============================================================
+   FORCED VISIBILITY FOR SITE A NAME IN LIGHT MODE
+   ============================================================ */
+
+/* Targets the primary site name span in light mode */
+[data-theme="light"] .history-table .site-name div span:first-child {
+    color: #000000 !important; /* Pure black for maximum contrast */
+    opacity: 1 !important;
+    font-weight: 700 !important;
+}
+
+/* Fallback for the general site-name class in light mode */
+[data-theme="light"] .history-table .site-name {
+    color: #000000 !important;
+}
+
+/* Ensures comparison text "vs" remains visible but slightly muted */
+[data-theme="light"] .history-table .site-name div span:nth-child(2) {
+    color: var(--accent-color) !important;
+    filter: brightness(0.7); /* Darkens your chosen palette color for readability */
+    opacity: 0.9 !important;
+}
