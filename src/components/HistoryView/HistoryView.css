@@ -847,3 +847,119 @@
   font-weight: bold;
   text-transform: uppercase;
 }
+
+
+
+
+
+
+
+
+.terrain-snapshot-section {
+  grid-column: 1 / -1; /* Full width */
+}
+
+.snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.snapshot-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.snapshot-card.active-range {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.mini-map-container {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  margin: 10px 0;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.map-render {
+  width: 100%;
+  height: 100%;
+  filter: saturate(1.4) brightness(0.9);
+  transition: background 0.8s ease;
+}
+
+.map-grid-overlay {
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 15px 15px;
+}
+
+.pulse-location-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #3b82f6;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #3b82f6;
+  transform: translate(-50%, -50%);
+  animation: pulseMarker 2s infinite;
+}
+
+@keyframes pulseMarker {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+
+.snap-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  font-weight: 600;
+}
+
+
+/* Layout Container for the two cards */
+.details-grid-responsive {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column on mobile */
+  gap: 20px;
+  width: 100%;
+}
+
+/* DESKTOP VIEW: Force Side-by-Side */
+@media (min-width: 1024px) {
+  .details-grid-responsive {
+    grid-template-columns: 1fr 1fr; /* Two equal columns on large screens */
+    align-items: stretch; /* Ensures both cards have equal height */
+  }
+}
+
+/* Ensure individual cards fill their grid space */
+.factor-drifts-card, .ai-analysis-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Factors container can scroll if the list is long */
+.factors-scroll-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
