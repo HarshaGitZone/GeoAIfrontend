@@ -787,7 +787,12 @@ export default function HistoryView({ data, locationName, onClose, lat, lng }) {
         if (!response.ok) {
            throw new Error(`HTTP Error ${response.status}`);
         }
-        const result = await response.json();
+        // 👇👇 ADD DEBUG CODE HERE (REPLACE response.json())
+      const text = await response.text();
+      console.log("RAW RESPONSE:", text);
+
+      const result = JSON.parse(text); 
+        // const result = await response.json();
         // Stores all timelines for instant manual switching
         setHistoryBundle(result.history_bundle || null);
       } catch (err) {
