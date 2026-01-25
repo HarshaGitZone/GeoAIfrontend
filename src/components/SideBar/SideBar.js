@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./SideBar.css";
+import { API_BASE } from "../../config/api";
 export default function SideBar({
   lat, setLat, lng, setLng,
   locationAName, setLocationAName,
@@ -137,7 +138,12 @@ const generateShareLink = async () => {
         };
 
         // const res = await fetch("http://127.0.0.1:5000/generate_report", {
-        const res = await fetch("/generate_report", {
+        // const res = await fetch("/generate_report", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify(payload),
+        // });
+        const res = await fetch(`${API_BASE}/generate_report`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
