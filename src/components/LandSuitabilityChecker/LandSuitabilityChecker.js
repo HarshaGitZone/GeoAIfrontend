@@ -610,10 +610,18 @@ useEffect(() => {
     // 1. Set main location state
     setLat(sharedLat);
     setLng(sharedLng);
-    
+    // 2. Persist to Local Storage immediately so other 
+    // components don't default to 0.0000
+    localStorage.setItem("geo_lat", sharedLat);
+    localStorage.setItem("geo_lng", sharedLng);
+    // if (sharedNameA) {
+    //   // Decode name here so handleSubmit sees a set name and skips the prompt
+    //   setLocationAName(decodeURIComponent(sharedNameA));
+    // }
     if (sharedNameA) {
-      // Decode name here so handleSubmit sees a set name and skips the prompt
-      setLocationAName(decodeURIComponent(sharedNameA));
+      const decodedName = decodeURIComponent(sharedNameA);
+      setLocationAName(decodedName);
+      localStorage.setItem("geo_name_a", decodedName);
     }
     shouldAnalyze = true; 
   }

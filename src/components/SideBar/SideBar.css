@@ -1555,7 +1555,7 @@ button.mini:hover, .btn-mono-tool:hover {
   background: rgba(255, 255, 255, 0.05) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   color: inherit !important;
-  padding: 10px !important;
+  padding: 4px !important;
 }
 
 [data-theme='light'] .share-close-bottom {
@@ -1615,7 +1615,8 @@ button.mini:hover, .btn-mono-tool:hover {
 /* Ensure the QR code fits the sidebar width */
 .qr-container-box {
   background: white !important;
-  padding: 10px;
+  margin-top:4px;
+  padding: 12px;
   border-radius: 12px;
   display: inline-block;
   margin-bottom: 10px;
@@ -1636,4 +1637,60 @@ button.mini:hover, .btn-mono-tool:hover {
 @keyframes modalSlideUp {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* High-contrast green button for the sidebar modal */
+.share-action-primary {
+  width: 100% !important;
+  padding: 12px 0 !important;
+  background: #10b981 !important; /* Matches your emerald theme */
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Subtle secondary button */
+.share-action-secondary {
+  width: 100% !important;
+  padding: 10px 0 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+}
+
+/* Hover: Brighten and lift */
+.share-action-primary:hover {
+  background: #059669 !important; /* Slightly darker green */
+  transform: translateY(-2px); /* Lift effect */
+  box-shadow: 0 10px 15px rgba(16, 185, 129, 0.4) !important;
+}
+/* Subtle secondary button */
+.share-action-secondary {
+  width: 100% !important;
+  padding: 10px 0 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+}
+
+/* Hover: Subtle highlight */
+.share-action-secondary:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+}
+
+/* Active: Fade slightly */
+.share-action-secondary:active {
+  background: rgba(255, 255, 255, 0.02) !important;
 }

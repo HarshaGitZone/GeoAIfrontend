@@ -34,8 +34,8 @@ export default function SideBar({
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
-  const [showSharePopup, setShowSharePopup] = useState(false);
-const [currentShareUrl, setCurrentShareUrl] = useState("");
+  // const [showSharePopup, setShowSharePopup] = useState(false);
+// const [currentShareUrl, setCurrentShareUrl] = useState("");
   const searchContainerRef = useRef(null);
   // Add this state to your SideBar.js component
 const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -142,12 +142,15 @@ const generateShareLink = () => {
     }
 
     setPdfLoading(true);
-
+    // Construct the same link logic used in your Share Modal
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    const mainLink = `${baseUrl}?lat=${lat}&lng=${lng}&nameA=${encodeURIComponent(locationAName)}`;
     try {
         const payload = {
             ...result,
             weather: result.weather,
             locationName: locationAName,
+            shareLink: mainLink,
             location: {
                 latitude: parseFloat(lat),
                 longitude: parseFloat(lng)
@@ -155,6 +158,7 @@ const generateShareLink = () => {
             compareData: (isCompareMode && compareResult) ? {
                 ...compareResult,
                 locationName: locationBName,
+                shareLink: `${mainLink}&bLat=${bLatInput}&bLng=${bLngInput}&nameB=${encodeURIComponent(locationBName)}&compare=true`,
                 location: {
                     latitude: parseFloat(bLatInput),
                     longitude: parseFloat(bLngInput)
@@ -276,19 +280,7 @@ const generateShareLink = () => {
             <button type="button" className="btn-save" onClick={generateShareLink} style={{ flex: 1, padding: '6px 8px', fontSize: '11px' }}>
               🔗 Share this Link
             </button>
-            {/* {showSharePopup && (
-              <div className="sidebar-share-popup glass-morphic">
-                <button className="popup-close" onClick={() => setShowSharePopup(false)}>✕</button>
-                <div className="popup-qr-wrap">
-                  <QRCode value={currentShareUrl} size={120} bgColor="white" fgColor="black" />
-                </div>
-                <p className="popup-status">✅ Link Copied!</p>
-                <button className="btn-save mini" onClick={() => navigator.clipboard.writeText(currentShareUrl)}>
-                  Re-copy Link
-                </button>
-              </div>
-            )} */}
-            {/* CENTRAL SHARE MODAL */}
+            
           {isShareModalOpen && (
             <div className="share-modal-overlay" onClick={() => setIsShareModalOpen(false)}>
               <div className="share-modal-card" onClick={(e) => e.stopPropagation()}>
@@ -319,7 +311,7 @@ const generateShareLink = () => {
                     
                     <div className="share-actions-vertical">
                       <button 
-                        className="btn-analyze share-full-btn" 
+                        className="share-action-primary" 
                         onClick={async () => {
                           await navigator.clipboard.writeText(shareUrl);
                           alert("Link copied to clipboard!");
@@ -329,7 +321,7 @@ const generateShareLink = () => {
                       </button>
 
                       <button 
-                        className="share-close-bottom" 
+                        className="share-action-secondary " 
                         onClick={() => setIsShareModalOpen(false)}
                       >
                         Close
