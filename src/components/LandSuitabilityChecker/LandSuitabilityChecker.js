@@ -841,12 +841,21 @@ useEffect(() => {
     } catch (err) { alert("Backend starting up, please retry in 10s"); } finally { setNearbyLoadingB(false); }
   };
 
-  const handleOpenHistory = (targetData, targetName, targetLat, targetLng) => {
-    setHistoryTargetData(targetData);
+  // const handleOpenHistory = (targetData, targetName, targetLat, targetLng) => {
+  //   setHistoryTargetData(targetData);
+  //   setHistoryTargetName(targetName);
+  //   setHistoryTargetCoords({ lat: targetLat, lng: targetLng });
+  //   setShowHistory(true);
+  // };
+  // Replace your existing handleOpenHistory with this
+const handleOpenHistory = useCallback(async (targetData, targetName, targetLat, targetLng) => {
     setHistoryTargetName(targetName);
     setHistoryTargetCoords({ lat: targetLat, lng: targetLng });
+    
+    // We pass the current data to the HistoryView so it can compare
+    setHistoryTargetData(targetData); 
     setShowHistory(true);
-  };
+}, []);
 
   const handleMyLocation = () => {
     if (!navigator.geolocation) return;
