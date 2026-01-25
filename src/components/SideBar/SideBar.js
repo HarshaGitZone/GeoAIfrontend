@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./SideBar.css";
 import { API_BASE } from "../../config/api";
+import QRCode from "react-qr-code"; 
 export default function SideBar({
   lat, setLat, lng, setLng,
   locationAName, setLocationAName,
@@ -33,9 +34,12 @@ export default function SideBar({
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
-
+  const [showSharePopup, setShowSharePopup] = useState(false);
+const [currentShareUrl, setCurrentShareUrl] = useState("");
   const searchContainerRef = useRef(null);
-
+  // Add this state to your SideBar.js component
+const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+const [shareUrl, setShareUrl] = useState("");
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
@@ -75,37 +79,58 @@ export default function SideBar({
     setSearchQuery("");
   };
 
-  // const generateShareLink = async () => {
-  //   let shareUrl = `${window.location.origin}${window.location.pathname}?lat=${lat}&lng=${lng}`;
-  //   if (isCompareMode && bLatInput && bLngInput) {
-  //     shareUrl += `&bLat=${encodeURIComponent(bLatInput)}&bLng=${encodeURIComponent(bLngInput)}&compare=true`;
-  //   }
-
-  //   try {
-  //     await navigator.clipboard.writeText(shareUrl);
-  //     alert(isCompareMode ? "Comparison link copied to clipboard!" : "Shareable link copied!");
-  //   } catch (err) {
-  //     console.error("Clipboard failed:", err);
-  //     prompt("Copy this link to share your analysis:", shareUrl);
-  //   }
-  // };
-  // SideBar.js - inside generateShareLink function
-const generateShareLink = async () => {
-  // Add nameA to the link
-  let shareUrl = `${window.location.origin}${window.location.pathname}?lat=${lat}&lng=${lng}&nameA=${encodeURIComponent(locationAName)}`;
   
-  // If in compare mode, add nameB as well
-  if (isCompareMode && bLatInput && bLngInput) {
-    shareUrl += `&bLat=${encodeURIComponent(bLatInput)}&bLng=${encodeURIComponent(bLngInput)}&nameB=${encodeURIComponent(locationBName)}&compare=true`;
-  }
+// const generateShareLink = async () => {
+//   // Add nameA to the link
+//   let shareUrl = `${window.location.origin}${window.location.pathname}?lat=${lat}&lng=${lng}&nameA=${encodeURIComponent(locationAName)}`;
+  
+//   // If in compare mode, add nameB as well
+//   if (isCompareMode && bLatInput && bLngInput) {
+//     shareUrl += `&bLat=${encodeURIComponent(bLatInput)}&bLng=${encodeURIComponent(bLngInput)}&nameB=${encodeURIComponent(locationBName)}&compare=true`;
+//   }
 
-  try {
-    await navigator.clipboard.writeText(shareUrl);
-    alert(isCompareMode ? "Comparison link copied to clipboard!" : "Shareable link copied!");
-  } catch (err) {
-    console.error("Clipboard failed:", err);
-    prompt("Copy this link to share your analysis:", shareUrl);
-  }
+//   try {
+//     await navigator.clipboard.writeText(shareUrl);
+//     alert(isCompareMode ? "Comparison link copied to clipboard!" : "Shareable link copied!");
+//   } catch (err) {
+//     console.error("Clipboard failed:", err);
+//     prompt("Copy this link to share your analysis:", shareUrl);
+//   }
+// };
+// const generateShareLink = async () => {
+//   let shareUrl = `${window.location.origin}${window.location.pathname}?lat=${lat}&lng=${lng}&nameA=${encodeURIComponent(locationAName)}`;
+  
+//   if (isCompareMode && bLatInput && bLngInput) {
+//     shareUrl += `&bLat=${encodeURIComponent(bLatInput)}&bLng=${encodeURIComponent(bLngInput)}&nameB=${encodeURIComponent(locationBName)}&compare=true`;
+//   }
+
+//   setCurrentShareUrl(shareUrl);
+//   setShowSharePopup(true);
+
+//   // Automatically copy to clipboard for convenience
+//   try {
+//     await navigator.clipboard.writeText(shareUrl);
+//   } catch (err) {
+//     console.error("Auto-copy failed", err);
+//   }
+// };
+// const generateShareLink = () => {
+//   // Construct the URL (keeping your logic for nameA, nameB, and coordinates)
+//   let url = `${window.location.origin}${window.location.pathname}?lat=${lat}&lng=${lng}&nameA=${encodeURIComponent(locationAName)}`;
+  
+//   if (isCompareMode && bLatInput && bLngInput) {
+//     url += `&bLat=${encodeURIComponent(bLatInput)}&bLng=${encodeURIComponent(bLngInput)}&nameB=${encodeURIComponent(locationBName)}&compare=true`;
+//   }
+
+//   setShareUrl(url);
+//   setIsShareModalOpen(true); // Open the center modal
+// };
+// ... inside SideBar function
+const generateShareLink = () => {
+  const url = `${window.location.origin}${window.location.pathname}?lat=${lat}&lng=${lng}&nameA=${encodeURIComponent(locationAName)}${isCompareMode && bLatInput && bLngInput ? `&bLat=${encodeURIComponent(bLatInput)}&bLng=${encodeURIComponent(bLngInput)}&nameB=${encodeURIComponent(locationBName)}&compare=true` : ''}`;
+  
+  setShareUrl(url);
+  setIsShareModalOpen(true);
 };
 
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -251,6 +276,70 @@ const generateShareLink = async () => {
             <button type="button" className="btn-save" onClick={generateShareLink} style={{ flex: 1, padding: '6px 8px', fontSize: '11px' }}>
               🔗 Share this Link
             </button>
+            {/* {showSharePopup && (
+              <div className="sidebar-share-popup glass-morphic">
+                <button className="popup-close" onClick={() => setShowSharePopup(false)}>✕</button>
+                <div className="popup-qr-wrap">
+                  <QRCode value={currentShareUrl} size={120} bgColor="white" fgColor="black" />
+                </div>
+                <p className="popup-status">✅ Link Copied!</p>
+                <button className="btn-save mini" onClick={() => navigator.clipboard.writeText(currentShareUrl)}>
+                  Re-copy Link
+                </button>
+              </div>
+            )} */}
+            {/* CENTRAL SHARE MODAL */}
+          {isShareModalOpen && (
+            <div className="share-modal-overlay" onClick={() => setIsShareModalOpen(false)}>
+              <div className="share-modal-card" onClick={(e) => e.stopPropagation()}>
+                <button className="share-modal-close-top" onClick={() => setIsShareModalOpen(false)}>✕</button>
+                
+                <div className="share-modal-content">
+                  <h3 className="share-title">Share Analysis</h3>
+                  
+                  <div className="share-qr-section">
+                    <div className="qr-container-box">
+                      <QRCode 
+                        value={shareUrl} 
+                        size={180} 
+                        bgColor="#ffffff" 
+                        fgColor="#000000" 
+                        level="M"
+                      />
+                    </div>
+                    <p className="share-subtitle">
+                      {isCompareMode ? `${locationAName} vs ${locationBName}` : locationAName}
+                    </p>
+                  </div>
+
+                  <div className="share-link-section">
+                    {/* <div className="link-display-box">
+                      {shareUrl.substring(0, 35)}...
+                    </div> */}
+                    
+                    <div className="share-actions-vertical">
+                      <button 
+                        className="btn-analyze share-full-btn" 
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(shareUrl);
+                          alert("Link copied to clipboard!");
+                        }}
+                      >
+                        Copy Link
+                      </button>
+
+                      <button 
+                        className="share-close-bottom" 
+                        onClick={() => setIsShareModalOpen(false)}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           </div>
         </section>
 
