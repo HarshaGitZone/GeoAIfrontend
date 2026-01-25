@@ -1006,3 +1006,229 @@
 
 .risk-bar .fill.high { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
 .risk-bar .fill.mid { background: #f59e0b; }
+
+
+/* HistoryView.css - standalone optimizations */
+
+/* 1. Root and Layout */
+.history-page-overlay.full-page-standalone {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    padding: 40px 20px;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+/* Theme Awareness */
+[data-theme="dark"] .history-page-overlay.full-page-standalone {
+    background: #0a0a0a;
+    color: #ffffff;
+}
+
+[data-theme="light"] .history-page-overlay.full-page-standalone {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* 2. Loading and Sync States */
+.history-loading-full {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    color: #3b82f6;
+    font-family: monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+/* 3. Light Mode Visibility Fixes */
+[data-theme="light"] .insight-card-new {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] h1, 
+[data-theme="light"] h3, 
+[data-theme="light"] .forecast-text {
+    color: #1e293b !important;
+}
+
+[data-theme="light"] .stat-row {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+    color: #334155;
+}
+
+[data-theme="light"] .snapshot-card {
+    background: #f8fafc;
+}
+
+/* 4. Gauge and Visualization */
+[data-theme="light"] .gauge-body::after {
+    background: #ffffff;
+}
+
+[data-theme="dark"] .gauge-body::after {
+    background: #1a1a1a;
+}
+
+/* 5. Forecast Logic */
+.forecast-card.glass-glow {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.risk-bar {
+    height: 8px;
+    background: rgba(128, 128, 128, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.risk-bar .fill {
+    height: 100%;
+    transition: width 1s ease-out;
+}
+
+.risk-bar .fill.high { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+.risk-bar .fill.mid { background: #f59e0b; }
+
+
+
+/* ============================================================
+   LIGHT MODE OVERRIDES - FORCING VISIBILITY FOR ALL ELEMENTS
+   ============================================================ */
+
+[data-theme="light"] .history-page-overlay {
+    background: #f1f5f9 !important; /* Force solid light-grey background */
+    color: #0f172a !important;
+}
+
+/* 1. Temporal Slider Visibility Fix */
+[data-theme="light"] .time-slider-container {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] .slider-labels span {
+    color: #64748b !important; /* Slate grey for inactive labels */
+    font-weight: 600;
+}
+
+[data-theme="light"] .slider-labels span.active {
+    color: #3b82f6 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="light"] .temporal-range-slider::-webkit-slider-runnable-track {
+    background: #e2e8f0 !important; /* Visible track */
+}
+
+/* 2. Terrain Archive & Numbers Fix */
+[data-theme="light"] .snapshot-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="light"] .snap-label, 
+[data-theme="light"] .snap-year,
+[data-theme="light"] .snap-stats span {
+    color: #1e293b !important; /* Deep navy for all stats */
+    opacity: 1 !important;
+}
+
+/* 3. Planning Forecast & Risk Bars Fix */
+[data-theme="light"] .forecast-card.glass-glow {
+    background: #ffffff !important;
+    border: 1px solid #8b5cf6 !important; /* Purple border to maintain ID */
+}
+
+[data-theme="light"] .forecast-text {
+    color: #334155 !important;
+    border-left-color: #8b5cf6 !important;
+}
+
+[data-theme="light"] .risk-item label {
+    color: #475569 !important;
+    font-weight: 700;
+}
+
+[data-theme="light"] .risk-bar {
+    background: #e2e8f0 !important; /* Light grey background for empty bar */
+    border: 1px solid #cbd5e1;
+}
+
+/* 4. Velocity Gauge Label Fix */
+[data-theme="light"] .gauge-labels span {
+    color: #475569 !important;
+    font-weight: 600;
+}
+
+[data-theme="light"] .velocity-status {
+    color: #1e293b !important;
+}
+
+/* 5. Chart & Header Fixes */
+[data-theme="light"] .chart-section h3, 
+[data-theme="light"] .drift-details h3 {
+    color: #0f172a !important;
+}
+
+[data-theme="light"] .sync-pulse {
+    color: #2563eb !important; /* Darker blue for visibility */
+}
+
+[data-theme="light"] .location-title {
+    -webkit-text-fill-color: #0f172a !important; /* Fix for transparent text */
+    color: #0f172a !important;
+}
+
+
+
+
+/* 1. Remove the default browser focus border */
+.temporal-range-slider:focus,
+.temporal-range-slider:active,
+.temporal-range-slider:focus-visible {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* 2. Ensure the thumb maintains its glow but loses the palette border */
+.temporal-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: #3b82f6; /* Keep your primary blue */
+    margin-top: -5.5px;
+    /* Maintain the blue glow, remove any color-palette border */
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.8); 
+    border: 1.5px solid #ffffff; /* Solid white border for the thumb only */
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 3. Handle Firefox specifically to ensure cross-browser stability */
+.temporal-range-slider::-moz-range-thumb {
+    height: 14px;
+    width: 14px;
+    background: #3b82f6;
+    border: 1.5px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+}
+
+/* 4. Fix for the "Blue palette border" on the container if applicable */
+.time-slider-container:focus-within {
+    border-color: rgba(255, 255, 255, 0.1) !important; /* Keep it subtle */
+    outline: none;
+}
