@@ -666,6 +666,33 @@ export default function HistoryView({ data, locationName, onClose, lat, lng }) {
                 </div>
               </div>
             </section>
+            <section className="insight-card-new forecast-card glass-glow">
+              <div className="card-header-flex">
+                <h3>
+                  <span className="sparkle-icon">✨</span> 
+                  GeoGPT 2030 Planning Forecast
+                </h3>
+                <span className="future-badge">PREDICTIVE</span>
+              </div>
+              
+              <div className="forecast-content">
+                <p className="forecast-text">
+                  {/* activeHistory would ideally contain a 'forecast' string from the backend */}
+                  {activeHistory?.forecast || "Analyzing historical momentum to project 2030 viability..."}
+                </p>
+                
+                <div className="risk-indicator-grid">
+                  <div className="risk-item">
+                    <label>Heat Island Risk</label>
+                    <div className="risk-bar"><div className="fill high" style={{width: '75%'}}></div></div>
+                  </div>
+                  <div className="risk-item">
+                    <label>Urban Saturation</label>
+                    <div className="risk-bar"><div className="fill mid" style={{width: '45%'}}></div></div>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </main>
       </div>

@@ -963,3 +963,46 @@
   overflow-y: auto;
   padding-right: 10px;
 }
+
+
+
+.forecast-card.glass-glow {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05));
+  border: 1px solid rgba(139, 92, 246, 0.3); /* Purple accent for "Future" */
+  grid-column: 1 / -1; /* Full width planning section */
+}
+
+.future-badge {
+  background: #8b5cf6;
+  color: white;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.forecast-text {
+  font-style: italic;
+  color: #e2e8f0;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  border-left: 3px solid #8b5cf6;
+  padding-left: 15px;
+}
+
+.risk-indicator-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.risk-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  margin-top: 5px;
+}
+
+.risk-bar .fill.high { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+.risk-bar .fill.mid { background: #f59e0b; }
