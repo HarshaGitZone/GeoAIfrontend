@@ -2084,3 +2084,99 @@
     filter: brightness(0.7); /* Darkens your chosen palette color for readability */
     opacity: 0.9 !important;
 }
+
+
+
+.history-table-card {
+    min-width: 700px; /* Adjust based on your preference */
+}
+
+.history-table td {
+    padding: 12px 8px;
+    vertical-align: middle;
+}
+
+
+
+
+/* Small QR in table */
+.qr-mini-preview {
+    transition: transform 0.2s ease;
+}
+.qr-mini-preview:hover {
+    transform: scale(1.1);
+}
+
+/* Big QR Overlay */
+.qr-expanded-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+}
+
+.qr-expanded-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    text-align: center;
+    color: black;
+    box-shadow: 0 0 30px var(--accent-color);
+}
+
+.qr-expanded-card p {
+    margin-top: 12px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+
+/* THE CARD - White in Light Mode, Black in Dark Mode */
+.qr-expanded-card {
+    background: var(--qr-bg, #ffffff);
+    color: var(--qr-text, #000000);
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+
+
+
+.analysis-tag {
+    background: var(--accent-color);
+    color: white;
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.comparison-title-wrap h4 {
+    color: var(--qr-text);
+    margin-top: 5px;
+    font-size: 20px;
+}
+
+/* Ensure the text doesn't overflow if names are long */
+.qr-info h4 {
+    word-wrap: break-word;
+    max-width: 100%;
+}

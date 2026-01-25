@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./TopNav.css";
-
+import QRCode from "react-qr-code"; // Import this at the top
 export default function TopNav({ isDarkMode, setIsDarkMode, analysisHistory = [] }) {
   const [isVisible, setIsVisible] = useState(false);
   const [showTeam, setShowTeam] = useState(false);
@@ -9,6 +9,7 @@ export default function TopNav({ isDarkMode, setIsDarkMode, analysisHistory = []
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   const [currentTime, setCurrentTime] = useState(new Date());
 const navHideTimeoutRef = useRef(null);
+const [expandedQR, setExpandedQR] = useState(null);
 const handleNavMouseEnter = () => {
   if (navHideTimeoutRef.current) {
     clearTimeout(navHideTimeoutRef.current);
@@ -189,50 +190,74 @@ const handleNavMouseLeave = () => {
         </div>
       </nav>
 
-      {/* --- COORDINATES HISTORY MODAL --- */}
-      {/* {showHistoryTable && (
-        <div className="modal-overlay" onClick={() => setShowHistoryTable(false)}>
-          <div className="history-table-card glass-morphic" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>🛰️ Analysis History</h3>
-              <button className="modal-close" onClick={() => setShowHistoryTable(false)}>✖</button>
-            </div>
-            <div className="history-table-container">
-              <table className="history-table">
-                <thead>
-                  <tr>
-                    <th>Site Name</th>
-                    <th>Lat / Lng</th>
-                    <th>Score</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {analysisHistory.length > 0 ? (
-                    analysisHistory.map((item, index) => (
-                      <tr key={index}>
-                        <td className="site-name">{item.name}</td>
-                        <td>{parseFloat(item.lat).toFixed(4)}, {parseFloat(item.lng).toFixed(4)}</td>
-                        <td>
-                          <span className="score-badge" style={{ backgroundColor: item.score < 70 ? '#f59e0b' : '#10b981' }}>
-                            {item.score.toFixed(1)}%
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr><td colSpan="3" className="empty-row">No history found.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )} */}
+      
 
 {/* --- COORDINATES HISTORY MODAL --- */}
 {showHistoryTable && (
   <div className="modal-overlay" onClick={() => setShowHistoryTable(false)}>
     <div className="history-table-card glass-morphic" onClick={(e) => e.stopPropagation()}>
+      {/* Expanded QR Overlay
+      {expandedQR !== null && (
+        <div className="qr-expanded-overlay" onClick={() => setExpandedQR(null)}>
+           <div className="qr-expanded-card glass-morphic">
+              <QRCode value={expandedQR.link} size={256} bgColor="#fff" fgColor="#000" />
+              <p>{expandedQR.name} Analysis</p>
+              <button className="modal-close">✖</button>
+           </div>
+        </div>
+      )} */}
+      {/* PROFESSIONAL EXPANDED QR OVERLAY */}
+      {/* {expandedQR && (
+        <div className="qr-expanded-overlay" onClick={() => setExpandedQR(null)}>
+           <div className="qr-expanded-card" onClick={(e) => e.stopPropagation()}>
+              <div className="qr-container">
+                <QRCode 
+                  value={expandedQR.link} 
+                  size={240} 
+                  bgColor="transparent" 
+                  fgColor="currentColor" // This makes the QR match the text color
+                />
+              </div>
+              <div className="qr-info">
+                <h4>{expandedQR.name} Analysis</h4>
+                <p>Scan to view </p>
+              </div>
+              <button className="qr-close-btn" onClick={() => setExpandedQR(null)}>Close</button>
+           </div>
+        </div>
+      )} */}
+      {/* PROFESSIONAL EXPANDED QR OVERLAY */}
+{expandedQR && (
+  <div className="qr-expanded-overlay" onClick={() => setExpandedQR(null)}>
+     <div className="qr-expanded-card" onClick={(e) => e.stopPropagation()}>
+        
+        <div className="qr-container">
+          <QRCode 
+            value={expandedQR.link} 
+            size={240} 
+            bgColor="#ffffff" 
+            fgColor="#000000" 
+          />
+        </div>
+
+        <div className="qr-info">
+          {/* This logic styles the text if it contains "vs" */}
+          {expandedQR.name.includes("vs") ? (
+            <div className="comparison-title-wrap">
+               <span className="analysis-tag">Comparison Analysis</span>
+               <h4>{expandedQR.name}</h4>
+            </div>
+          ) : (
+            <h4>{expandedQR.name} Report</h4>
+          )}
+          <p>Scan to view this geospatial report on mobile</p>
+        </div>
+
+        <button className="qr-close-btn" onClick={() => setExpandedQR(null)}>Close</button>
+     </div>
+  </div>
+)}
+      
       <div className="modal-header" style={{ borderBottomColor: 'var(--accent-color)' }}>
         <h3>🛰️ Analysis History</h3>
         <button className="modal-close" onClick={() => setShowHistoryTable(false)}>✖</button>
@@ -241,9 +266,11 @@ const handleNavMouseLeave = () => {
         <table className="history-table">
           <thead>
             <tr>
-              <th>Site Name</th>
-              <th>Lat / Lng</th>
+              <th>Site</th>
+              <th>Lat , Lng</th>
               <th>Score</th>
+              <th>Date & Time</th>
+              <th>Scan</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -269,7 +296,12 @@ const handleNavMouseLeave = () => {
 
       // Helper for grading colors
       const getScoreColor = (s) => (s < 40 ? '#ef4444' : s < 70 ? '#f59e0b' : '#10b981');
-
+      // --- NEW: Time Formatting Logic ---
+                const analysisDate = item.timestamp ? new Date(item.timestamp) : null;
+                const formattedTime = analysisDate 
+                  ? analysisDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' , year: 'numeric'}) + ' ' + 
+                    analysisDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  : "N/A";
       return (
         <tr key={index} className={isComparison ? "history-row-comp" : ""}>
           {/* SITE NAME: Stacked for Comparison */}
@@ -312,7 +344,69 @@ const handleNavMouseLeave = () => {
               )}
             </div>
           </td>
+          {/* --- NEW COLUMN: Date & Time --- */}
+                    <td style={{ fontSize: '11px', whiteSpace: 'nowrap', opacity: 0.8 }}>
+                      {formattedTime}
+                    </td>
+          {/* COLUMN 5: QR CODE (THE MISSING PIECE) */}
+          {/* <td style={{ textAlign: 'center' }}>
+            <div 
+              className="qr-mini-wrapper"
+              onClick={() => setExpandedQR({ link: dynamicLink, name: item.name })}
+              style={{ 
+                cursor: 'zoom-in', 
+                background: '#fff', 
+                padding: '3px', 
+                borderRadius: '4px', 
+                display: 'inline-block',
+                lineHeight: 0
+              }}
+            >
+              <QRCode value={dynamicLink} size={28} bordered={false} />
+            </div>
+          </td> */}
+          {/* <td style={{ textAlign: 'center' }}>
+          <div 
+            className="qr-mini-wrapper"
+            onClick={() => setExpandedQR({ link: dynamicLink, name: item.name })}
+            style={{ 
+              cursor: 'zoom-in', 
+              background: '#fff', // White background is essential for scanning
+              padding: '5px', 
+              borderRadius: '4px', 
+              display: 'inline-block',
+              lineHeight: 0,
+              border: '1px solid #ddd'
+            }}
+          >
+            <QRCode 
+              value={dynamicLink} 
+              size={40}      // Slightly larger for better scanning
+              level="L"      // Lower error correction makes the dots larger and easier to scan
+              bordered={false} 
+            />
+          </div>
+        </td> */}
+        {/* COLUMN 5: QR CODE */}
+        <td style={{ textAlign: 'center' }}>
+          <div 
+            className="qr-mini-wrapper"
+            onClick={() => {
+              // Create the display name: "Site A" or "Site A vs Site B"
+              const displayName = isComparison 
+                ? `${item.name} vs ${item.nameB}` 
+                : item.name;
 
+              setExpandedQR({ 
+                link: dynamicLink, 
+                name: displayName 
+              });
+            }}
+            style={{ cursor: 'zoom-in', background: '#fff', padding: '3px', borderRadius: '4px', display: 'inline-block' }}
+          >
+            <QRCode value={dynamicLink} size={28} bordered={false} />
+          </div>
+        </td>
           {/* ACTION: Styled as a Pro Button */}
           <td>
             <a 
