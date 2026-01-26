@@ -967,27 +967,25 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 
 if (activeTab === "infrastructure") {
 
+
 const intel = data.strategic_intelligence || {}; 
-   const placesList = data.nearby?.places || [];
+//  const placesList = data?.nearby?.places ?? [];
 
- 
-  const getNearest = (keywords) => {
-  if (!placesList || placesList.length === 0) {
-    return "Unavailable";
-  }
+// const getNearest = (type) => {
+//   if (!placesList.length) return "Unavailable";
 
-  const matched = placesList.filter(p =>
-    keywords.some(k =>
-      p.type?.toLowerCase().includes(k.toLowerCase())
-    )
-  );
+//   const match = placesList
+//     .filter(p => p.type === type)
+//     .sort((a, b) => a.distance_km - b.distance_km)[0];
 
-  if (matched.length > 0) {
-    return `${matched[0].distance_km} km`;
-  }
+//   if (!match) return "Not Found";
 
-  return "Not Found";
-};
+//   return `${match.name} (${match.distance_km} km)`;
+// };
+
+
+
+
 // console.log("INFRA DATA", {
 //   hasNearby: !!data.nearby,
 //   places: data.nearby?.places,
@@ -1003,17 +1001,22 @@ const intel = data.strategic_intelligence || {};
         <PotentialSection factors={data.factors} score={data.suitability_score} />
 
         {/* 2. Infrastructure Proximity (Now using synchronized state) */}
-        <div className="card glass-morphic intel-card">
+        {/* <div className="card glass-morphic intel-card">
           <div className="intel-header"><h3>🏗️ Infrastructure Context</h3></div>
           <p className="subtitle">Exact distance to nearest facilities</p>
-          <div className="nearby-summary-grid">
-             <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest(["school", "kindergarten"])}</strong></div>
+          <div className="nearby-summary-grid"> */}
+             {/* <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest(["school", "kindergarten"])}</strong></div>
              <div className="mini-stat"><span>🏥 Hospital:</span> <strong>{getNearest(["hospital", "clinic", "doctors"])}</strong></div>
              <div className="mini-stat"><span>🎓 College:</span> <strong>{getNearest(["college", "university"])}</strong></div>
              <div className="mini-stat"><span>🛒 Market:</span> <strong>{getNearest(["marketplace", "supermarket", "mall"])}</strong></div>
-             <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest(["station", "bus_stop", "platform"])}</strong></div>
+             <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest(["station", "bus_stop", "platform"])}</strong></div> */}
+             {/* <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest("school")}</strong></div>
+             <div className="mini-stat"><span>🏥 Hospital:</span> <strong>{getNearest("hospital")}</strong></div>
+             <div className="mini-stat"><span>🎓 College:</span> <strong>{getNearest("college")}</strong></div>
+             <div className="mini-stat"><span>🛒 Market:</span> <strong>{getNearest("market")}</strong></div>
+             <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest("transit")}</strong></div>
           </div>
-        </div>
+        </div> */}
 
         
       </div>
