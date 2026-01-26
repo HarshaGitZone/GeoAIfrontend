@@ -952,122 +952,25 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
     return (
       <div className={containerClass}>
         <div className={isFullWidth ? "col-1" : ""}>
-          <WeatherCard weather={data?.weather} />
+          {/* <WeatherCard weather={data?.weather} /> */}
           {/* NEW SNAPSHOT COMPONENT HERE */}
         <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
+        {data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
         </div>
         <div className={isFullWidth ? "col-2" : ""}>
-          {data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
+          <WeatherCard weather={data?.weather} />
+          
         </div>
       </div>
     );
   }
 
-//   if (activeTab === "infrastructure") {
-//     const intel = data.strategic_intelligence || {}; // Data from backend
-//     return (
-//       // <div className="infrastructure-tab-view">
-//       //   <div className="card glass-morphic">
-//       //     <h3>Infrastructure & Amenities</h3>
-//       //     <p className="subtitle">Proximity to essential services for {name}</p>
-//       //     <div className="empty-results">Infrastructure Data Visualization Coming Soon</div>
-//       //   </div>
-//       // </div>
-//   //     <div className={containerClass}>
-//   //       <div className={isFullWidth ? "col-1" : ""}>
-//   //         {/* SITE POTENTIAL ANALYSIS MOVED HERE */}
-//   //         <PotentialSection factors={data.factors} score={data.suitability_score} />
-//   //       </div>
-//   //       <div className={isFullWidth ? "col-2" : ""}>
-//   //         <div className="card glass-morphic">
-//   //           <h3>Infrastructure Context</h3>
-//   //           <p className="subtitle">Proximity to essential services for {name}</p>
-//   //           <div className="empty-results">Nearby Places Data mapping here...</div>
-//   //         </div>
-//   //       </div>
-//   //     </div>
-//   //   );
-//   // }
-//   <div className="strategic-intel-grid">
-//       {/* COLUMN 1: EXISTING CONTEXT & ROADMAP */}
-//       <div className="intel-col">
-//         <div className={isFullWidth ? "col-1" : ""}>
-//           {/* SITE POTENTIAL ANALYSIS MOVED HERE */}
-//            <PotentialSection factors={data.factors} score={data.suitability_score} />
-//          </div>
-//         {/* CARD 1: Infrastructure Context (Proximity) */}
-//         <div className="card glass-morphic intel-card">
-//           <div className="intel-header"><h3>🏗️ Infrastructure Context</h3></div>
-//           <p className="subtitle">Proximity to essential services for {name}</p>
-//           <div className="nearby-summary-box">
-//              {/* This is where your nearby places data maps */}
-//              <div className="mini-stat"><span>Healthcare Access:</span> <strong>8.2km</strong></div>
-//              <div className="mini-stat"><span>Transit Hubs:</span> <strong>1.4km</strong></div>
-//           </div>
-//         </div>
-
-//         {/* CARD 2: Improvement Roadmap */}
-//         <div className="card glass-morphic intel-card roadmap-card">
-//           <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
-//           <div className="roadmap-list">
-//             {intel.roadmap?.map((item, i) => (
-//               <div key={i} className="roadmap-item">
-//                 <span className="task-name">{item.task}</span>
-//                 <span className="impact-tag">{item.impact} Boost</span>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* COLUMN 2: AI PREDICTION & PREVENTION */}
-//       <div className="intel-col">
-//         {/* CARD 3: AI Future Prediction */}
-//         <div className="card glass-morphic intel-card prediction-card">
-//           <div className="intel-header">
-//             <h3>🚀 AI Future Projection (2035)</h3>
-//             <div className="future-score">{intel.future_projection?.expected_score}%</div>
-//           </div>
-//           <div className="drift-metrics">
-//              <div className="drift-row"><span>Urban Sprawl:</span> <span className="val-red">+22%</span></div>
-//              <div className="drift-row"><span>Vegetation Loss:</span> <span className="val-red">-14%</span></div>
-//           </div>
-//         </div>
-
-//         {/* CARD 4: Suggestible Changes (Preventative) */}
-//         <div className="card glass-morphic intel-card prevention-card">
-//           <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
-//           <ul className="prevention-list">
-//             {intel.preventative_measures?.map((msg, i) => (
-//               <li key={i}>{msg}</li>
-//             ))}
-//           </ul>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 if (activeTab === "infrastructure") {
 
 const intel = data.strategic_intelligence || {}; 
-  
-  // FIX: Access the shared state variables from the main component
-  // Use nearbyData for Site A, nearbyDataB for Site B
-  // const currentNearbyState = name === locationAName ? nearbyData : nearbyDataB;
-  const placesList = data.nearby?.places || [];
+   const placesList = data.nearby?.places || [];
 
-  // const placesList = currentNearbyState?.places || []; 
-
-  // const getNearest = (keywords) => {
-  //   // Search the list that was populated by the Sidebar's API call
-  //   const matched = placesList.filter(p => 
-  //     keywords.some(k => p.type.toLowerCase().includes(k.toLowerCase()))
-  //   );
-    
-  //   // Return the first match's distance or a "Not Found" message if the search finished
-  //   if (matched.length > 0) return `${matched[0].distance_km} km`;
-  //   return currentNearbyState ? "Not Found" : "Searching...";
-  // };
+ 
   const getNearest = (keywords) => {
   if (!placesList || placesList.length === 0) {
     return "Unavailable";
@@ -1117,6 +1020,33 @@ const intel = data.strategic_intelligence || {};
 
       {/* COLUMN 2: FUTURE AI PROJECTION */}
       <div className="intel-col">
+         {/* 3. Roadmap */}
+        <div className="card glass-morphic intel-card roadmap-card">
+          <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
+          <div className="roadmap-list">
+            {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
+              <div key={i} className="roadmap-item">
+                <div className="roadmap-task-info">
+                  <span className="task-name">{item.task}</span>
+                  <p className="tiny-note">{item.note}</p>
+                </div>
+                <span className="impact-tag">{item.impact} Boost</span>
+              </div>
+            )) : <div className="nearby-empty">Site maintains Grade A stability.</div>}
+          </div>
+        </div>
+        
+
+        {/* 5. PREVENTATIVE INTERVENTIONS */}
+        <div className="card glass-morphic intel-card prevention-card">
+          <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
+          <p className="subtitle">AI-driven preventative strategy</p>
+          <ul className="prevention-list">
+            {intel.interventions?.map((msg, i) => (
+              <li key={i}>{msg}</li>
+            ))}
+          </ul>
+        </div>
         {/* 4. TEMPORAL SUITABILITY DRIFT */}
         <div className="card glass-morphic intel-card prediction-card">
           <div className="intel-header">
@@ -1138,32 +1068,7 @@ const intel = data.strategic_intelligence || {};
              </div>
           </div>
         </div>
-
-        {/* 5. PREVENTATIVE INTERVENTIONS */}
-        <div className="card glass-morphic intel-card prevention-card">
-          <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
-          <p className="subtitle">AI-driven preventative strategy</p>
-          <ul className="prevention-list">
-            {intel.interventions?.map((msg, i) => (
-              <li key={i}>{msg}</li>
-            ))}
-          </ul>
-        </div>
-        {/* 3. Roadmap */}
-        <div className="card glass-morphic intel-card roadmap-card">
-          <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
-          <div className="roadmap-list">
-            {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
-              <div key={i} className="roadmap-item">
-                <div className="roadmap-task-info">
-                  <span className="task-name">{item.task}</span>
-                  <p className="tiny-note">{item.note}</p>
-                </div>
-                <span className="impact-tag">{item.impact} Boost</span>
-              </div>
-            )) : <div className="nearby-empty">Site maintains Grade A stability.</div>}
-          </div>
-        </div>
+       
       </div>
     </div>
     );
