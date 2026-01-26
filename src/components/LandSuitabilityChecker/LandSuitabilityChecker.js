@@ -966,65 +966,134 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
     );
   }
 
-if (activeTab === "infrastructure") {
+// if (activeTab === "infrastructure") {
 
 
-const intel = data.strategic_intelligence || {}; 
-//  const placesList = data?.nearby?.places ?? [];
+// const intel = data.strategic_intelligence || {}; 
+// //  const placesList = data?.nearby?.places ?? [];
 
-// const getNearest = (type) => {
-//   if (!placesList.length) return "Unavailable";
+// // const getNearest = (type) => {
+// //   if (!placesList.length) return "Unavailable";
 
-//   const match = placesList
-//     .filter(p => p.type === type)
-//     .sort((a, b) => a.distance_km - b.distance_km)[0];
+// //   const match = placesList
+// //     .filter(p => p.type === type)
+// //     .sort((a, b) => a.distance_km - b.distance_km)[0];
 
-//   if (!match) return "Not Found";
+// //   if (!match) return "Not Found";
 
-//   return `${match.name} (${match.distance_km} km)`;
-// };
-
-
+// //   return `${match.name} (${match.distance_km} km)`;
+// // };
 
 
-// console.log("INFRA DATA", {
-//   hasNearby: !!data.nearby,
-//   places: data.nearby?.places,
-//   count: data.nearby?.places?.length,
-// });
 
 
-    return (
+// // console.log("INFRA DATA", {
+// //   hasNearby: !!data.nearby,
+// //   places: data.nearby?.places,
+// //   count: data.nearby?.places?.length,
+// // });
 
-    <div className="strategic-intel-grid">
-      <div className="intel-col">
-        {/* 1. Site Potential */}
-        <PotentialSection factors={data.factors} score={data.suitability_score} />
 
-        {/* 2. Infrastructure Proximity (Now using synchronized state) */}
-        {/* <div className="card glass-morphic intel-card">
-          <div className="intel-header"><h3>🏗️ Infrastructure Context</h3></div>
-          <p className="subtitle">Exact distance to nearest facilities</p>
-          <div className="nearby-summary-grid"> */}
-             {/* <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest(["school", "kindergarten"])}</strong></div>
-             <div className="mini-stat"><span>🏥 Hospital:</span> <strong>{getNearest(["hospital", "clinic", "doctors"])}</strong></div>
-             <div className="mini-stat"><span>🎓 College:</span> <strong>{getNearest(["college", "university"])}</strong></div>
-             <div className="mini-stat"><span>🛒 Market:</span> <strong>{getNearest(["marketplace", "supermarket", "mall"])}</strong></div>
-             <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest(["station", "bus_stop", "platform"])}</strong></div> */}
-             {/* <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest("school")}</strong></div>
-             <div className="mini-stat"><span>🏥 Hospital:</span> <strong>{getNearest("hospital")}</strong></div>
-             <div className="mini-stat"><span>🎓 College:</span> <strong>{getNearest("college")}</strong></div>
-             <div className="mini-stat"><span>🛒 Market:</span> <strong>{getNearest("market")}</strong></div>
-             <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest("transit")}</strong></div>
-          </div>
-        </div> */}
+//     return (
+
+//     <div className="strategic-intel-grid">
+//       <div className="intel-col">
+//         {/* 1. Site Potential */}
+//         <PotentialSection factors={data.factors} score={data.suitability_score} />
+
+//         {/* 2. Infrastructure Proximity (Now using synchronized state) */}
+//         {/* <div className="card glass-morphic intel-card">
+//           <div className="intel-header"><h3>🏗️ Infrastructure Context</h3></div>
+//           <p className="subtitle">Exact distance to nearest facilities</p>
+//           <div className="nearby-summary-grid"> */}
+//              {/* <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest(["school", "kindergarten"])}</strong></div>
+//              <div className="mini-stat"><span>🏥 Hospital:</span> <strong>{getNearest(["hospital", "clinic", "doctors"])}</strong></div>
+//              <div className="mini-stat"><span>🎓 College:</span> <strong>{getNearest(["college", "university"])}</strong></div>
+//              <div className="mini-stat"><span>🛒 Market:</span> <strong>{getNearest(["marketplace", "supermarket", "mall"])}</strong></div>
+//              <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest(["station", "bus_stop", "platform"])}</strong></div> */}
+//              {/* <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest("school")}</strong></div>
+//              <div className="mini-stat"><span>🏥 Hospital:</span> <strong>{getNearest("hospital")}</strong></div>
+//              <div className="mini-stat"><span>🎓 College:</span> <strong>{getNearest("college")}</strong></div>
+//              <div className="mini-stat"><span>🛒 Market:</span> <strong>{getNearest("market")}</strong></div>
+//              <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest("transit")}</strong></div>
+//           </div>
+//         </div> */}
 
         
+//       </div>
+
+//       {/* COLUMN 2: FUTURE AI PROJECTION */}
+//       <div className="intel-col">
+//          {/* 3. Roadmap */}
+//         <div className="card glass-morphic intel-card roadmap-card">
+//           <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
+//           <div className="roadmap-list">
+//             {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
+//               <div key={i} className="roadmap-item">
+//                 <div className="roadmap-task-info">
+//                   <span className="task-name">{item.task}</span>
+//                   <p className="tiny-note">{item.note}</p>
+//                 </div>
+//                 <span className="impact-tag">{item.impact} Boost</span>
+//               </div>
+//             )) : <div className="nearby-empty">Site maintains Grade A stability.</div>}
+//           </div>
+//         </div>
+        
+
+//         {/* 5. PREVENTATIVE INTERVENTIONS */}
+//         <div className="card glass-morphic intel-card prevention-card">
+//           <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
+//           <p className="subtitle">AI-driven preventative strategy</p>
+//           <ul className="prevention-list">
+//             {intel.interventions?.map((msg, i) => (
+//               <li key={i}>{msg}</li>
+//             ))}
+//           </ul>
+//         </div>
+//         {/* 4. TEMPORAL SUITABILITY DRIFT */}
+//         <div className="card glass-morphic intel-card prediction-card">
+//           <div className="intel-header">
+//             <h3>🚀 AI Future Projection (2036)</h3>
+//             <div className="future-score-wrap">
+//               <span className="current-mini">{data.suitability_score?.toFixed(1)}</span>
+//               <span className="drift-arrow">→</span>
+//               <span className="future-score">{intel.expected_score}%</span>
+//             </div>
+//           </div>
+//           <div className="drift-metrics">
+//              <div className="drift-row">
+//                <span>Urbanization Risk:</span> 
+//                <span className="val-red">{intel.metrics?.urban_sprawl}</span>
+//              </div>
+//              <div className="drift-row">
+//                <span>Vegetation Loss:</span> 
+//                <span className="val-red">{intel.metrics?.veg_loss}</span>
+//              </div>
+//           </div>
+//         </div>
+       
+//       </div>
+//     </div>
+//     );
+//   }
+if (activeTab === "infrastructure") {
+  const intel = data.strategic_intelligence || {}; 
+
+  return (
+    /* Use the dynamic containerClass instead of the hardcoded strategic-intel-grid */
+    <div className={containerClass}>
+      
+      {/* Column 1: Potential and Infrastructure Context */}
+      <div className={isFullWidth ? "col-1" : ""}>
+        <PotentialSection factors={data.factors} score={data.suitability_score} />
+        
+        {/* If you ever uncomment your Infrastructure Context card, it goes here */}
       </div>
 
-      {/* COLUMN 2: FUTURE AI PROJECTION */}
-      <div className="intel-col">
-         {/* 3. Roadmap */}
+      {/* Column 2: Roadmap, Interventions, and Projections */}
+      <div className={isFullWidth ? "col-2" : "intel-col"}>
+        {/* Roadmap Card */}
         <div className="card glass-morphic intel-card roadmap-card">
           <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
           <div className="roadmap-list">
@@ -1039,9 +1108,8 @@ const intel = data.strategic_intelligence || {};
             )) : <div className="nearby-empty">Site maintains Grade A stability.</div>}
           </div>
         </div>
-        
 
-        {/* 5. PREVENTATIVE INTERVENTIONS */}
+        {/* Interventions Card */}
         <div className="card glass-morphic intel-card prevention-card">
           <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
           <p className="subtitle">AI-driven preventative strategy</p>
@@ -1051,7 +1119,8 @@ const intel = data.strategic_intelligence || {};
             ))}
           </ul>
         </div>
-        {/* 4. TEMPORAL SUITABILITY DRIFT */}
+
+        {/* Future Projection Card */}
         <div className="card glass-morphic intel-card prediction-card">
           <div className="intel-header">
             <h3>🚀 AI Future Projection (2036)</h3>
@@ -1062,21 +1131,20 @@ const intel = data.strategic_intelligence || {};
             </div>
           </div>
           <div className="drift-metrics">
-             <div className="drift-row">
-               <span>Urbanization Risk:</span> 
-               <span className="val-red">{intel.metrics?.urban_sprawl}</span>
-             </div>
-             <div className="drift-row">
-               <span>Vegetation Loss:</span> 
-               <span className="val-red">{intel.metrics?.veg_loss}</span>
-             </div>
+            <div className="drift-row">
+              <span>Urbanization Risk:</span> 
+              <span className="val-red">{intel.metrics?.urban_sprawl}</span>
+            </div>
+            <div className="drift-row">
+              <span>Vegetation Loss:</span> 
+              <span className="val-red">{intel.metrics?.veg_loss}</span>
+            </div>
           </div>
         </div>
-       
       </div>
     </div>
-    );
-  }
+  );
+}
 
   // Fallback return to avoid "undefined" errors
   return null;
