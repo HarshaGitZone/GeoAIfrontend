@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./TopNav.css";
 import QRCode from "react-qr-code"; // Import this at the top
-export default function TopNav({ isDarkMode, setIsDarkMode, analysisHistory = [] }) {
+export default function TopNav({ isDarkMode, setIsDarkMode,isAudioEnabled,setIsAudioEnabled, analysisHistory = [] }) {
   const [isVisible, setIsVisible] = useState(false);
   const [showTeam, setShowTeam] = useState(false);
   const [showHistoryTable, setShowHistoryTable] = useState(false);
@@ -162,7 +162,15 @@ const handleNavMouseLeave = () => {
                 ))}
               </div>
             </div>
-
+            {/* --- NEW: AUDIO TOGGLE BUTTON --- */}
+            <button 
+              className={`icon-btn audio-toggle ${isAudioEnabled ? "active" : ""}`} 
+              onClick={() => setIsAudioEnabled(!isAudioEnabled)}
+              title={isAudioEnabled ? "Deactivate Atmosphere" : "Activate Immersive Audio"}
+              style={{ fontSize: '1.2rem' }}
+            >
+              {isAudioEnabled ? "🔊" : "🔇"}
+            </button>
             <div className="team-trigger-wrapper">
               <button className={`team-btn ${showTeam ? "active" : ""}`} onClick={() => setShowTeam(!showTeam)}>Team</button>
               <div className={`compact-team-pane ${showTeam ? "show" : ""}`}>
@@ -196,36 +204,7 @@ const handleNavMouseLeave = () => {
 {showHistoryTable && (
   <div className="modal-overlay" onClick={() => setShowHistoryTable(false)}>
     <div className="history-table-card glass-morphic" onClick={(e) => e.stopPropagation()}>
-      {/* Expanded QR Overlay
-      {expandedQR !== null && (
-        <div className="qr-expanded-overlay" onClick={() => setExpandedQR(null)}>
-           <div className="qr-expanded-card glass-morphic">
-              <QRCode value={expandedQR.link} size={256} bgColor="#fff" fgColor="#000" />
-              <p>{expandedQR.name} Analysis</p>
-              <button className="modal-close">✖</button>
-           </div>
-        </div>
-      )} */}
-      {/* PROFESSIONAL EXPANDED QR OVERLAY */}
-      {/* {expandedQR && (
-        <div className="qr-expanded-overlay" onClick={() => setExpandedQR(null)}>
-           <div className="qr-expanded-card" onClick={(e) => e.stopPropagation()}>
-              <div className="qr-container">
-                <QRCode 
-                  value={expandedQR.link} 
-                  size={240} 
-                  bgColor="transparent" 
-                  fgColor="currentColor" // This makes the QR match the text color
-                />
-              </div>
-              <div className="qr-info">
-                <h4>{expandedQR.name} Analysis</h4>
-                <p>Scan to view </p>
-              </div>
-              <button className="qr-close-btn" onClick={() => setExpandedQR(null)}>Close</button>
-           </div>
-        </div>
-      )} */}
+      
       {/* PROFESSIONAL EXPANDED QR OVERLAY */}
 {expandedQR && (
   <div className="qr-expanded-overlay" onClick={() => setExpandedQR(null)}>
@@ -348,45 +327,7 @@ const handleNavMouseLeave = () => {
                     <td style={{ fontSize: '11px', whiteSpace: 'nowrap', opacity: 0.8 }}>
                       {formattedTime}
                     </td>
-          {/* COLUMN 5: QR CODE (THE MISSING PIECE) */}
-          {/* <td style={{ textAlign: 'center' }}>
-            <div 
-              className="qr-mini-wrapper"
-              onClick={() => setExpandedQR({ link: dynamicLink, name: item.name })}
-              style={{ 
-                cursor: 'zoom-in', 
-                background: '#fff', 
-                padding: '3px', 
-                borderRadius: '4px', 
-                display: 'inline-block',
-                lineHeight: 0
-              }}
-            >
-              <QRCode value={dynamicLink} size={28} bordered={false} />
-            </div>
-          </td> */}
-          {/* <td style={{ textAlign: 'center' }}>
-          <div 
-            className="qr-mini-wrapper"
-            onClick={() => setExpandedQR({ link: dynamicLink, name: item.name })}
-            style={{ 
-              cursor: 'zoom-in', 
-              background: '#fff', // White background is essential for scanning
-              padding: '5px', 
-              borderRadius: '4px', 
-              display: 'inline-block',
-              lineHeight: 0,
-              border: '1px solid #ddd'
-            }}
-          >
-            <QRCode 
-              value={dynamicLink} 
-              size={40}      // Slightly larger for better scanning
-              level="L"      // Lower error correction makes the dots larger and easier to scan
-              bordered={false} 
-            />
-          </div>
-        </td> */}
+         
         {/* COLUMN 5: QR CODE */}
         <td style={{ textAlign: 'center' }}>
           <div 

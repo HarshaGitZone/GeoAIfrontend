@@ -14,6 +14,7 @@ import SnapshotGeo from "../SnapshotGeo/SnapshotGeo";
 import { API_BASE } from "../../config/api";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import AudioLandscape from "../AudioLandscape/AudioLandscape";
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -237,7 +238,7 @@ export default function LandSuitabilityChecker() {
   const [analysisHistory, setAnalysisHistory] = useState(() => 
       JSON.parse(localStorage.getItem("analysis_history")) || []
   );
-
+  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
 
   const [lat, setLat] = useState(() => localStorage.getItem("geo_lat") || "17.385");
   const [lng, setLng] = useState(() => localStorage.getItem("geo_lng") || "78.4867");
@@ -1082,7 +1083,34 @@ const intel = data.strategic_intelligence || {};
 };
   return (
     <div className="app-shell">
-      <TopNav isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} analysisHistory={analysisHistory} onSearchResult={handleSearchResult} />
+      {/* <AudioLandscape 
+        factors={result?.factors} 
+        isEnabled={isAudioEnabled} 
+      /> */}
+
+      {/* <AudioLandscape 
+        factors={isCompareMode 
+          ? (mobileCompareSite === "A" ? result?.factors : compareResult?.factors) 
+          : result?.factors
+        } 
+        isEnabled={isAudioEnabled}
+        isLoading={loading || compareLoading}
+      /> */}
+      <AudioLandscape 
+  // Select factors based on which site is active in compare mode
+  activeFactors={isCompareMode 
+    ? (mobileCompareSite === "A" ? result?.factors : compareResult?.factors) 
+    : result?.factors
+  } 
+  // NEW: Pass the label (e.g. "Not Suitable (Waterbody)")
+  resultLabel={isCompareMode
+    ? (mobileCompareSite === "A" ? result?.label : compareResult?.label)
+    : result?.label
+  }
+  isEnabled={isAudioEnabled}
+  isLoading={loading || compareLoading}
+/>
+      <TopNav isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} isAudioEnabled={isAudioEnabled} setIsAudioEnabled={setIsAudioEnabled} analysisHistory={analysisHistory} onSearchResult={handleSearchResult} />
       
       <SideBar
         onSearchResult={handleSearchResult}
