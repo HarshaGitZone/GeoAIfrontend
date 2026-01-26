@@ -5293,3 +5293,80 @@ html, body, #root, .app-shell {
     font-style: italic;
     color: #ccc;
 }
+
+
+
+.strategic-intel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Strict 2 Columns */
+    gap: 20px;
+    padding: 10px;
+}
+
+.intel-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.intel-card {
+    margin-bottom: 0 !important; /* Managed by grid gap */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.intel-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-color);
+}
+
+.intel-header h3 {
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin-bottom: 12px;
+}
+
+/* Specific Card Styling */
+.future-score {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ef4444; /* Red indicating expected drop */
+}
+
+.roadmap-item {
+    background: rgba(16, 185, 129, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+}
+
+.impact-tag {
+    color: #10b981;
+    font-weight: bold;
+}
+
+.prevention-list {
+    list-style: none;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+.prevention-list li {
+    margin-bottom: 10px;
+    padding-left: 15px;
+    position: relative;
+}
+
+.prevention-list li::before {
+    content: "•";
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+}
