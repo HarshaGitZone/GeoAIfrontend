@@ -10,6 +10,7 @@ export default function TopNav({ isDarkMode, setIsDarkMode,isAudioEnabled,setIsA
   const [currentTime, setCurrentTime] = useState(new Date());
 const navHideTimeoutRef = useRef(null);
 const [expandedQR, setExpandedQR] = useState(null);
+
 const handleNavMouseEnter = () => {
   if (navHideTimeoutRef.current) {
     clearTimeout(navHideTimeoutRef.current);
@@ -345,7 +346,7 @@ const handleNavMouseLeave = () => {
             }}
             style={{ cursor: 'zoom-in', background: '#fff', padding: '3px', borderRadius: '4px', display: 'inline-block' }}
           >
-            <QRCode value={dynamicLink} size={28} bordered={false} />
+            <QRCode value={dynamicLink} size={28} bordered={isDarkMode ? "true" : undefined} />
           </div>
         </td>
           {/* ACTION: Styled as a Pro Button */}

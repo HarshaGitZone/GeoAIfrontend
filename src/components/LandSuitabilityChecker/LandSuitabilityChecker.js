@@ -192,6 +192,8 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
 };
 
 const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral }) => {
+  // console.log("FULL DATA OBJECT RECEIVED:", data);
+
   const nLat = parseFloat(latVal);
   const nLng = parseFloat(lngVal);
   const isValidCoords = !isNaN(nLat) && !isNaN(nLng);
@@ -287,8 +289,45 @@ const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, v
           {data.suitability_score?.toFixed(1)}
         </div>
         <div className={`status-pill ${data.label?.toLowerCase().replace(/\s+/g, '-')}`}>{data.label}</div>
-        
-        <div className="history-action-container">
+{/*         
+{data?.cnn_analysis && data?.cnn_analysis?.image_sample ? (
+  <div className="card cnn-intelligence-card glass-morphic animate-in">
+    <div className="cnn-header">
+      <h4>🛰️ AI Visual Scan</h4>
+      <span className="cnn-tag">CNN ENGINE</span>
+    </div>
+    
+    <div className="cnn-content-layout">
+      <div className="cnn-visual-preview" style={{ 
+        backgroundImage: `url(${data.cnn_analysis.image_sample})`,
+        backgroundSize: 'cover'
+      }}>
+        <div className="scan-line-overlay"></div>
+      </div>
+
+      <div className="cnn-details">
+        <div className="cnn-stat">
+          <span style={{ display: 'block', fontSize: '10px', opacity: 0.7, marginBottom: '2px' }}>CLASSIFICATION</span>
+          <strong style={{ fontSize: '14px', display: 'block' }}>{data.cnn_analysis.class}</strong>
+        </div>
+        <div className="cnn-stat" style={{ marginTop: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+            <span style={{ fontSize: '10px', opacity: 0.7 }}>CONFIDENCE</span>
+            <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{data.cnn_analysis.confidence}%</span>
+          </div>
+          <div className="progress-bar" style={{ height: '4px', background: 'rgba(255,255,255,0.2)', borderRadius: '2px', overflow: 'hidden' }}>
+            <div style={{ width: `${data.cnn_analysis.confidence}%`, height: '100%', background: 'var(--accent-color, #00d4ff)', borderRadius: '2px' }}></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+) : (
+  <div className="cnn-loading-placeholder">
+    <span style={{ opacity: 0.7 }}>⚠️ Satellite Visual Unavailable</span>
+  </div>
+)} */}
+          <div className="history-action-container">
           <button 
             className="history-pro-btn" 
             onClick={() => onOpenHistory(data, locationName, latVal, lngVal)} 
@@ -1005,6 +1044,7 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
     return (
       <div className={containerClass}>
         <div className={isFullWidth ? "col-1" : ""}>
+          
           <FactorsSection 
             data={data} 
             latVal={coords.lat} 
@@ -1028,15 +1068,123 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
   }
 
   if (activeTab === "environmental") {
-    return (
-      <div className={containerClass}>
-        <div className={isFullWidth ? "col-1" : ""}>
-          {/* <WeatherCard weather={data?.weather} /> */}
-          {/* NEW SNAPSHOT COMPONENT HERE */}
-        <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
+//     const cnn = data?.cnn_analysis;
+//     const isLowConfidence = cnn?.confidence < 40;
+//     const cnnColor = isLowConfidence ? "#f59e0b" : "#00d4ff";
+//     // Inside your activeTab === "environmental" block
+
+//     const confidence = cnn?.confidence || 0;
+
+// // Dynamic status based on confidence
+// const getStatus = (conf) => {
+//   if (conf > 70) return { label: "VERIFIED", color: "#10b981", glow: "rgba(16, 185, 129, 0.5)" };
+//   if (conf > 40) return { label: "PROBABLE", color: "#00d4ff", glow: "rgba(0, 212, 255, 0.5)" };
+//   return { label: "UNCERTAIN", color: "#ef4444", glow: "rgba(239, 68, 68, 0.5)" };
+// };
+
+// const status = getStatus(confidence);
+const cnn = data?.cnn_analysis;
+const confidence = cnn?.confidence || 0;
+
+// NEW: 3-Tier Tactical Color Logic
+const getCnnTheme = (conf) => {
+  if (conf >= 70) return { color: "#10b981", label: "VERIFIED", note: "TARGET LOCKED", class: "high-conf", glow: "rgba(16, 185, 129, 0.2)" }; 
+  if (conf >= 40) return { color: "#3b82f6", label: "PROBABLE", note: "PATTERN RECOGNIZED", class: "mid-conf", glow: "rgba(59, 130, 246, 0.2)" }; 
+  return { color: "#ef4444", label: "UNCERTAIN", note: "SIGNAL INTERFERENCE", class: "low-conf", glow: "rgba(239, 68, 68, 0.2)" }; 
+};
+
+const cnnTheme = getCnnTheme(confidence);
+
+return (
+  <div className={containerClass}>
+    <div className={isFullWidth ? "col-1" : ""}>
+      
+      {/* UPDATED CNN TACTICAL CARD */}
+      <div 
+        className={`card cnn-tactical-card glass-morphic animate-in ${cnnTheme.class}`} 
+        style={{ "--status-color": cnnTheme.color, "--status-glow": cnnTheme.glow }}
+      >
+        <div className="cnn-tactical-header">
+          <div className="cnn-title-group">
+            <span className="live-tag">LIVE TELEMETRY</span>
+            <h3>Visual Intelligence Scan</h3>
+          </div>
+          
+          <div className="tactical-header-right">
+            {/* Dedicated Space for Model Identity */}
+            <div className="model-id-badge">
+              <span className="model-label">ENGINE</span>
+              <span className="model-name">CNN-V2 / MOBILE-NET</span>
+            </div>
+            {/* Compact Status Badge - Uses dynamic 3-tier color */}
+            <div className="status-indicator-pill" style={{ backgroundColor: cnnTheme.color }}>
+              {confidence < 40 && <span className="mini-warn">⚠️</span>}
+              {cnnTheme.label}
+            </div>
+          </div>
+        </div>
+
+        <div className="cnn-tactical-layout">
+          <div className="cnn-visual-container">
+            <div className="cnn-frame" style={{ borderColor: cnnTheme.color }}>
+               <div className="cnn-image-feed" style={{ 
+                 backgroundImage: cnn?.image_sample ? `url(${cnn.image_sample})` : 'none',
+                 filter: confidence < 40 ? 'grayscale(0.4) contrast(1.1) brightness(0.9)' : 'none'
+               }}>
+                 {cnn?.image_sample && <div className="scan-telemetry-overlay"></div>}
+               </div>
+               {/* Fixed Tactical Corners */}
+               <div className="corner-bit tl"></div><div className="corner-bit tr"></div>
+               <div className="corner-bit bl"></div><div className="corner-bit br"></div>
+            </div>
+          </div>
+
+          <div className="cnn-data-grid">
+            <div className="cnn-stat-item">
+              <label>TERRAIN CLASSIFICATION: </label>
+              <strong className="cnn-class-text" style={{ color: cnnTheme.color }}>
+                {cnn?.class || "ANALYZING..."}
+              </strong>
+            </div>
+
+            <div className="cnn-stat-item">
+              <div className="label-row">
+                <label>SPECTRAL CONFIDENCE: </label>
+                <span className="confidence-value" style={{ color: cnnTheme.color }}>{confidence}%</span>
+              </div>
+              <div className="tactical-progress-bg">
+                <div 
+                  className="tactical-progress-fill" 
+                  style={{ width: `${confidence}%`, backgroundColor: cnnTheme.color }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="cnn-alert-box" style={{ borderLeftColor: cnnTheme.color, background: `${cnnTheme.color}15` }}>
+              <div className="alert-content">
+                <strong style={{ color: cnnTheme.color }}>{cnnTheme.note}</strong>
+                <p>
+                  {confidence < 40 
+                    ? "Terrain complexity exceeding standard spectral resolution." 
+                    : `Visual markers confirm high correlation with ${cnn?.class} signatures.`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Responsive Footer - Theme specific colors handled via CSS */}
+        <div className="cnn-footer-telemetry">
+          <span>RES: 10m/px</span>
+          <span>SENSOR: SENTINEL-2 L2A</span>
+          <span>TS: {new Date().toLocaleTimeString()}</span>
+        </div>
+      </div>
+ 
         {data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
         </div>
         <div className={isFullWidth ? "col-2" : ""}>
+          <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
           <WeatherCard weather={data?.weather} />
           
         </div>
@@ -1582,8 +1730,3 @@ const intel = data.strategic_intelligence || {};
     </div>
   );
 }
-
-
-
-
-
