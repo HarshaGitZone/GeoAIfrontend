@@ -6350,3 +6350,23 @@ html, body, #root, .app-shell {
   display: flex;
   align-items: center;
 }
+
+/* Target the specific stat item for classification */
+.cnn-stat-item {
+  display: flex;
+  flex-direction: column; /* This forces children to stack vertically */
+  align-items: flex-start; /* Aligns both label and value to the left */
+  gap: 4px; /* Adds a clean gap between the label and the value */
+}
+
+.cnn-stat-item label {
+  display: block; /* Ensures the label takes its own row */
+  width: 100%;
+}
+
+.cnn-class-text {
+  display: block; /* Ensures "Water" or "Forest" drops to the next line */
+  margin-top: 2px;
+  font-size: 26px; /* High-visibility sizing */
+  line-height: 1.1;
+}

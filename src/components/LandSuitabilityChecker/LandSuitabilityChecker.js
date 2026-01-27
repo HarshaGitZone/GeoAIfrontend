@@ -249,22 +249,7 @@ const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, v
           <Marker position={[nLat, nLng]} />
         </MapContainer>
 
-        {activeSpectral !== "standard" && (
-          <div className="spectral-legend glass-morphic animate-in">
-            <div className="legend-title">
-              {activeSpectral === "ndvi" ? "🌿 Plant Health Index" : 
-               activeSpectral === "thermal" ? "🔥 Heat Intensity" : "💧 Storm Runoff Paths"}
-            </div>
-            <div className="legend-bar" id={`legend-${activeSpectral}`}></div>
-            <div className="legend-labels">
-              <span>{activeSpectral === "ndvi" ? "Low" : "Cool"}</span>
-              <span>{activeSpectral === "ndvi" ? "High" : "Hot"}</span>
-            </div>
-            <p className="tiny-legend-note">
-              {activeSpectral === "hydrology" && "Lines indicate natural water accumulation points."}
-            </p>
-          </div>
-        )}
+        
       </>
     ) : (
       <div className="empty-results" style={{ fontSize: '11px' }}>
@@ -1099,6 +1084,7 @@ return (
   <div className={containerClass}>
     <div className={isFullWidth ? "col-1" : ""}>
       
+      
       {/* UPDATED CNN TACTICAL CARD */}
       <div 
         className={`card cnn-tactical-card glass-morphic animate-in ${cnnTheme.class}`} 
@@ -1181,14 +1167,20 @@ return (
         </div>
       </div>
  
-        {data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
-        </div>
+        {/* {data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
+        </div> */}
+        {/* If Single View, Terrain shows here in col-1 */}
+        {isFullWidth && data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
+      </div>
         <div className={isFullWidth ? "col-2" : ""}>
           <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
           <WeatherCard weather={data?.weather} />
           
         </div>
-      </div>
+        {/* If Compare Mode, Terrain is forced to the bottom of the entire stack */}
+      {!isFullWidth && data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
+    </div>
+  
     );
   }
 
