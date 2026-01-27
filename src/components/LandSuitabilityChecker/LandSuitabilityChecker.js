@@ -62,7 +62,7 @@ const isNearbyDevice = (lat1, lng1, deviceLoc) => {
 };
 
 // --- DYNAMIC INFERENCE ENGINE ---
-const getSitePotential = (factors) => {
+const getSitePotential = (factors,activeSpectral) => {
   const potentials = [];
   const f = factors;
 
@@ -111,7 +111,27 @@ const getSitePotential = (factors) => {
       reason: `Strategic for commercial use because it ranks top 20% in Infrastructure Proximity (${f.proximity.toFixed(0)}%). Ideal for warehouses or manufacturing.`
     });
   }
+  // 3️⃣ HYDROLOGY INTELLIGENCE: Connect Flow to Flood Risk
+  if (activeSpectral === "hydrology" && f.flood < 50) {
+    potentials.push({
+      type: "Risk",
+      label: "Hydrological Trap",
+      class: "pot-red",
+      icon: "🌊",
+      reason: "Overlay reveals physics-based water accumulation at this coordinate. Stormwater will likely pool here due to the terrain slope."
+    });
+  }
 
+  // 2️⃣ THERMAL INTELLIGENCE: Residential Livability
+  if (activeSpectral === "thermal" && f.pollution < 60) {
+    potentials.push({
+      type: "Climate",
+      label: "Urban Heat Island",
+      class: "pot-blue",
+      icon: "🌡️",
+      reason: "Site absorbs high solar radiation. Residential planning should include green roofing to mitigate cooling costs."
+    });
+  }
   return potentials;
 };
 
@@ -202,35 +222,57 @@ const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, v
   return (
     <>
       <div className={`card hero-card glass-morphic ${data.suitability_score < 40 ? 'danger-glow' : ''}`}>
-        <div className="mini-map-context">
-          {isValidCoords ? (
-            <MapContainer center={[nLat, nLng]} zoom={15} zoomControl={false} dragging={false} touchZoom={false} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
-                {/* <TileLayer url={varieties[mapVariety] || varieties.hybrid} /> */}
-                
-                {/* <TileLayer url={varieties[mapVariety]} />
+  <div className="mini-map-context">
+    {isValidCoords ? (
+      <>
+        <MapContainer 
+          center={[nLat, nLng]} 
+          zoom={15} 
+          zoomControl={false} 
+          dragging={false} 
+          touchZoom={false} 
+          scrollWheelZoom={false} 
+          style={{ height: "100%", width: "100%" }}
+        >
+          <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
+          
+          {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+            <TileLayer 
+              key={activeSpectral} 
+              url={spectralLayers[activeSpectral]} 
+              opacity={0.7} 
+              zIndex={100} 
+            />
+          )}
+          <Marker position={[nLat, nLng]} />
+        </MapContainer>
 
-                {activeSpectral !== "standard" && (
-                  <TileLayer 
-                    url={spectralLayers[activeSpectral]} 
-                    opacity={0.7} // Keeps the base map visible underneath
-                    zIndex={100} 
-                  />
-                )} */}
-                <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
-                
-                {/* Fixed: Active Spectral Layer must be INSIDE MapContainer */}
-                {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
-                  <TileLayer 
-                    url={spectralLayers[activeSpectral]} 
-                    opacity={0.7} 
-                    zIndex={100} 
-                  />
-                )}
-                <Marker position={[nLat, nLng]} />
-            </MapContainer>
-          ) : <div className="empty-results" style={{fontSize: '11px'}}>Awaiting Geospatial Analysis...</div>}
-          <div className="mini-map-label">Tactical Preview</div>
-        </div>
+        {activeSpectral !== "standard" && (
+          <div className="spectral-legend glass-morphic animate-in">
+            <div className="legend-title">
+              {activeSpectral === "ndvi" ? "🌿 Plant Health Index" : 
+               activeSpectral === "thermal" ? "🔥 Heat Intensity" : "💧 Storm Runoff Paths"}
+            </div>
+            <div className="legend-bar" id={`legend-${activeSpectral}`}></div>
+            <div className="legend-labels">
+              <span>{activeSpectral === "ndvi" ? "Low" : "Cool"}</span>
+              <span>{activeSpectral === "ndvi" ? "High" : "Hot"}</span>
+            </div>
+            <p className="tiny-legend-note">
+              {activeSpectral === "hydrology" && "Lines indicate natural water accumulation points."}
+            </p>
+          </div>
+        )}
+      </>
+    ) : (
+      <div className="empty-results" style={{ fontSize: '11px' }}>
+        Awaiting Geospatial Analysis...
+      </div>
+    )}
+    <div className="mini-map-label">Tactical Preview</div>
+  </div>
+
+
 
         <div className="card-coordinates">
           <span>LAT: {isValidCoords ? nLat.toFixed(4) : "0.0000"}</span>
@@ -1334,9 +1376,15 @@ const intel = data.strategic_intelligence || {};
               </optgroup>
             </select>
             <div className="spectral-toggle-bar">
-  <button onClick={() => setActiveSpectral("ndvi")} className={activeSpectral === "ndvi" ? "active" : ""}>
+  {/* <button onClick={() => setActiveSpectral("ndvi")} className={activeSpectral === "ndvi" ? "active" : ""}>
     🌿 NDVI
-  </button>
+  </button> */}
+  <button 
+  className={activeSpectral === "ndvi" ? "active" : ""} 
+  onClick={() => setActiveSpectral(activeSpectral === "ndvi" ? "standard" : "ndvi")}
+>
+  🌿 NDVI
+</button>
   <button onClick={() => setActiveSpectral("thermal")} className={activeSpectral === "thermal" ? "active" : ""}>
     🔥 Heat
   </button>

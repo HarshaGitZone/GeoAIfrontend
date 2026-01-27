@@ -5755,3 +5755,32 @@ html, body, #root, .app-shell {
   opacity: 0.7;
   color: var(--text);
 }
+
+
+.spectral-legend {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 1001; /* Must be higher than Leaflet */
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  pointer-events: none; /* Allows clicking through the legend to the map */
+}
+
+.legend-bar {
+  height: 6px;
+  border-radius: 3px;
+  margin: 6px 0;
+}
+
+#legend-ndvi { background: linear-gradient(to right, #fde68a, #166534); }
+#legend-thermal { background: linear-gradient(to right, #3b82f6, #ef4444); }
+#legend-hydrology { background: linear-gradient(to right, #cbd5e1, #1e40af); }
+
+.tiny-legend-note {
+  font-size: 9px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
