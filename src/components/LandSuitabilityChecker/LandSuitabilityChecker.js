@@ -1078,7 +1078,15 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 //     );
 //   }
 if (activeTab === "infrastructure") {
-  const intel = data.strategic_intelligence || {}; 
+const intel = data.strategic_intelligence || {}; 
+  // Carbon Intelligence: Potential based on vegetation biomass
+    const carbonIntelligence = (data.factors.landuse * 0.75).toFixed(1); 
+    // Carbon Footprint: Estimated based on proximity & infrastructure
+    const liveFootprint = ((100 - data.factors.pollution + (100 - data.factors.proximity)) / 15).toFixed(1);
+    // ESG Score: Derived from soil, water, and pollution factors
+    const esgScore = Math.round((data.factors.soil + data.factors.pollution + data.factors.water) / 3);
+  const esgColorClass = esgScore > 75 ? "grade-A" : esgScore > 50 ? "grade-B" : esgScore > 35 ? "grade-C" : "grade-F";
+  
 
   return (
     /* Use the dynamic containerClass instead of the hardcoded strategic-intel-grid */
@@ -1088,9 +1096,62 @@ if (activeTab === "infrastructure") {
       <div className={isFullWidth ? "col-1" : ""}>
         <PotentialSection factors={data.factors} score={data.suitability_score} />
         
-        {/* If you ever uncomment your Infrastructure Context card, it goes here */}
+  <div className="card glass-morphic intel-card">
+    <div className="intel-header">
+      <div className="title-group">
+        <h3>🌳 Sustainability Intelligence</h3>
+        <p className="subtitle">Lithospheric & Biomass Sequestration</p>
       </div>
+      
+      {/* DYNAMIC COLOR CLASS ADDED HERE */}
+      <div className={`esg-score-circle ${esgColorClass}`}>
+        <span className="esg-val">{esgScore}</span>
+        <span className="esg-lab">ESG</span>
+      </div>
+    </div>
 
+  <div className="carbon-analysis-zone">
+    <div className="analysis-row">
+      <div className="analysis-item">
+        <label>Carbon Asset</label>
+        <span className="val-green">+{carbonIntelligence} <small>tCO2e/yr</small></span>
+        <div className="mini-progress-bg">
+          <div className="mini-progress-fill green" style={{ width: `${Math.min(carbonIntelligence * 2, 100)}%` }}></div>
+        </div>
+      </div>
+      <div className="analysis-item">
+        <label>Live Footprint</label>
+        <span className="val-red">-{liveFootprint} <small>tCO2e/yr</small></span>
+        <div className="mini-progress-bg">
+          <div className="mini-progress-fill red" style={{ width: `${Math.min(liveFootprint * 10, 100)}%` }}></div>
+        </div>
+      </div>
+    </div>
+
+    <div className="net-impact-summary">
+      <div className="impact-label">Net Ecosystem Impact</div>
+      <div className="impact-value">
+        { (carbonIntelligence - liveFootprint) > 0 ? "CARBON NEGATIVE (CLIMATE POSITIVE)" : "CARBON POSITIVE (CLIMATE RISK)" }
+      </div>
+    </div>
+  </div>
+
+  <div className="eligibility-drawer">
+    <div className="drawer-item">
+      <span>🌿 Conservation Credit Match:</span>
+      <strong className={esgScore > 65 ? "status-ok" : "status-no"}>
+        {esgScore > 65 ? "HIGHLY ELIGIBLE" : "INELIGIBLE"}
+      </strong>
+    </div>
+    <div className="drawer-item">
+      <span>🛡️ Biodiversity Buffer:</span>
+      <strong>{data.factors.landuse > 60 ? "PREMIUM" : "STANDARD"}</strong>
+    </div>
+  </div>
+  
+  <p className="legal-disclaimer">Estimates based on biomass density and emission intensity.</p>
+</div>
+      </div>
       {/* Column 2: Roadmap, Interventions, and Projections */}
       <div className={isFullWidth ? "col-2" : "intel-col"}>
         {/* Roadmap Card */}

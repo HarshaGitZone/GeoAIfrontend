@@ -5414,3 +5414,344 @@ html, body, #root, .app-shell {
   padding: 10px 0; 
 }
 
+
+
+/* GAP FIX: Prevents cards from sticking together */
+.intel-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px !important; /* Forces the gap you were missing */
+  width: 100%;
+}
+
+/* Specific styling for the Sustainability Card */
+.carbon-esg-card.green-glow {
+  border-left: 4px solid #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.carbon-balance-sheet {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 15px 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.balance-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.balance-item label {
+  font-size: 10px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.balance-item strong, .balance-item span {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.esg-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 12px;
+  background: #10b981;
+  color: white;
+}
+
+.eligibility-status {
+  font-size: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Compare Mode specific spacing */
+.column-stack {
+  gap: 30px !important;
+}
+
+
+
+.enhanced-green-card {
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.05) 0%, rgba(0, 0, 0, 0.2) 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.enhanced-green-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.esg-score-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #10b981;
+  background: rgba(0,0,0,0.3);
+}
+
+.esg-val { font-size: 18px; font-weight: 800; color: #10b981; line-height: 1; }
+.esg-lab { font-size: 8px; font-weight: bold; opacity: 0.7; }
+
+.carbon-analysis-zone {
+  margin-top: 20px;
+}
+
+.analysis-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.analysis-item { flex: 1; }
+.analysis-item label { font-size: 10px; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 4px; }
+.analysis-item span { font-size: 1.2rem; font-weight: bold; }
+.analysis-item small { font-size: 0.7rem; opacity: 0.8; }
+
+/* Mini Progress Bars */
+.mini-progress-bg { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 6px; }
+.mini-progress-fill { height: 100%; border-radius: 2px; }
+.mini-progress-fill.green { background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+.mini-progress-fill.red { background: #ef4444; }
+
+.net-impact-summary {
+  background: rgba(0,0,0,0.3);
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.impact-label { font-size: 9px; text-transform: uppercase; opacity: 0.7; }
+.impact-value { font-size: 11px; font-weight: 800; color: #10b981; margin-top: 2px; }
+
+.eligibility-drawer {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-item { display: flex; justify-content: space-between; font-size: 12px; }
+.status-ok { color: #10b981; }
+.status-no { color: #f59e0b; }
+
+.legal-disclaimer { font-size: 8px; opacity: 0.4; margin-top: 12px; font-style: italic; }
+
+[data-theme="light"] {
+  --bg: #f8fafc;        /* Soft blue-gray background */
+  --side: #ffffff;      /* Pure white sidebar */
+  --card: #ffffff;      /* Pure white cards */
+  --text: #0f172a;      /* Slate 900 for text */
+  --border: #e2e8f0;    /* Slate 200 for borders */
+  --accent: #2d8a8a;    /* Keep Teak accent */
+  --input-bg: #f1f5f9;
+}
+/* --- LIGHT THEME GREEN CARD OVERRIDES --- */
+[data-theme="light"] .enhanced-green-card {
+  background: linear-gradient(145deg, #f0fdf4 0%, #ffffff 100%) !important;
+  border: 1px solid #bbf7d0 !important; /* Soft green border */
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.1) !important;
+}
+
+[data-theme="light"] .enhanced-green-card::before {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+}
+
+[data-theme="light"] .esg-score-circle {
+  background: #ffffff;
+  border-color: #10b981;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+}
+
+[data-theme="light"] .net-impact-summary {
+  background: #ecfdf5; /* Very light emerald */
+  border: 1px solid #d1fae5;
+}
+
+[data-theme="light"] .mini-progress-bg {
+  background: #e2e8f0; /* Darker gray track for light mode */
+}
+
+/* --- LIGHT THEME HERO CARD & SCORE --- */
+[data-theme="light"] .hero-card {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Ensure the score number uses the dynamic color but stays sharp */
+[data-theme="light"] .score-value {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05)) !important;
+}
+
+/* --- LIGHT THEME GGPT STYLES --- */
+[data-theme="light"] .geogpt-polished-box {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .assistant .msg-bubble {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-color: #e2e8f0;
+}
+
+/* --- LIGHT THEME INPUTS --- */
+[data-theme="light"] .field input, 
+[data-theme="light"] .highlighted-box {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+
+
+/* --- SUSTAINABILITY CARD (Standardized Version) --- */
+
+/* Circle ESG Badge - Now uses standard borders */
+.esg-score-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--accent); /* Matches your Teak branding */
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .esg-score-circle {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.esg-val { font-size: 18px; font-weight: 800; color: var(--accent); line-height: 1; }
+.esg-lab { font-size: 8px; font-weight: bold; opacity: 0.7; color: var(--text); }
+
+/* Internal Content Spacing */
+.carbon-analysis-zone { margin-top: 15px; }
+.analysis-row { display: flex; justify-content: space-between; gap: 15px; margin-bottom: 12px; }
+.analysis-item label { font-size: 10px; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 4px; }
+.analysis-item span { font-size: 1.1rem; font-weight: 800; color: var(--text); }
+
+/* Standardized Progress Bars */
+.mini-progress-bg { 
+    height: 4px; 
+    background: var(--border); /* Standard border color as background */
+    border-radius: 10px; 
+    margin-top: 6px; 
+}
+.mini-progress-fill.green { background: #10b981; }
+.mini-progress-fill.red { background: #ef4444; }
+
+/* Impact Box - Uses standard card-like background */
+.net-impact-summary {
+  background: rgba(128, 128, 128, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+[data-theme="light"] .net-impact-summary {
+    background: #f1f5f9;
+}
+
+.impact-label { font-size: 9px; text-transform: uppercase; opacity: 0.7; color: var(--text); }
+.impact-value { font-size: 11px; font-weight: 800; color: var(--accent); margin-top: 2px; }
+
+/* Eligibility Drawer */
+.eligibility-drawer {
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drawer-item { display: flex; justify-content: space-between; font-size: 12px; color: var(--text); }
+.status-ok { color: #10b981; font-weight: bold; }
+.status-no { color: #f59e0b; font-weight: bold; }
+
+.legal-disclaimer { font-size: 8px; opacity: 0.4; margin-top: 10px; font-style: italic; color: var(--text); }
+
+/* --- DYNAMIC ESG CIRCLE COLORS --- */
+
+.esg-score-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--border); /* Default */
+  transition: all 0.4s ease;
+}
+
+/* High Score - Green */
+.esg-score-circle.grade-A {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+}
+.esg-score-circle.grade-A .esg-val { color: #10b981 !important; }
+
+/* Moderate Score - Blue/Teak */
+.esg-score-circle.grade-B {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 15px rgba(45, 138, 138, 0.2);
+}
+.esg-score-circle.grade-B .esg-val { color: var(--accent) !important; }
+
+/* Warning Score - Orange/Yellow */
+.esg-score-circle.grade-C {
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+}
+.esg-score-circle.grade-C .esg-val { color: #f59e0b !important; }
+
+/* Critical Score - Red */
+.esg-score-circle.grade-F {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+}
+.esg-score-circle.grade-F .esg-val { color: #ef4444 !important; }
+
+/* Text within the circle */
+.esg-val {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.esg-lab {
+  font-size: 8px;
+  font-weight: 900;
+  opacity: 0.7;
+  color: var(--text);
+}
