@@ -22,6 +22,21 @@ L.Icon.Default.mergeOptions({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
+// const spectralLayers = {
+//   standard: null,
+//   ndvi: "https://services.sentinel-hub.com/ogc/wms/YOUR_API_KEY?LAYER=NDVI&...",
+//   thermal: "https://services.sentinel-hub.com/ogc/wms/YOUR_API_KEY?LAYER=THERMAL&...",
+//   hydrology: "https://your-backend-api.com/hydrology/{z}/{x}/{y}.png"
+// };
+const spectralLayers = {
+  standard: null,
+
+  ndvi: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg",
+
+  thermal: "https://tiles.maps.eox.at/wmts/1.0.0/terrain-light_3857/default/g/{z}/{y}/{x}.jpg",
+
+  hydrology: "https://tiles.maps.eox.at/wmts/1.0.0/hydrography_3857/default/g/{z}/{y}/{x}.jpg"
+};
 
 const varieties = {
   streets: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -156,7 +171,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
   return <Marker position={markerPos} />;
 };
 
-const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode }) => {
+const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral }) => {
   const nLat = parseFloat(latVal);
   const nLng = parseFloat(lngVal);
   const isValidCoords = !isNaN(nLat) && !isNaN(nLng);
@@ -190,7 +205,27 @@ const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, v
         <div className="mini-map-context">
           {isValidCoords ? (
             <MapContainer center={[nLat, nLng]} zoom={15} zoomControl={false} dragging={false} touchZoom={false} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
+                {/* <TileLayer url={varieties[mapVariety] || varieties.hybrid} /> */}
+                
+                {/* <TileLayer url={varieties[mapVariety]} />
+
+                {activeSpectral !== "standard" && (
+                  <TileLayer 
+                    url={spectralLayers[activeSpectral]} 
+                    opacity={0.7} // Keeps the base map visible underneath
+                    zIndex={100} 
+                  />
+                )} */}
                 <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
+                
+                {/* Fixed: Active Spectral Layer must be INSIDE MapContainer */}
+                {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+                  <TileLayer 
+                    url={spectralLayers[activeSpectral]} 
+                    opacity={0.7} 
+                    zIndex={100} 
+                  />
+                )}
                 <Marker position={[nLat, nLng]} />
             </MapContainer>
           ) : <div className="empty-results" style={{fontSize: '11px'}}>Awaiting Geospatial Analysis...</div>}
@@ -239,7 +274,7 @@ export default function LandSuitabilityChecker() {
       JSON.parse(localStorage.getItem("analysis_history")) || []
   );
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
-
+  
   const [lat, setLat] = useState(() => localStorage.getItem("geo_lat") || "17.385");
   const [lng, setLng] = useState(() => localStorage.getItem("geo_lng") || "78.4867");
   const [zoom, setZoom] = useState(() => Number(localStorage.getItem("geo_zoom")) || 13);
@@ -879,7 +914,7 @@ const handleOpenHistory = useCallback(async (targetData, targetName, targetLat, 
     if (!name) return;
     setSavedPlaces([...savedPlaces, { name, lat: parseFloat(lat), lng: parseFloat(lng) }]);
   };
-
+const [activeSpectral, setActiveSpectral] = useState("standard");
   const handleMyLocationB = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -939,6 +974,7 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
             onOpenHistory={handleOpenHistory} 
             mapVariety={mapVariety}
             isCompareMode={!isFullWidth}
+            activeSpectral={activeSpectral}
           />
         </div>
         <div className={isFullWidth ? "col-2" : ""}>
@@ -1089,6 +1125,7 @@ const intel = data.strategic_intelligence || {};
   
 
   return (
+    
     /* Use the dynamic containerClass instead of the hardcoded strategic-intel-grid */
     <div className={containerClass}>
       
@@ -1296,10 +1333,29 @@ const intel = data.strategic_intelligence || {};
                 <option value="light">Minimalist Light</option>
               </optgroup>
             </select>
+            <div className="spectral-toggle-bar">
+  <button onClick={() => setActiveSpectral("ndvi")} className={activeSpectral === "ndvi" ? "active" : ""}>
+    🌿 NDVI
+  </button>
+  <button onClick={() => setActiveSpectral("thermal")} className={activeSpectral === "thermal" ? "active" : ""}>
+    🔥 Heat
+  </button>
+  <button onClick={() => setActiveSpectral("hydrology")} className={activeSpectral === "hydrology" ? "active" : ""}>
+    💧 Flow
+  </button>
+</div>
           </div>
 
           <MapContainer center={[parseFloat(lat), parseFloat(lng)]} zoom={zoom} zoomControl={false} style={{ height: "100%", width: "100%" }}>
             <TileLayer url={varieties[mapVariety]} />
+            {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+    <TileLayer
+      url={spectralLayers[activeSpectral]}
+      opacity={0.6}
+      zIndex={300}
+    />
+  )}
+
             <LocationMarker lat={lat} lng={lng} setLat={setLat} setLng={setLng} setZoom={setZoom} isSelectingB={isSelectingB} onSelectB={handleCompareSelect} />
           </MapContainer>
         </section>
