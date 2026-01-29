@@ -6855,3 +6855,93 @@ html, body, #root, .app-shell {
   box-shadow: 0 0 20px rgba(0, 212, 255, 0.5) !important;
 }
 
+
+
+/* --- TACTICAL ZOOM (Left Side) --- */
+.tactical-zoom-hud {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.85); /* Deep black glass */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  z-index: 2200;
+}
+
+.tactical-zoom-hud button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.tactical-zoom-hud button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #00d4ff;
+}
+
+.zoom-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  width: 50%;
+  margin: 0 auto;
+}
+
+/* --- FULLSCREEN INTEGRATION --- */
+.vertical-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 4px;
+  align-self: center;
+}
+
+.fullscreen-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  padding: 0 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.fullscreen-btn:hover {
+  color: #00d4ff;
+  transform: scale(1.1);
+}
+
+/* Fullscreen safety lock to keep HUDs visible */
+:fullscreen .tactical-zoom-hud,
+:fullscreen .engine-switch-container,
+:fullscreen .map-variety-picker {
+  z-index: 999999;
+}
+
+
+/* Target the element while it is in fullscreen mode */
+.map-container:fullscreen {
+  background-color: #000000 !important;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure your tactical HUDs stay visible over the fullscreen map */
+.map-container:fullscreen .engine-switch-container,
+.map-container:fullscreen .tactical-zoom-hud,
+.map-container:fullscreen .map-variety-picker {
+  z-index: 9999999;
+}

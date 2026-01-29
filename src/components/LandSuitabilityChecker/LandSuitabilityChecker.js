@@ -209,9 +209,13 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
 // const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral,mapMode,         // ADD THIS
 //   active3DStyle }) => {
   const FactorsSection = memo(({ 
+  // data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, 
+  // onOpenHistory, mapVariety, isCompareMode, activeSpectral, mapMode, 
+  // active3DStyle, setLat, setLng,  isSelectingB, handleCompareSelect,currentZoom, setCurrentZoom, onZoomIn, onZoomOut, toggleFullScreen,zoom,setzoom // ADD THESE
   data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, 
   onOpenHistory, mapVariety, isCompareMode, activeSpectral, mapMode, 
-  active3DStyle, setLat, setLng, setZoom, isSelectingB, handleCompareSelect // ADD THESE
+  active3DStyle, setLat, setLng, isSelectingB, handleCompareSelect,
+  currentZoom, setCurrentZoom, zoom// ✅ CLEAN NAMES
 }) => {
   // console.log("FULL DATA OBJECT RECEIVED:", data);
 
@@ -301,7 +305,9 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
       /* 2D Minimap */
       <MapContainer 
         center={[nLat, nLng]} 
-        zoom={15} 
+        // zoom={15} 
+        zoom={zoom}               // ✅ REQUIRED: Pass the state
+    key={`map-2d-${zoom}`}
         zoomControl={false} 
         dragging={false} 
         style={{ height: "100%", width: "100%" }}
@@ -320,7 +326,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
         <LocationMarker 
        lat={latVal} lng={lngVal} 
        setLat={setLat} setLng={setLng} 
-       setZoom={setZoom} 
+       setZoom={setCurrentZoom} 
        isSelectingB={isSelectingB} 
        onSelectB={handleCompareSelect} 
     />
@@ -332,6 +338,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
         lng={nLng} 
         setLat={setLat} // Fixed: Passing setter to 3D
     setLng={setLng}
+    zoom={currentZoom}
         factors={data.factors} 
         isDarkMode={isDarkMode} 
         activeStyle={active3DStyle}
@@ -382,6 +389,31 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
 
 export default function LandSuitabilityChecker() {
   // 1. Add new state at the top of your component
+  // 1. Ensure zoom is at the top level
+// const [zoom, setZoom] = useState(13);
+
+// 2. Wrap zoom in a function that the buttons call
+const handleZoomIn = () => {
+  setZoom(prev => Math.min(prev + 1, 20)); // Limit to max 20
+};
+
+const handleZoomOut = () => {
+  setZoom(prev => Math.max(prev - 1, 2)); // Limit to min 2
+};
+// 3. FULLSCREEN FIX: Add a null check to avoid the error you saw
+const toggleFullScreen = () => {
+  const mapElement = mapViewportRef.current;
+  if (!mapElement) return;
+
+  if (!document.fullscreenElement) {
+    mapElement.requestFullscreen().catch(err => {
+      console.error("Fullscreen failed:", err);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+};
+
 const [mapMode, setMapMode] = useState("2D"); // "2D" or "3D"
 const [active3DStyle, setActive3DStyle] = useState("satellite");
   const initialAnalysisRef = useRef(false); // Flag to prevent double execution on mount
@@ -695,7 +727,30 @@ const handleSubmit = useCallback(async (e) => {
 ]);
 
 
+const mapViewportRef = useRef(null); // Reference for Fullscreen targeting
 
+// const toggleFullScreen = () => {
+//   // Check if current is not null before calling the API
+//   if (mapContainerRef.current) {
+//     if (!document.fullscreenElement) {
+//       mapContainerRef.current.requestFullscreen().catch(err => {
+//         console.warn(`Fullscreen error: ${err.message}`);
+//       });
+//     } else {
+//       document.exitFullscreen();
+//     }
+//   } else {
+//     console.error("Map container reference not found.");
+//   }
+// };
+
+  // --- NEW: Zoom Logic (shared between 2D and 3D) ---
+  // const handleZoom = (delta) => {
+  //   setZoom(prev => {
+  //     const next = prev + delta;
+  //     return Math.min(Math.max(next, 2), 20); // Scale range 2-20
+  //   });
+  // };
 // Monitor Coordinate Changes to Reset Names/Analysis for Site B
 useEffect(() => {
   const params = new URLSearchParams(window.location.search);
@@ -1095,10 +1150,17 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
             activeSpectral={activeSpectral}
             mapMode={mapMode}           // PASS STATE HERE
   active3DStyle={active3DStyle}
+  currentZoom={zoom}
+  setZoom={setZoom}
+  handleZoomIn={handleZoomIn}
+  handleZoomOut={handleZoomOut}
   /* NEW PROPS BELOW */
   setLat={setLat}
   setLng={setLng}
-  setZoom={setZoom}
+  // currentZoom={zoom}           // Local state 'zoom' maps to 'currentZoom'
+  setCurrentZoom={setZoom}
+  onZoomIn={handleZoomIn}      // Local function maps to 'onZoomIn'
+  onZoomOut={handleZoomOut}
   isSelectingB={isSelectingB}
   handleCompareSelect={handleCompareSelect}
           />
@@ -1434,6 +1496,12 @@ const intel = data.strategic_intelligence || {};
 
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
         <section className="map-container" style={{ flex: 1, position: 'relative' }}>
+        {/* TACTICAL ZOOM CONTROLS (Left side of map) */}
+          <div className="tactical-zoom-hud">
+            <button onClick={() => handleZoomIn(1)}>+</button>
+            <div className="zoom-divider" />
+            <button onClick={() => handleZoomOut(-1)}>−</button>
+          </div>
         {/* TACTICAL ENGINE TOGGLE */}
         <div className="engine-switch-container">
   <button 
@@ -1450,6 +1518,8 @@ const intel = data.strategic_intelligence || {};
   >
     3D
   </button>
+  <div className="vertical-divider" />
+            <button className="fullscreen-btn" onClick={toggleFullScreen} title="Map Focus Mode">⛶</button>
 </div>
     
     <div className="map-variety-picker">
@@ -1482,15 +1552,21 @@ const intel = data.strategic_intelligence || {};
           <option value="topo">🏔️ 3D Topographic</option>
           <option value="dark">🕶️ 3D Stealth</option>
           <option value="nature">🌱 3D Nature</option>
+          <option value="streets">🏙️ 3D Urban (Buildings)</option> {/* New */}
+    <option value="outdoor">⛅ 3D Atmospheric</option>
         </select>
       )}
     </div>
-
-    {/* CONDITIONAL MAP RENDER */}
+  <div
+  ref={mapViewportRef}
+  className="map-viewport"
+  style={{ height: "100%", width: "100%" }}
+>
     {mapMode === "2D" ? (
       <MapContainer 
         center={[parseFloat(lat), parseFloat(lng)]} 
         zoom={zoom} 
+        key={`minimap-${zoom}`}
         zoomControl={false} 
         style={{ height: "100%", width: "100%" }}
       >
@@ -1516,6 +1592,7 @@ const intel = data.strategic_intelligence || {};
       <ProMap 
         lat={lat} 
         lng={lng} 
+         zoom={zoom} 
          setLat={setLat}      // ✅ REQUIRED
   setLng={setLng} 
         factors={result?.factors} 
@@ -1524,6 +1601,7 @@ const intel = data.strategic_intelligence || {};
         interactive={true}
       />
     )}
+    </div>
   </section>
         <div className="horizontal-resizer" onMouseDown={startResizingBottom} />
 
