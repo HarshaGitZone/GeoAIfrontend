@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
+// import { Marker, useMap, useMapEvents } from "react-leaflet";
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
 import FactorBar from "../FactorBar/FactorBar";
 import SideBar from "../SideBar/SideBar";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import ProMap from '../ProMap/ProMap';
 import "./LandSuitabilityChecker.css";
 import TopNav from "../TopNav/TopNav";
 import RadarChart from "../RadarChart/RadarChart"; 
@@ -165,6 +167,19 @@ const PotentialSection = ({ factors, score }) => {
     </div>
   );
 };
+const MapClickHandler = ({ setLat, setLng, setZoom }) => {
+  const map = useMap();
+
+  useMapEvents({
+    click(e) {
+      setLat(e.latlng.lat.toString());
+      setLng(e.latlng.lng.toString());
+      setZoom(map.getZoom());
+    }
+  });
+
+  return null;
+};
 
 const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSelectB }) => {
   const map = useMap();
@@ -191,7 +206,13 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
   return <Marker position={markerPos} />;
 };
 
-const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral }) => {
+// const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral,mapMode,         // ADD THIS
+//   active3DStyle }) => {
+  const FactorsSection = memo(({ 
+  data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, 
+  onOpenHistory, mapVariety, isCompareMode, activeSpectral, mapMode, 
+  active3DStyle, setLat, setLng, setZoom, isSelectingB, handleCompareSelect // ADD THESE
+}) => {
   // console.log("FULL DATA OBJECT RECEIVED:", data);
 
   const nLat = parseFloat(latVal);
@@ -224,7 +245,7 @@ const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, v
   return (
     <>
       <div className={`card hero-card glass-morphic ${data.suitability_score < 40 ? 'danger-glow' : ''}`}>
-  <div className="mini-map-context">
+  {/* <div className="mini-map-context">
     {isValidCoords ? (
       <>
         <MapContainer 
@@ -257,7 +278,71 @@ const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, v
       </div>
     )}
     <div className="mini-map-label">Tactical Preview</div>
-  </div>
+  </div> */}
+  {/* <div className="mini-map-context">
+  {isValidCoords ? (
+    
+    <ProMap 
+      lat={nLat} 
+      lng={nLng} 
+      factors={data.factors} 
+      isDarkMode={isDarkMode} 
+    />
+  ) : (
+    <div className="empty-results" style={{ fontSize: '11px' }}>
+      Awaiting Geospatial Analysis...
+    </div>
+  )}
+  <div className="mini-map-label">Tactical 3D Preview</div>
+</div> */}
+<div className="mini-map-context">
+  {isValidCoords ? (
+    mapMode === "2D" ? (
+      /* 2D Minimap */
+      <MapContainer 
+        center={[nLat, nLng]} 
+        zoom={15} 
+        zoomControl={false} 
+        dragging={false} 
+        style={{ height: "100%", width: "100%" }}
+      >
+        <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
+        {/* ✅ RESTORED FOR MINIMAP */}
+        {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+          <TileLayer 
+            key={activeSpectral} 
+            url={spectralLayers[activeSpectral]} 
+            opacity={0.7} 
+            zIndex={100} 
+          />
+        )}
+        <Marker position={[nLat, nLng]} />
+        <LocationMarker 
+       lat={latVal} lng={lngVal} 
+       setLat={setLat} setLng={setLng} 
+       setZoom={setZoom} 
+       isSelectingB={isSelectingB} 
+       onSelectB={handleCompareSelect} 
+    />
+      </MapContainer>
+    ) : (
+      /* 3D Minimap */
+      <ProMap 
+        lat={nLat} 
+        lng={nLng} 
+        setLat={setLat} // Fixed: Passing setter to 3D
+    setLng={setLng}
+        factors={data.factors} 
+        isDarkMode={isDarkMode} 
+        activeStyle={active3DStyle}
+        interactive={false}
+      />
+    )
+  ) : (
+    <div className="empty-results" style={{ fontSize: '11px' }}>Awaiting Analysis...</div>
+  )}
+  <div className="mini-map-label">{mapMode} Tactical Preview</div>
+</div>
 
 
 
@@ -274,44 +359,7 @@ const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, v
           {data.suitability_score?.toFixed(1)}
         </div>
         <div className={`status-pill ${data.label?.toLowerCase().replace(/\s+/g, '-')}`}>{data.label}</div>
-{/*         
-{data?.cnn_analysis && data?.cnn_analysis?.image_sample ? (
-  <div className="card cnn-intelligence-card glass-morphic animate-in">
-    <div className="cnn-header">
-      <h4>🛰️ AI Visual Scan</h4>
-      <span className="cnn-tag">CNN ENGINE</span>
-    </div>
-    
-    <div className="cnn-content-layout">
-      <div className="cnn-visual-preview" style={{ 
-        backgroundImage: `url(${data.cnn_analysis.image_sample})`,
-        backgroundSize: 'cover'
-      }}>
-        <div className="scan-line-overlay"></div>
-      </div>
-
-      <div className="cnn-details">
-        <div className="cnn-stat">
-          <span style={{ display: 'block', fontSize: '10px', opacity: 0.7, marginBottom: '2px' }}>CLASSIFICATION</span>
-          <strong style={{ fontSize: '14px', display: 'block' }}>{data.cnn_analysis.class}</strong>
-        </div>
-        <div className="cnn-stat" style={{ marginTop: '8px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-            <span style={{ fontSize: '10px', opacity: 0.7 }}>CONFIDENCE</span>
-            <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{data.cnn_analysis.confidence}%</span>
-          </div>
-          <div className="progress-bar" style={{ height: '4px', background: 'rgba(255,255,255,0.2)', borderRadius: '2px', overflow: 'hidden' }}>
-            <div style={{ width: `${data.cnn_analysis.confidence}%`, height: '100%', background: 'var(--accent-color, #00d4ff)', borderRadius: '2px' }}></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-) : (
-  <div className="cnn-loading-placeholder">
-    <span style={{ opacity: 0.7 }}>⚠️ Satellite Visual Unavailable</span>
-  </div>
-)} */}
+{}
           <div className="history-action-container">
           <button 
             className="history-pro-btn" 
@@ -333,6 +381,9 @@ const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, v
 });
 
 export default function LandSuitabilityChecker() {
+  // 1. Add new state at the top of your component
+const [mapMode, setMapMode] = useState("2D"); // "2D" or "3D"
+const [active3DStyle, setActive3DStyle] = useState("satellite");
   const initialAnalysisRef = useRef(false); // Flag to prevent double execution on mount
   const [mobileCompareSite, setMobileCompareSite] = useState("A");
   const [deviceLocation, setDeviceLocation] = useState({ lat: null, lng: null });
@@ -1042,6 +1093,14 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
             mapVariety={mapVariety}
             isCompareMode={!isFullWidth}
             activeSpectral={activeSpectral}
+            mapMode={mapMode}           // PASS STATE HERE
+  active3DStyle={active3DStyle}
+  /* NEW PROPS BELOW */
+  setLat={setLat}
+  setLng={setLng}
+  setZoom={setZoom}
+  isSelectingB={isSelectingB}
+  handleCompareSelect={handleCompareSelect}
           />
         </div>
         <div className={isFullWidth ? "col-2" : ""}>
@@ -1053,21 +1112,7 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
   }
 
   if (activeTab === "environmental") {
-//     const cnn = data?.cnn_analysis;
-//     const isLowConfidence = cnn?.confidence < 40;
-//     const cnnColor = isLowConfidence ? "#f59e0b" : "#00d4ff";
-//     // Inside your activeTab === "environmental" block
 
-//     const confidence = cnn?.confidence || 0;
-
-// // Dynamic status based on confidence
-// const getStatus = (conf) => {
-//   if (conf > 70) return { label: "VERIFIED", color: "#10b981", glow: "rgba(16, 185, 129, 0.5)" };
-//   if (conf > 40) return { label: "PROBABLE", color: "#00d4ff", glow: "rgba(0, 212, 255, 0.5)" };
-//   return { label: "UNCERTAIN", color: "#ef4444", glow: "rgba(239, 68, 68, 0.5)" };
-// };
-
-// const status = getStatus(confidence);
 const cnn = data?.cnn_analysis;
 const confidence = cnn?.confidence || 0;
 
@@ -1184,117 +1229,7 @@ return (
     );
   }
 
-// if (activeTab === "infrastructure") {
 
-
-// const intel = data.strategic_intelligence || {}; 
-// //  const placesList = data?.nearby?.places ?? [];
-
-// // const getNearest = (type) => {
-// //   if (!placesList.length) return "Unavailable";
-
-// //   const match = placesList
-// //     .filter(p => p.type === type)
-// //     .sort((a, b) => a.distance_km - b.distance_km)[0];
-
-// //   if (!match) return "Not Found";
-
-// //   return `${match.name} (${match.distance_km} km)`;
-// // };
-
-
-
-
-// // console.log("INFRA DATA", {
-// //   hasNearby: !!data.nearby,
-// //   places: data.nearby?.places,
-// //   count: data.nearby?.places?.length,
-// // });
-
-
-//     return (
-
-//     <div className="strategic-intel-grid">
-//       <div className="intel-col">
-//         {/* 1. Site Potential */}
-//         <PotentialSection factors={data.factors} score={data.suitability_score} />
-
-//         {/* 2. Infrastructure Proximity (Now using synchronized state) */}
-//         {/* <div className="card glass-morphic intel-card">
-//           <div className="intel-header"><h3>🏗️ Infrastructure Context</h3></div>
-//           <p className="subtitle">Exact distance to nearest facilities</p>
-//           <div className="nearby-summary-grid"> */}
-//              {/* <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest(["school", "kindergarten"])}</strong></div>
-//              <div className="mini-stat"><span>🏥 Hospital:</span> <strong>{getNearest(["hospital", "clinic", "doctors"])}</strong></div>
-//              <div className="mini-stat"><span>🎓 College:</span> <strong>{getNearest(["college", "university"])}</strong></div>
-//              <div className="mini-stat"><span>🛒 Market:</span> <strong>{getNearest(["marketplace", "supermarket", "mall"])}</strong></div>
-//              <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest(["station", "bus_stop", "platform"])}</strong></div> */}
-//              {/* <div className="mini-stat"><span>🏫 School:</span> <strong>{getNearest("school")}</strong></div>
-//              <div className="mini-stat"><span>🏥 Hospital:</span> <strong>{getNearest("hospital")}</strong></div>
-//              <div className="mini-stat"><span>🎓 College:</span> <strong>{getNearest("college")}</strong></div>
-//              <div className="mini-stat"><span>🛒 Market:</span> <strong>{getNearest("market")}</strong></div>
-//              <div className="mini-stat"><span>🚉 Transit:</span> <strong>{getNearest("transit")}</strong></div>
-//           </div>
-//         </div> */}
-
-        
-//       </div>
-
-//       {/* COLUMN 2: FUTURE AI PROJECTION */}
-//       <div className="intel-col">
-//          {/* 3. Roadmap */}
-//         <div className="card glass-morphic intel-card roadmap-card">
-//           <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
-//           <div className="roadmap-list">
-//             {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
-//               <div key={i} className="roadmap-item">
-//                 <div className="roadmap-task-info">
-//                   <span className="task-name">{item.task}</span>
-//                   <p className="tiny-note">{item.note}</p>
-//                 </div>
-//                 <span className="impact-tag">{item.impact} Boost</span>
-//               </div>
-//             )) : <div className="nearby-empty">Site maintains Grade A stability.</div>}
-//           </div>
-//         </div>
-        
-
-//         {/* 5. PREVENTATIVE INTERVENTIONS */}
-//         <div className="card glass-morphic intel-card prevention-card">
-//           <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
-//           <p className="subtitle">AI-driven preventative strategy</p>
-//           <ul className="prevention-list">
-//             {intel.interventions?.map((msg, i) => (
-//               <li key={i}>{msg}</li>
-//             ))}
-//           </ul>
-//         </div>
-//         {/* 4. TEMPORAL SUITABILITY DRIFT */}
-//         <div className="card glass-morphic intel-card prediction-card">
-//           <div className="intel-header">
-//             <h3>🚀 AI Future Projection (2036)</h3>
-//             <div className="future-score-wrap">
-//               <span className="current-mini">{data.suitability_score?.toFixed(1)}</span>
-//               <span className="drift-arrow">→</span>
-//               <span className="future-score">{intel.expected_score}%</span>
-//             </div>
-//           </div>
-//           <div className="drift-metrics">
-//              <div className="drift-row">
-//                <span>Urbanization Risk:</span> 
-//                <span className="val-red">{intel.metrics?.urban_sprawl}</span>
-//              </div>
-//              <div className="drift-row">
-//                <span>Vegetation Loss:</span> 
-//                <span className="val-red">{intel.metrics?.veg_loss}</span>
-//              </div>
-//           </div>
-//         </div>
-       
-//       </div>
-//     </div>
-//     );
-//   }
 if (activeTab === "infrastructure") {
 const intel = data.strategic_intelligence || {}; 
   // Carbon Intelligence: Potential based on vegetation biomass
@@ -1499,55 +1434,97 @@ const intel = data.strategic_intelligence || {};
 
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
         <section className="map-container" style={{ flex: 1, position: 'relative' }}>
-          {isSelectingB && <div className="map-instruction-overlay">Click map for Location B</div>}
-          <div className="map-variety-picker">
-            <label className="picker-header">🗺️ Map Style</label>
-            <select value={mapVariety} onChange={(e) => setMapVariety(e.target.value)} className="variety-select">
-              <optgroup label="Google Maps">
-                <option value="hybrid">Satellite Hybrid</option>
-                <option value="satellite">Pure Satellite</option>
-                <option value="terrain">Physical Terrain</option>
-              </optgroup>
-              <optgroup label="Analysis Themes">
-                <option value="dark">Dark Matter (Pro)</option>
-                <option value="topo">Topographic (Technical)</option>
-                <option value="streets">Standard Streets</option>
-                <option value="light">Minimalist Light</option>
-              </optgroup>
-            </select>
-            <div className="spectral-toggle-bar">
-  {/* <button onClick={() => setActiveSpectral("ndvi")} className={activeSpectral === "ndvi" ? "active" : ""}>
-    🌿 NDVI
-  </button> */}
+        {/* TACTICAL ENGINE TOGGLE */}
+        <div className="engine-switch-container">
   <button 
-  className={activeSpectral === "ndvi" ? "active" : ""} 
-  onClick={() => setActiveSpectral(activeSpectral === "ndvi" ? "standard" : "ndvi")}
->
-  🌿 NDVI
-</button>
-  <button onClick={() => setActiveSpectral("thermal")} className={activeSpectral === "thermal" ? "active" : ""}>
-    🔥 Heat
+    className={`switch-btn ${mapMode === "2D" ? "active" : ""}`}
+    onClick={() => setMapMode("2D")}
+    title="Standard 2D"
+  >
+    2D
   </button>
-  <button onClick={() => setActiveSpectral("hydrology")} className={activeSpectral === "hydrology" ? "active" : ""}>
-    💧 Flow
+  <button 
+    className={`switch-btn ${mapMode === "3D" ? "active" : ""}`}
+    onClick={() => setMapMode("3D")}
+    title="Tactical 3D"
+  >
+    3D
   </button>
 </div>
+    
+    <div className="map-variety-picker">
+      <label className="picker-header">🗺️ Engine style</label>
+      {mapMode === "2D" ? (
+        <>
+          <select value={mapVariety} onChange={(e) => setMapVariety(e.target.value)} className="variety-select">
+            <optgroup label="Google Maps">
+          <option value="hybrid">Satellite Hybrid</option>
+          <option value="satellite">Pure Satellite</option>
+          <option value="terrain">Physical Terrain</option>
+        </optgroup>
+        <optgroup label="Analysis Themes">
+          <option value="dark">Dark Matter (Pro)</option>
+          <option value="topo">Topographic (Technical)</option>
+          <option value="streets">Standard Streets</option>
+          <option value="light">Minimalist Light</option>
+        </optgroup>
+          </select>
+
+          <div className="spectral-toggle-bar">
+            <button className={activeSpectral === "ndvi" ? "active" : ""} onClick={() => setActiveSpectral(activeSpectral === "ndvi" ? "standard" : "ndvi")}>🌿 NDVI</button>
+            <button className={activeSpectral === "thermal" ? "active" : ""} onClick={() => setActiveSpectral("thermal")}>🔥 Heat</button>
+            <button className={activeSpectral === "hydrology" ? "active" : ""} onClick={() => setActiveSpectral("hydrology")}>💧 Flow</button>
           </div>
+        </>
+      ) : (
+        <select value={active3DStyle} onChange={(e) => setActive3DStyle(e.target.value)} className="variety-select">
+          <option value="satellite">🛰️ 3D Satellite</option>
+          <option value="topo">🏔️ 3D Topographic</option>
+          <option value="dark">🕶️ 3D Stealth</option>
+          <option value="nature">🌱 3D Nature</option>
+        </select>
+      )}
+    </div>
 
-          <MapContainer center={[parseFloat(lat), parseFloat(lng)]} zoom={zoom} zoomControl={false} style={{ height: "100%", width: "100%" }}>
-            <TileLayer url={varieties[mapVariety]} />
-            {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
-    <TileLayer
-      url={spectralLayers[activeSpectral]}
-      opacity={0.6}
-      zIndex={300}
+    {/* CONDITIONAL MAP RENDER */}
+    {mapMode === "2D" ? (
+      <MapContainer 
+        center={[parseFloat(lat), parseFloat(lng)]} 
+        zoom={zoom} 
+        zoomControl={false} 
+        style={{ height: "100%", width: "100%" }}
+      >
+        <TileLayer url={varieties[mapVariety]} />
+        {/* ✅ RESTORED SPECTRAL LAYERS (NDVI, Heat, Flow) */}
+    {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+      <TileLayer 
+        key={activeSpectral} 
+        url={spectralLayers[activeSpectral]} 
+        opacity={0.6} 
+        zIndex={300} 
+      />
+    )}
+        <Marker position={[parseFloat(lat), parseFloat(lng)]} />
+         {/* ✅ THIS RESTORES CLICK SELECTION */}
+    <MapClickHandler
+      setLat={setLat}
+      setLng={setLng}
+      setZoom={setZoom}
     />
-  )}
-
-            <LocationMarker lat={lat} lng={lng} setLat={setLat} setLng={setLng} setZoom={setZoom} isSelectingB={isSelectingB} onSelectB={handleCompareSelect} />
-          </MapContainer>
-        </section>
-
+      </MapContainer>
+    ) : (
+      <ProMap 
+        lat={lat} 
+        lng={lng} 
+         setLat={setLat}      // ✅ REQUIRED
+  setLng={setLng} 
+        factors={result?.factors} 
+        isDarkMode={isDarkMode} 
+        activeStyle={active3DStyle} 
+        interactive={true}
+      />
+    )}
+  </section>
         <div className="horizontal-resizer" onMouseDown={startResizingBottom} />
 
             <section className="results-container" style={{ height: `${bottomHeight}px`, flex: `0 0 ${bottomHeight}px`, overflowY: 'auto' }}>

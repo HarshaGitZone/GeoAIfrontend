@@ -6370,3 +6370,488 @@ html, body, #root, .app-shell {
   font-size: 26px; /* High-visibility sizing */
   line-height: 1.1;
 }
+
+
+.mini-map-context {
+  height: 220px; /* Adjust based on your card size */
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 15px;
+}
+
+.mini-map-label {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #00d4ff;
+  padding: 2px 8px;
+  font-size: 9px;
+  font-family: monospace;
+  border-radius: 4px;
+  z-index: 10;
+  letter-spacing: 1px;
+}
+
+
+/* --- PRO 3D MAP WRAPPER --- */
+.pro-map-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- TACTICAL HUD STYLE SWITCHER --- */
+.map-type-hud {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.75); /* Dark Slate with transparency */
+  backdrop-filter: blur(12px) saturate(180%); /* Pro Glassmorphism */
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  z-index: 100;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.map-type-hud button {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  padding: 8px 14px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.map-type-hud button:hover {
+  background: rgba(0, 212, 255, 0.1);
+  color: #fff;
+  border-color: rgba(0, 212, 255, 0.4);
+}
+
+.map-type-hud button.active {
+  background: #00d4ff; /* Tactical Cyan */
+  color: #0f172a;
+  border-color: #00d4ff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+  opacity: 1;
+}
+
+/* --- PULSING 3D MARKER --- */
+.pulse-marker-3d {
+  width: 20px;
+  height: 20px;
+  background: #00d4ff;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+  position: relative;
+}
+
+/* Outer pulsing rings */
+.pulse-marker-3d::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #00d4ff;
+  animation: geo-scan-pulse 2s infinite ease-out;
+}
+
+@keyframes geo-scan-pulse {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+  }
+  100% {
+    width: 60px;
+    height: 60px;
+    opacity: 0;
+  }
+}
+
+/* --- TOP HUD INDICATOR --- */
+.map-hud {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #00d4ff;
+  padding: 6px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: bold;
+  border-left: 4px solid #00d4ff;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+  animation: flicker-hud 4s infinite;
+}
+
+@keyframes flicker-hud {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.7; }
+  94% { opacity: 1; }
+}
+
+/* --- MAPLIBRE OVERRIDES --- */
+.maplibregl-ctrl-attrib {
+  display: none !important; /* Keep the UI clean for the analysis view */
+}
+
+
+.engine-toggle-hud {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.engine-toggle-hud button {
+  background: rgba(0, 212, 255, 0.2);
+  border: 1px solid #00d4ff;
+  color: #00d4ff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+  font-family: monospace;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+.engine-toggle-hud button:hover {
+  background: #00d4ff;
+  color: #000;
+  box-shadow: 0 0 25px #00d4ff;
+}
+
+.pro-map-view {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+}
+
+
+.engine-toggle-hud {
+  position: absolute;
+  top: 20px;
+  left: 50%; /* Center it */
+  transform: translateX(-50%); /* Perfectly center horizontally */
+  z-index: 1100; /* Ensure it is above everything else */
+}
+
+.engine-toggle-hud button {
+  background: rgba(0, 212, 255, 0.15);
+  border: 2px solid #00d4ff;
+  color: #00d4ff;
+  padding: 8px 20px;
+  border-radius: 50px;
+  backdrop-filter: blur(8px);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+  transition: all 0.3s ease;
+}
+
+.engine-toggle-hud button:hover {
+  background: #00d4ff;
+  color: #001a2c;
+  box-shadow: 0 0 25px #00d4ff;
+}
+
+
+.engine-switch-container {
+  position: absolute;
+  top: 20px;
+  right: 20px; /* Aligned top-right */
+  display: flex;
+  background: rgba(15, 23, 42, 0.6); /* Translucent dark slate */
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 4px;
+  z-index: 2000; /* Ensure it stays above Map Style box */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.switch-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 6px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.switch-btn.active {
+  background: rgba(0, 212, 255, 0.2);
+  color: #00d4ff;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  box-shadow: inset 0 0 10px rgba(0, 212, 255, 0.1);
+}
+
+.switch-btn:hover:not(.active) {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+
+.engine-switch-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 4px;
+  z-index: 2000;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.switch-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 8px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.switch-btn.active {
+  background: rgba(0, 212, 255, 0.2);
+  color: #00d4ff;
+  box-shadow: inset 0 0 10px rgba(0, 212, 255, 0.2);
+}
+
+.pro-map-view {
+  border-radius: 16px;
+}
+
+
+/* --- UNIFIED CONTAINER LOGIC --- */
+/* Pins both separate JS containers to the same top-right corner to prevent overlap */
+.engine-switch-container,
+.map-variety-picker {
+  position: absolute;
+  right: 20px;
+  width: 200px;
+  z-index: 2000;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+}
+.engine-switch-container{
+  width: 100px!important;
+}
+
+/* Layer 1: The 2D/3D Switch */
+.engine-switch-container {
+  top: 20px;
+  display: flex;
+  padding: 2px;
+  background: rgba(15, 23, 42, 0.8);
+}
+
+/* Layer 2: The Style Picker & Spectral Buttons (Stacked below Switch) */
+.map-variety-picker {
+  top: 50px;
+/* Positioned exactly below the first container */
+  padding: 8px;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* --- THEME SPECIFIC OVERRIDES --- */
+[data-theme="light"] .engine-switch-container,
+[data-theme="light"] .map-variety-picker {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* --- BUTTON STYLING --- */
+.switch-btn, .spectral-toggle-bar button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+/* 2D/3D Active State */
+.switch-btn {
+  color: #94a3b8;
+  font-size: 11px;
+  padding: 4px 0;
+}
+
+.switch-btn.active {
+  background: #00d4ff; /* Tactical Cyan */
+  color: #001a2c;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+}
+
+/* --- SPECTRAL BUTTONS (NDVI, HEAT, FLOW) --- */
+.spectral-toggle-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 5px;
+}
+
+.spectral-toggle-bar button {
+  padding: 8px 2px;
+  font-size: 9px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Active Analysis States */
+.spectral-toggle-bar button.active:nth-child(1) { /* NDVI - Green */
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #10b981 !important;
+  border-color: #10b981;
+}
+
+.spectral-toggle-bar button.active:nth-child(2) { /* HEAT - Orange */
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #f59e0b !important;
+  border-color: #f59e0b;
+}
+
+.spectral-toggle-bar button.active:nth-child(3) { /* FLOW - Blue */
+  background: rgba(59, 130, 246, 0.2) !important;
+  color: #3b82f6 !important;
+  border-color: #3b82f6;
+}
+
+/* --- SELECTOR STYLING --- */
+.variety-select {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+}
+
+[data-theme="light"] .variety-select {
+  background: #fff;
+  color: #000;
+  border-color: #ccc;
+}
+
+/* Hover effect for visibility */
+.switch-btn:hover:not(.active),
+.spectral-toggle-bar button:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+[data-theme="light"] .switch-btn:hover:not(.active),
+[data-theme="light"] .spectral-toggle-bar button:hover:not(.active) {
+  background: rgba(0, 0, 0, 0.05);
+  color: #000;
+}
+
+
+/* --- DEEP BLACK OVERRIDES FOR DARK THEME --- */
+
+[data-theme="dark"] .map-variety-picker,
+[data-theme="dark"] .engine-switch-container {
+  /* Replace Translucent Navy with Pure Black */
+  background: rgba(0, 0, 0, 0.85) !important; 
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="dark"] .hud-select,
+[data-theme="dark"] .variety-select {
+  /* Style the dropdown itself */
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Forces the browser's native dropdown list (options) to be black */
+[data-theme="dark"] select option {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Ensure Spectral buttons also look good against pure black */
+[data-theme="dark"] .spectral-toggle-bar button {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .spectral-toggle-bar button:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* --- OPTIONAL: GLOW REFINEMENT --- */
+/* Makes the cyan pop more against the pure black background */
+[data-theme="dark"] .switch-btn.active {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5) !important;
+}
+
