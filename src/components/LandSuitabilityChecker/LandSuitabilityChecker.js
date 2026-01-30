@@ -416,11 +416,15 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
       <MapContainer 
         center={[nLat, nLng]} 
         // zoom={15} 
-        zoom={zoom}               // ✅ REQUIRED: Pass the state
+        zoom={16}               // ✅ REQUIRED: Pass the state
     // key={`map-2d-${zoom}`}
         zoomControl={false} 
         dragging={false} 
+        scrollWheelZoom={false}    // 🔒 LOCK: Prevents zooming inside the mini-card
+    doubleClickZoom={false}
+    touchZoom={false}
         style={{ height: "100%", width: "100%" }}
+        key={`minimap-${nLat}-${nLng}`}
       >
         {/* 🚀 THIS IS THE FIX: It watches lat/lng and moves the engine */}
         <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
@@ -434,13 +438,15 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
           />
         )}
         {/* <Marker position={[nLat, nLng]} /> */}
-        <LocationMarker 
+        {/* <LocationMarker 
        lat={latVal} lng={lngVal} 
        setLat={setLat} setLng={setLng} 
        setZoom={setCurrentZoom} 
        isSelectingB={isSelectingB} 
        onSelectB={handleCompareSelect} 
-    />
+    /> */}
+    {/* Use a simple Marker instead of LocationMarker to keep it static */}
+    <Marker position={[nLat, nLng]} />
       </MapContainer>
     ) : (
       /* 3D Minimap */
@@ -449,7 +455,8 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
         lng={nLng} 
         setLat={setLat} // Fixed: Passing setter to 3D
     setLng={setLng}
-    zoom={currentZoom}
+    // zoom={currentZoom}
+    zoom={16}
         factors={data.factors} 
         isDarkMode={isDarkMode} 
         activeStyle={active3DStyle}
@@ -1324,20 +1331,20 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
             isCompareMode={!isFullWidth}
             activeSpectral={activeSpectral}
             mapMode={mapMode}           // PASS STATE HERE
-  active3DStyle={active3DStyle}
-  currentZoom={zoom}
-  setZoom={setZoom}
-  handleZoomIn={handleZoomIn}
-  handleZoomOut={handleZoomOut}
-  /* NEW PROPS BELOW */
-  setLat={setLat}
-  setLng={setLng}
-  // currentZoom={zoom}           // Local state 'zoom' maps to 'currentZoom'
-  setCurrentZoom={setZoom}
-  onZoomIn={handleZoomIn}      // Local function maps to 'onZoomIn'
-  onZoomOut={handleZoomOut}
-  isSelectingB={isSelectingB}
-  handleCompareSelect={handleCompareSelect}
+            active3DStyle={active3DStyle}
+            currentZoom={zoom}
+            setZoom={setZoom}
+            handleZoomIn={handleZoomIn}
+            handleZoomOut={handleZoomOut}
+            /* NEW PROPS BELOW */
+            setLat={setLat}
+            setLng={setLng}
+            // currentZoom={zoom}           // Local state 'zoom' maps to 'currentZoom'
+            setCurrentZoom={setZoom}
+            onZoomIn={handleZoomIn}      // Local function maps to 'onZoomIn'
+            onZoomOut={handleZoomOut}
+            isSelectingB={isSelectingB}
+            handleCompareSelect={handleCompareSelect}
           />
         </div>
         <div className={isFullWidth ? "col-2" : ""}>
@@ -1777,6 +1784,7 @@ const intel = data.strategic_intelligence || {};
 //   style={{ height: "100%", width: "100%" }}
 // >
 <MapContainer
+key={`map-${lat}-${lng}-${zoom}`} // Forces a hard reset on change
 center={[parseFloat(lat), parseFloat(lng)]} 
   zoom={zoom}
   zoomControl={false}
