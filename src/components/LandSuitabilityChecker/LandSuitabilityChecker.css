@@ -6945,3 +6945,98 @@ html, body, #root, .app-shell {
 .map-container:fullscreen .map-variety-picker {
   z-index: 9999999;
 }
+
+
+
+/* --- TACTICAL SNAP HUD (Below Style Picker) --- */
+.tactical-snap-controls {
+    position: absolute;
+    top: 250px; /* Adjust this value based on the height of your variety picker */
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2000;
+}
+
+.snap-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+/* Site A Snap (Blue Theme) */
+.snap-btn.btn-a {
+    background: rgba(37, 99, 235, 0.2);
+    color: #3b82f6;
+    border-color: rgba(59, 130, 246, 0.4);
+}
+
+.snap-btn.btn-a:hover {
+    background: #2563eb;
+    color: white;
+    transform: translateX(-5px);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
+}
+
+/* Site B Snap (Red Theme) */
+.snap-btn.btn-b {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.snap-btn.btn-b:hover {
+    background: #ef4444;
+    color: white;
+    transform: translateX(-5px);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+/* --- THEME ADAPTATION --- */
+[data-theme="dark"] .snap-btn {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="light"] .snap-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* --- MATCHING GLOW LOGIC --- */
+.snap-btn.active-match {
+    border: 2px solid #fff !important;
+    animation: match-pulse 1.5s infinite;
+    transform: scale(1.1);
+}
+
+@keyframes match-pulse {
+    0% { box-shadow: 0 0 0 0px var(--accent); }
+    70% { box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0px rgba(255, 255, 255, 0); }
+}
+
+/* Snap Divider */
+.snap-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 4px 0;
+}
+
+/* Specific button for the moving pointer */
+.snap-btn.btn-live {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}

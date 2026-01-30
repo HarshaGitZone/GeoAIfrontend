@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 // import { Marker, useMap, useMapEvents } from "react-leaflet";
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents, Popup } from "react-leaflet";
 import FactorBar from "../FactorBar/FactorBar";
 import SideBar from "../SideBar/SideBar";
 import "leaflet/dist/leaflet.css";
@@ -167,97 +167,7 @@ const PotentialSection = ({ factors, score }) => {
     </div>
   );
 };
-// const MapClickHandler = ({ setLat, setLng, setZoom }) => {
-//   // const map = useMap();
 
-//   useMapEvents({
-//     click(e) {
-//       setLat(e.latlng.lat.toString());
-//       setLng(e.latlng.lng.toString());
-//       // setZoom(map.getZoom());
-//     },
-//       zoomend() {
-//       // setZoom(map.getZoom());
-//     }
-//   });
-
-//   return null;
-// };
-
-// const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSelectB }) => {
-//   const map = useMap();
-//   useMapEvents({
-//     click(e) {
-//       if (isSelectingB) onSelectB(e.latlng.lat, e.latlng.lng);
-//       else { 
-//         setLat(e.latlng.lat.toString()); 
-//         setLng(e.latlng.lng.toString()); 
-//       }
-//     },
-//     zoomend() { setZoom(map.getZoom()); },
-//   });
-
-//   // useEffect(() => {
-//   //   const nLat = parseFloat(lat);
-//   //   const nLng = parseFloat(lng);
-//   //   if (!isNaN(nLat) && !isNaN(nLng)) {
-//   //     map.setView([nLat, nLng], map.getZoom());
-//   //   }
-//   // }, [lat, lng, map]);
-
-// //   const markerPos = [parseFloat(lat) || 0, parseFloat(lng) || 0];
-// //   return <Marker position={markerPos} />;
-// // };
-// const nLat = parseFloat(lat);
-// const nLng = parseFloat(lng);
-
-// if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
-
-// return <Marker position={[nLat, nLng]} />;
-// }
-
-// const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSelectB }) => {
-//   const map = useMap();
-
-//   useMapEvents({
-//     click(e) {
-//       if (isSelectingB) {
-//         onSelectB(e.latlng.lat, e.latlng.lng);
-//       } else { 
-//         setLat(e.latlng.lat.toString()); 
-//         setLng(e.latlng.lng.toString()); 
-//       }
-//     },
-//     zoomend() {
-//       setZoom(map.getZoom());
-//     },
-//   });
-
-//   const nLat = parseFloat(lat);
-//   const nLng = parseFloat(lng);
-
-//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
-
-//   return <Marker position={[nLat, nLng]} />;
-// };
-// const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) => {
-//   useMapEvents({
-//     click(e) {
-//       if (isSelectingB) {
-//         onSelectB(e.latlng.lat, e.latlng.lng);
-//       } else {
-//         setLat(e.latlng.lat.toString());
-//         setLng(e.latlng.lng.toString());
-//       }
-//     },
-//   });
-
-//   const nLat = parseFloat(lat);
-//   const nLng = parseFloat(lng);
-
-//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
-//   return <Marker position={[nLat, nLng]} />;
-// };
 const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) => {
   const map = useMap();
 
@@ -281,20 +191,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
     const nLat = parseFloat(lat);
     const nLng = parseFloat(lng);
 
-//     if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
-//       map.flyTo([nLat, nLng], map.getZoom(), {
-//         animate: true,
-//         duration: 1.2,
-//       });
-//     }
-//   }, [lat, lng, map]);
-//    const nLat = parseFloat(lat);
-//   const nLng = parseFloat(lng);
 
-//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
-
-//   return <Marker position={[nLat, nLng]} />;
-// };
   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return;
 
     map.whenReady(() => {
@@ -319,9 +216,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
 // const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral,mapMode,         // ADD THIS
 //   active3DStyle }) => {
   const FactorsSection = memo(({ 
-  // data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, 
-  // onOpenHistory, mapVariety, isCompareMode, activeSpectral, mapMode, 
-  // active3DStyle, setLat, setLng,  isSelectingB, handleCompareSelect,currentZoom, setCurrentZoom, onZoomIn, onZoomOut, toggleFullScreen,zoom,setzoom // ADD THESE
+ 
   data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, 
   onOpenHistory, mapVariety, isCompareMode, activeSpectral, mapMode, 
   active3DStyle, setLat, setLng, isSelectingB, handleCompareSelect,
@@ -359,56 +254,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
   return (
     <>
       <div className={`card hero-card glass-morphic ${data.suitability_score < 40 ? 'danger-glow' : ''}`}>
-  {/* <div className="mini-map-context">
-    {isValidCoords ? (
-      <>
-        <MapContainer 
-          center={[nLat, nLng]} 
-          zoom={15} 
-          zoomControl={false} 
-          dragging={false} 
-          touchZoom={false} 
-          scrollWheelZoom={false} 
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
-          
-          {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
-            <TileLayer 
-              key={activeSpectral} 
-              url={spectralLayers[activeSpectral]} 
-              opacity={0.7} 
-              zIndex={100} 
-            />
-          )}
-          <Marker position={[nLat, nLng]} />
-        </MapContainer>
-
-        
-      </>
-    ) : (
-      <div className="empty-results" style={{ fontSize: '11px' }}>
-        Awaiting Geospatial Analysis...
-      </div>
-    )}
-    <div className="mini-map-label">Tactical Preview</div>
-  </div> */}
-  {/* <div className="mini-map-context">
-  {isValidCoords ? (
-    
-    <ProMap 
-      lat={nLat} 
-      lng={nLng} 
-      factors={data.factors} 
-      isDarkMode={isDarkMode} 
-    />
-  ) : (
-    <div className="empty-results" style={{ fontSize: '11px' }}>
-      Awaiting Geospatial Analysis...
-    </div>
-  )}
-  <div className="mini-map-label">Tactical 3D Preview</div>
-</div> */}
+ 
 <div className="mini-map-context">
   {isValidCoords ? (
     mapMode === "2D" ? (
@@ -504,43 +350,267 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
     </>
   );
 });
-// const MapRecenter = ({ lat, lng }) => {
+// const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng }) => {
 //   const map = useMap();
 
+//   // Listen for map clicks to move ONLY the "Live" pointer
+//   useMapEvents({
+//     click(e) {
+//       setLat(e.latlng.lat.toString());
+//       setLng(e.latlng.lng.toString());
+//     },
+//   });
+
+//   // Expose snap functions to the parent via a global (or better, use a ref)
 //   useEffect(() => {
-//     const nLat = parseFloat(lat);
-//     const nLng = parseFloat(lng);
+//     window.snapToA = () => {
+//       if (latA && lngA) map.flyTo([parseFloat(latA), parseFloat(lngA)], 16);
+//     };
+//     window.snapToB = () => {
+//       if (latB && lngB) map.flyTo([parseFloat(latB), parseFloat(lngB)], 16);
+//     };
+//     // Cleanup on unmount
+//     return () => {
+//       delete window.snapToA;
+//       delete window.snapToB;
+//     };
+//   }, [map, latA, lngA, latB, lngB]);
 
-//     if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
-//       // .flyTo creates a smooth animation; use .setView for an instant jump
-//       map.flyTo([nLat, nLng], map.getZoom(), {
-//         animate: true,
-//         duration: 1.5
-//       });
-//     }
-//   }, [lat, lng, map]);
+//   const createIcon = (color) => new L.Icon({
+//     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+//     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+//     iconSize: [25, 41], iconAnchor: [12, 41]
+//   });
 
-//   return null;
+//   return (
+//     <>
+//       {/* 📍 Permanent Site A (Blue) - Only shows if Analyzed */}
+//       {latA && lngA && <Marker position={[parseFloat(latA), parseFloat(lngA)]} icon={createIcon('blue')} />}
+
+//       {/* 📍 Permanent Site B (Red) - Only shows if Analyzed */}
+//       {latB && lngB && <Marker position={[parseFloat(latB), parseFloat(lngB)]} icon={createIcon('red')} />}
+
+//       {/* 📍 Live Shuffle Pointer (Green) - Always follows clicks */}
+//       <Marker position={[parseFloat(currentLat), parseFloat(currentLng)]} icon={createIcon('green')} />
+//     </>
+//   );
 // };
-
-// Add this at the TOP of your file (outside LandSuitabilityChecker)
-// const MapRecenter = ({ lat, lng }) => {
+/* --- TACTICAL MAP CONTROLLER --- */
+// const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng, mapVariety }) => {
 //   const map = useMap();
 
+//   // Handle map clicks to update only the "Exploring" pointer
+//   useMapEvents({
+//     click(e) {
+//       setLat(e.latlng.lat.toString());
+//       setLng(e.latlng.lng.toString());
+//     },
+//   });
+
+//   // Attach global snap functions so the buttons outside the map can reach in
 //   useEffect(() => {
-//     const nLat = parseFloat(lat);
-//     const nLng = parseFloat(lng);
+//     window.snapToA = () => {
+//       if (latA && lngA) map.flyTo([parseFloat(latA), parseFloat(lngA)], 16, { animate: true });
+//     };
+//     window.snapToB = () => {
+//       if (latB && lngB) map.flyTo([parseFloat(latB), parseFloat(lngB)], 16, { animate: true });
+//     };
+//     window.snapToLive = () => {
+//       map.flyTo([parseFloat(currentLat), parseFloat(currentLng)], 16);
+//     };
 
-//     if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
-//       map.flyTo([nLat, nLng], map.getZoom(), {
-//         animate: true,
-//         duration: 1.2,
-//       });
-//     }
-//   }, [lat, lng, map]);
+//     return () => {
+//       delete window.snapToA;
+//       delete window.snapToB;
+//       delete window.snapToLive;
+//     };
+//   }, [map, latA, lngA, latB, lngB, currentLat, currentLng]);
 
-//   return null;
+//   // Dynamic Icon Factory
+//   const getIcon = (color, isLive = false) => new L.Icon({
+//     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+//     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+//     iconSize: isLive ? [30, 48] : [25, 41], // Make the "Live" pointer slightly larger
+//     iconAnchor: [12, 41],
+//   });
+
+//   return (
+//     <>
+//       {/* 🔵 SITE A (Fixed Blue) */}
+//       {latA && lngA && (
+//         <Marker position={[parseFloat(latA), parseFloat(lngA)]} icon={getIcon('blue')}>
+//             <Popup><strong>Site A:</strong> Analyzed Target</Popup>
+//         </Marker>
+//       )}
+
+//       {/* 🔴 SITE B (Fixed Red) */}
+//       {latB && lngB && (
+//         <Marker position={[parseFloat(latB), parseFloat(lngB)]} icon={getIcon('red')}>
+//             <Popup><strong>Site B:</strong> Comparison Target</Popup>
+//         </Marker>
+//       )}
+
+//       {/* 🟢 LIVE POINTER (Shuffle/Green) */}
+//       <Marker position={[parseFloat(currentLat), parseFloat(currentLng)]} icon={getIcon('green', true)}>
+//           <Popup>Current Selection (Click Map to Move)</Popup>
+//       </Marker>
+//     </>
+//   );
 // };
+
+// const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng,isSelectingB, setBLatInput, setBLngInput }) => {
+//   const map = useMap();
+
+//   // Handle map clicks for the "Neutral/Green" pointer
+//   useMapEvents({
+//     click(e) {
+//     //   setLat(e.latlng.lat.toString());
+//     //   setLng(e.latlng.lng.toString());
+//     // },
+//     const clickedLat = e.latlng.lat.toString();
+//       const clickedLng = e.latlng.lng.toString();
+
+//       if (isSelectingB) {
+//         // 🎯 FIX: Update Location B text boxes specifically
+//         setBLatInput(clickedLat);
+//         setBLngInput(clickedLng);
+//       } else {
+//         // Update general selection (Site A / Green Pointer)
+//         setLat(clickedLat);
+//         setLng(clickedLng);
+//       }
+//     },
+//   });
+
+//   useEffect(() => {
+//     window.snapToA = () => {
+//       const nLat = parseFloat(latA);
+//       const nLng = parseFloat(lngA);
+//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+//     };
+//     window.snapToB = () => {
+//       const nLat = parseFloat(latB);
+//       const nLng = parseFloat(lngB);
+//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+//     };
+//     return () => { delete window.snapToA; delete window.snapToB; };
+//   }, [map, latA, lngA, latB, lngB]);
+
+//   const createIcon = (color) => new L.Icon({
+//     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+//     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+//     iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+//   });
+
+//   // Convert inputs to numbers safely
+//   const posA = [parseFloat(latA), parseFloat(lngA)];
+//   const posB = [parseFloat(latB), parseFloat(lngB)];
+//   const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
+
+//   return (
+//     <>
+//       {/* 📍 SITE A (BLUE) - Render if analyzedCoords.lat exists */}
+//       {Number.isFinite(posA[0]) && (
+//         <Marker position={posA} icon={createIcon('blue')}>
+//           <Popup>Site A: Analyzed</Popup>
+//         </Marker>
+//       )}
+
+//       {/* 📍 SITE B (RED) - Render if analyzedCoordsB.lat exists */}
+//       {Number.isFinite(posB[0]) && (
+//         <Marker position={posB} icon={createIcon('red')}>
+//           <Popup>Site B: Comparison</Popup>
+//         </Marker>
+//       )}
+
+//       {/* 📍 LIVE POINTER (GREEN) - Always follows clicks */}
+//       {Number.isFinite(posLive[0]) && (
+//         <Marker position={posLive} icon={createIcon('green')}>
+//           <Popup>Current Selection</Popup>
+//         </Marker>
+//       )}
+//     </>
+//   );
+// };
+const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng, isSelectingB, setBLatInput, setBLngInput }) => {
+  const map = useMap();
+
+  useMapEvents({
+    click(e) {
+      const clickedLat = e.latlng.lat.toString();
+      const clickedLng = e.latlng.lng.toString();
+
+      if (isSelectingB) {
+        setBLatInput(clickedLat);
+        setBLngInput(clickedLng);
+      } else {
+        setLat(clickedLat);
+        setLng(clickedLng);
+      }
+    },
+  });
+
+  useEffect(() => {
+    // 🔵 Snap to Site A
+    window.snapToA = () => {
+      const nLat = parseFloat(latA);
+      const nLng = parseFloat(lngA);
+      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+    };
+
+    // 🔴 Snap to Site B
+    window.snapToB = () => {
+      const nLat = parseFloat(latB);
+      const nLng = parseFloat(lngB);
+      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+    };
+
+    // 🟢 Snap to Live Pointer (The Fix)
+    window.snapToLive = () => {
+      const nLat = parseFloat(currentLat);
+      const nLng = parseFloat(currentLng);
+      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+    };
+
+    return () => { 
+      delete window.snapToA; 
+      delete window.snapToB; 
+      delete window.snapToLive; // Cleanup
+    };
+  }, [map, latA, lngA, latB, lngB, currentLat, currentLng]); // Added current coords as dependencies
+
+  const createIcon = (color) => new L.Icon({
+    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+  });
+
+  const posA = [parseFloat(latA), parseFloat(lngA)];
+  const posB = [parseFloat(latB), parseFloat(lngB)];
+  const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
+
+  return (
+    <>
+      {Number.isFinite(posA[0]) && (
+        <Marker position={posA} icon={createIcon('blue')}>
+          <Popup>Site A: Analyzed</Popup>
+        </Marker>
+      )}
+
+      {Number.isFinite(posB[0]) && (
+        <Marker position={posB} icon={createIcon('red')}>
+          <Popup>Site B: Comparison</Popup>
+        </Marker>
+      )}
+
+      {Number.isFinite(posLive[0]) && (
+        <Marker position={posLive} icon={createIcon('green')}>
+          <Popup>Current Selection</Popup>
+        </Marker>
+      )}
+    </>
+  );
+};
 
 export default function LandSuitabilityChecker() {
   // 1. Add new state at the top of your component
@@ -560,7 +630,7 @@ const handleZoomIn = () => {
 };
 
 const handleZoomOut = () => {
-  setZoom(z => Math.max(z - 1, 2));
+  setZoom(z => Math.max(z - 1, 0));
 };
 
 // 3. FULLSCREEN FIX: Add a null check to avoid the error you saw
@@ -618,7 +688,16 @@ const [locationBName, setLocationBName] = useState(() => localStorage.getItem("g
   const [loading, setLoading] = useState(false);
   const [debug] = useState(false);
   const [viewMode, setViewMode] = useState("bars"); 
+// Add these near your other useState calls
+const [analyzedCoords, setAnalyzedCoords] = useState(() => ({
+  lat: localStorage.getItem("geo_lat_analyzed") || null,
+  lng: localStorage.getItem("geo_lng_analyzed") || null
+}));
 
+const [analyzedCoordsB, setAnalyzedCoordsB] = useState(() => ({
+  lat: localStorage.getItem("geo_lat_b_analyzed") || null,
+  lng: localStorage.getItem("geo_lng_b_analyzed") || null
+}));
   const [showHistory, setShowHistory] = useState(false); 
   const [historyTargetData, setHistoryTargetData] = useState(null);
   const [historyTargetName, setHistoryTargetName] = useState("");
@@ -626,8 +705,8 @@ const [locationBName, setLocationBName] = useState(() => localStorage.getItem("g
 const [editingIndex, setEditingIndex] = useState(null);
   const [editingName, setEditingName] = useState("");
   const [savedPlaces, setSavedPlaces] = useState(() => JSON.parse(localStorage.getItem("savedPlaces")) || []);
-  const [analyzedCoords, setAnalyzedCoords] = useState({ lat: null, lng: null });
-  const [analyzedCoordsB, setAnalyzedCoordsB] = useState({ lat: null, lng: null });
+  // const [analyzedCoords, setAnalyzedCoords] = useState({ lat: null, lng: null });
+  // const [analyzedCoordsB, setAnalyzedCoordsB] = useState({ lat: null, lng: null });
   // const [locationAName, setLocationAName] = useState("Site A");
   // const [locationBName, setLocationBName] = useState("Site B");
   // const [showLocationB, setShowLocationB] = useState(false);
@@ -729,7 +808,12 @@ const handleCompareSelect = useCallback(async (tLat, tLng, existingName = null) 
 
       setCompareResult(suitResult);
       setSnapshotDataB(snapData); // Now snapData is correctly defined from the fetch
-      setAnalyzedCoordsB({ lat: tLat.toString(), lng: tLng.toString() });
+      // setAnalyzedCoordsB({ lat: tLat.toString(), lng: tLng.toString() });
+      // 📍 PERSISTENCE FIX: Save analyzed coords so the Red marker stays
+        const coordsB = { lat: tLat.toString(), lng: tLng.toString() };
+        setAnalyzedCoordsB(coordsB);
+        localStorage.setItem("geo_lat_b_analyzed", tLat.toString());
+        localStorage.setItem("geo_lng_b_analyzed", tLng.toString());
     } catch (err) { 
       console.error(err); 
     } finally { 
@@ -814,8 +898,10 @@ const handleSubmit = useCallback(async (e) => {
     if (results[0].status === 'fulfilled') {
       const analysisData = results[0].value;
       setResult(analysisData);
+      const coordsA = { lat, lng };
       setAnalyzedCoords({ lat, lng });
-
+      localStorage.setItem("geo_lat_analyzed", lat);
+    localStorage.setItem("geo_lng_analyzed", lng);
       // Identify Score B from the task results (index 2) directly to ensure history accuracy
       const scoreBVal = (activeCompareMode && results[2]?.status === 'fulfilled') 
         ? results[2].value.suitability_score 
@@ -935,7 +1021,7 @@ useEffect(() => {
   } else if (analyzedCoordsB.lat && bLatInput !== analyzedCoordsB.lat.toString()) {
     // 4. Reset to "Site B" and clear old comparison data
     setLocationBName("Site B");
-    setCompareResult(null);
+    // setCompareResult(null);
   }
 }, [bLatInput, bLngInput, analyzedCoordsB.lat, savedPlaces]);
 
@@ -958,7 +1044,7 @@ useEffect(() => {
     // 2. Only reset to "Site A" if coordinates moved away from last analysis 
     // AND it's not a saved place
     setLocationAName("Site A");
-    setResult(null); 
+    // setResult(null); 
   }
 }, [lat, lng, analyzedCoords, savedPlaces]); // Added savedPlaces to dependencies
 
@@ -1675,6 +1761,7 @@ const intel = data.strategic_intelligence || {};
         setEditingIndex={setEditingIndex}
         editingName={editingName}
         setEditingName={setEditingName}
+        setAnalyzedCoordsB={setAnalyzedCoordsB}
       />
 
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
@@ -1740,6 +1827,26 @@ const intel = data.strategic_intelligence || {};
         </select>
       )}
     </div>
+   <div className="tactical-snap-controls">
+  {/* Add a button for the Live pointer too so you don't get lost! */}
+  <button className="snap-btn btn-live" onClick={() => window.snapToLive?.()} title="Snap to Current Selection">📍</button>
+  
+  <div className="snap-divider" />
+
+  <button 
+    className={`snap-btn btn-a ${lat === analyzedCoords.lat ? 'active-match' : ''}`} 
+    onClick={() => window.snapToA?.()}
+  >
+    A
+  </button>
+  
+  <button 
+    className={`snap-btn btn-b ${lat === analyzedCoordsB.lat ? 'active-match' : ''}`} 
+    onClick={() => window.snapToB?.()}
+  >
+    B
+  </button>
+</div>
   <div
   ref={mapViewportRef}
   className="map-viewport"
@@ -1806,14 +1913,28 @@ center={[parseFloat(lat), parseFloat(lng)]}
     setLng={setLng}
     setZoom={setZoom}
   /> */}
-  <LocationMarker
+  {/* <LocationMarker
   lat={lat}
   lng={lng}
   setLat={setLat}
   setLng={setLng}
   isSelectingB={isSelectingB}
   onSelectB={handleCompareSelect}
-/>
+/> */}
+<TacticalMapController 
+    latA={analyzedCoords.lat}   // From analyzed state
+    lngA={analyzedCoords.lng}
+    latB={analyzedCoordsB.lat}  // From analyzed state
+    lngB={analyzedCoordsB.lng}
+    currentLat={lat}            // The "Shuffle" lat
+    currentLng={lng}            // The "Shuffle" lng
+    setLat={setLat}             // Updates shuffle on click
+    setLng={setLng}
+    // 🚀 ADD THESE PROPS BELOW
+  isSelectingB={isSelectingB}
+  setBLatInput={setBLatInput}
+  setBLngInput={setBLngInput}
+  />
 
 </MapContainer>
 

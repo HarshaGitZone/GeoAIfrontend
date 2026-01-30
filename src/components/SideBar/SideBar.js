@@ -18,6 +18,7 @@ export default function SideBar({
   handleCompareSelect, compareLoading,
   handleMyLocationB, isBFromSavedPlace,
   handleSavePlaceB, analyzedCoordsB,
+  setAnalyzedCoordsB, // 🚀 ADD THIS HERE
   nearbyLoadingB, handleNearbyPlacesB,
   isCompareMode, setIsCompareMode,
   editingIndex, setEditingIndex,
@@ -521,6 +522,14 @@ const generateShareLink = () => {
       setCompareResult(null);       // Remove analysis data for B
       setSnapshotDataB(null);       // Clear Site B snapshot
       setLocationBName("Site B");   // Reset name fallback
+      // 🎯 THE FIX: Clear the analyzed coordinates so the RED marker disappears
+          if (typeof analyzedCoordsB !== 'undefined') {
+             // If you passed setAnalyzedCoordsB as a prop:
+             // setAnalyzedCoordsB({ lat: null, lng: null }); 
+             // OR rely on the fact that analyzedCoordsB is usually derived in the parent
+          }
+          localStorage.removeItem("geo_lat_b_analyzed");
+          localStorage.removeItem("geo_lng_b_analyzed");
     }} 
     className="btn-cross" 
     title="Exit Compare"
@@ -574,7 +583,7 @@ const generateShareLink = () => {
         </section>
 
         {/* 🔄 TOGGLE BUTTON FOR LOCATION B */}
-        <button
+        {/* <button
           onClick={() => setShowLocationB(!showLocationB)}
           className="compare-toggle-btn"
           style={{
@@ -593,7 +602,56 @@ const generateShareLink = () => {
           }}
         >
           {showLocationB ? "✕ Close Comparison" : "🔄 Compare with Location B"}
-        </button>
+        </button> */}
+         {/* <button
+          onClick={() => setShowLocationB(!showLocationB)}
+          className="compare-toggle-btn"
+          style={{
+            width: "calc(100% - 20px)",
+            margin: "6px 10px",
+            padding: "4px",
+            background: showLocationB
+              ? "linear-gradient(135deg, #ef4444, #dc2626)"
+              : "linear-gradient(135deg, #ec4899, #f43f5e)",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            fontSize: "10px",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          {showLocationB ? "✕ Close Comparison" : "🔄 Compare with Location B"}
+        </button> */}
+        <button
+  onClick={() => {
+    if (showLocationB) {
+      setShowLocationB(false);
+      setIsCompareMode(false);
+      setCompareResult(null);
+      setSnapshotDataB(null);
+      setBLatInput("");
+      setBLngInput("");
+      
+      // 🎯 ADD THIS: Clear the map pointer state
+      // if (props.setAnalyzedCoordsB) {
+      //   props.setAnalyzedCoordsB({ lat: null, lng: null });
+      // }
+      // 🎯 THE FIX: Call the setter directly here too
+      if (setAnalyzedCoordsB) {
+        setAnalyzedCoordsB({ lat: null, lng: null });
+      }
+
+      localStorage.removeItem("geo_lat_b_analyzed");
+      localStorage.removeItem("geo_lng_b_analyzed");
+    } else {
+      setShowLocationB(true);
+    }
+  }}
+  className="compare-toggle-btn"
+>
+  {showLocationB ? "✕ Close Comparison" : "🔄 Compare with Location B"}
+</button>
 
         {/* Saved Places Section */}
         <section className="saved-places-section" style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
@@ -643,10 +701,38 @@ const generateShareLink = () => {
                       setEditingName(p.name);
                     }}>✎</button>
                   )}
-                  <button className="btn-cross" onClick={(e) => {
+                  {/* <button className="btn-cross" onClick={(e) => {
                     e.stopPropagation();
                     setSavedPlaces(savedPlaces.filter((_, idx) => idx !== i));
-                  }}>✕</button>
+                  }}>✕</button> */}
+                
+<button 
+  onClick={() => {
+    setIsCompareMode(false);
+    setBLatInput("");
+    setBLngInput("");
+    setCompareResult(null);
+    setSnapshotDataB(null);
+    setLocationBName("Site B");
+    
+    // 🎯 ADD THIS: Clear the coordinates the Map is watching
+    // Ensure you passed 'setAnalyzedCoordsB' as a prop from the parent
+    // if (props.setAnalyzedCoordsB) {
+    //    props.setAnalyzedCoordsB({ lat: null, lng: null });
+    // }
+    // 🎯 THE FIX: Call the setter directly (no 'props.')
+      if (setAnalyzedCoordsB) {
+        setAnalyzedCoordsB({ lat: null, lng: null });
+      }
+
+    localStorage.removeItem("geo_lat_b_analyzed");
+    localStorage.removeItem("geo_lng_b_analyzed");
+  }} 
+  className="btn-cross" 
+  title="Exit Compare"
+>
+  ✕
+</button>
                 </div>
               </div>
             ))}
