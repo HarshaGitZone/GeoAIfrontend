@@ -168,7 +168,7 @@ const PotentialSection = ({ factors, score }) => {
   );
 };
 const MapClickHandler = ({ setLat, setLng, setZoom }) => {
-  const map = useMap();
+  // const map = useMap();
 
   useMapEvents({
     click(e) {
@@ -440,24 +440,24 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
     </>
   );
 });
-const MapRecenter = ({ lat, lng }) => {
-  const map = useMap();
+// const MapRecenter = ({ lat, lng }) => {
+//   const map = useMap();
 
-  useEffect(() => {
-    const nLat = parseFloat(lat);
-    const nLng = parseFloat(lng);
+//   useEffect(() => {
+//     const nLat = parseFloat(lat);
+//     const nLng = parseFloat(lng);
 
-    if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
-      // .flyTo creates a smooth animation; use .setView for an instant jump
-      map.flyTo([nLat, nLng], map.getZoom(), {
-        animate: true,
-        duration: 1.5
-      });
-    }
-  }, [lat, lng, map]);
+//     if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+//       // .flyTo creates a smooth animation; use .setView for an instant jump
+//       map.flyTo([nLat, nLng], map.getZoom(), {
+//         animate: true,
+//         duration: 1.5
+//       });
+//     }
+//   }, [lat, lng, map]);
 
-  return null;
-};
+//   return null;
+// };
 export default function LandSuitabilityChecker() {
   // 1. Add new state at the top of your component
   // 1. Ensure zoom is at the top level
