@@ -7040,3 +7040,491 @@ html, body, #root, .app-shell {
     background: rgba(16, 185, 129, 0.2);
     color: #10b981;
 }
+
+
+
+/* --- ATTRACTIVE TOGGLE CONTAINER --- */
+.tactical-mode-toggle-container {
+    position: absolute;
+    top: 20px;
+    left: 70px; /* Offset from zoom controls */
+    z-index: 3500;
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 6px 12px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 10px;
+}
+
+.toggle-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #10b981;
+    letter-spacing: 1px;
+}
+
+/* --- THE SWITCH --- */
+.switch-attractive {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+}
+
+.switch-attractive input { opacity: 0; width: 0; height: 0; }
+
+.slider-attractive {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #334155;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider-attractive:before {
+  position: absolute;
+  content: "";
+  height: 14px; width: 14px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider-attractive { background-color: #10b981; }
+input:checked + .slider-attractive:before { transform: translateX(14px); }
+
+/* --- HORIZONTAL SNAP BUTTONS (Top Center-Left) --- */
+.tactical-snap-controls {
+    position: absolute;
+    top: 70px; /* Below the toggle */
+    left: 70px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    z-index: 3000;
+}
+
+.animate-slide-in {
+    animation: slideRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideRight {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.snap-btn {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    transition: 0.3s;
+}
+
+.btn-a { background: #3b82f6; color: #fff; }
+.btn-b { background: #ef4444; color: #fff; }
+.btn-live { background: #10b981; color: #000; }
+
+.snap-btn:hover { transform: scale(1.1); filter: brightness(1.2); }
+
+
+.hud-right-stack {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 4000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Spacing between the Engine box, Style box, and Toggle box */
+    align-items: flex-end;
+}
+
+.hud-card, .map-variety-picker, .engine-switch-container {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    width: 220px; /* Consistent width for all right-hand HUD elements */
+}
+
+.tactical-mode-toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tactical-snap-controls {
+    display: flex;
+    flex-direction: row; /* Buttons stay horizontal inside their row */
+    gap: 8px;
+    width: auto; /* Buttons only take needed space */
+}
+
+
+/* Parent reference */
+.map-container {
+  position: relative;
+}
+
+/* Engine style box (already exists) */
+.map-variety-picker {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 1000;
+}
+
+/* 🔥 Tactical HUD — moved BELOW engine styles */
+.tactical-mode-toggle-container {
+  position: absolute;
+  top: calc(14px + 120px); /* adjust if engine box height changes */
+  right: 16px;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 14px;
+  border-radius: 14px;
+
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* Label styling */
+.tactical-mode-toggle-container .toggle-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: #a7f3d0;
+  text-transform: uppercase;
+}
+
+/* Switch polish */
+.switch-attractive {
+  position: relative;
+  width: 44px;
+  height: 24px;
+}
+
+.switch-attractive input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider-attractive {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  background: #334155;
+  border-radius: 999px;
+  transition: 0.25s;
+}
+
+.slider-attractive::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+.switch-attractive input:checked + .slider-attractive {
+  background: #10b981;
+}
+
+.switch-attractive input:checked + .slider-attractive::before {
+  transform: translateX(20px);
+}
+
+
+
+/* ===============================
+   RIGHT-SIDE TACTICAL STACK
+================================ */
+
+/* Ensure map is positioning context */
+.map-container {
+  position: relative;
+}
+
+/* 🔹 Base container for all right-side controls */
+.map-variety-picker,
+.engine-switch-container,
+.tactical-mode-toggle-container {
+  position: absolute;
+  right: 16px;
+  z-index: 1000;
+}
+
+/* 1️⃣ 2D / 3D toggle (top) */
+.engine-switch-container {
+  top: 14px;
+}
+
+/* 2️⃣ Engine style + spectral layers */
+.map-variety-picker {
+  top: 64px;
+}
+
+/* 3️⃣ Tactical HUD — COMPACT BUTTON (FIXED) */
+.tactical-mode-toggle-container {
+  top: 210px;               /* sits below spectral buttons */
+  width: auto;              /* ❌ no full width */
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Remove any inherited full-width behavior */
+.tactical-mode-toggle-container {
+  max-width: fit-content;
+}
+
+/* Label styling */
+.tactical-mode-toggle-container .toggle-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #a7f3d0;
+  white-space: nowrap;
+}
+
+/* 🔘 Compact switch */
+.switch-attractive {
+  position: relative;
+  width: 36px;
+  height: 18px;
+}
+
+.switch-attractive input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider-attractive {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  background: #334155;
+  border-radius: 999px;
+  transition: 0.25s;
+}
+
+.slider-attractive::before {
+  content: "";
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  top: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+.switch-attractive input:checked + .slider-attractive {
+  background: #10b981;
+}
+
+.switch-attractive input:checked + .slider-attractive::before {
+  transform: translateX(18px);
+}
+
+
+
+/* ===============================
+   RIGHT-SIDE CONTROL STACK
+================================ */
+
+.map-container {
+  position: relative;
+}
+
+/* Common right alignment */
+.engine-switch-container,
+.map-variety-picker,
+.tactical-mode-toggle-container,
+.tactical-snap-controls {
+  position: absolute;
+  right: 16px;
+  z-index: 1000;
+}
+
+/* 1️⃣ 2D / 3D toggle (top-most) */
+.engine-switch-container {
+  top: 14px;
+}
+
+/* 2️⃣ Engine Style box */
+.map-variety-picker {
+  top: 64px;
+}
+
+/* 3️⃣ Tactical HUD toggle — SMALL PILL */
+.tactical-mode-toggle-container {
+  top: 210px;               /* directly below Engine Style */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 6px 12px;
+  border-radius: 999px;
+  width: fit-content;
+
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Tactical HUD label */
+.tactical-mode-toggle-container .toggle-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #a7f3d0;
+  white-space: nowrap;
+}
+
+/* 4️⃣ A / B / 📍 buttons — EXACTLY below Tactical HUD */
+.tactical-snap-controls {
+  top: 252px;               /* HUD top + HUD height + spacing */
+  display: flex;
+  gap: 10px;
+}
+
+/* Individual snap buttons */
+.snap-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+
+  background: rgba(15, 23, 42, 0.85);
+  color: white;
+
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.35),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.snap-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 26px rgba(0,0,0,0.45),
+    inset 0 0 0 1px rgba(255,255,255,0.12);
+}
+
+/* Color accents */
+.snap-btn.btn-a { color: #60a5fa; }
+.snap-btn.btn-b { color: #f87171; }
+.snap-btn.btn-live { color: #34d399; }
+
+
+/* =====================================
+   FORCE TACTICAL HUD TO RIGHT COLUMN
+===================================== */
+
+/* Shared right-column anchor */
+.engine-switch-container,
+.map-variety-picker,
+.tactical-mode-toggle-container,
+.tactical-snap-controls {
+  position: absolute;
+  right: 16px;          /* 🔥 THIS is the key */
+  left: auto;           /* ❌ prevent left anchoring */
+  z-index: 1000;
+}
+
+/* Tactical HUD — compact pill, right-aligned */
+.tactical-mode-toggle-container {
+  top: 170px;
+  margin-left: auto;    /* ensures it hugs right edge */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+}
+
+/* A / B / 📍 — directly below Tactical HUD, right-aligned */
+.tactical-snap-controls {
+  top: 200px;
+  margin-left: auto;
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+}
+
+
+
+
+/* 🚀 Ensures the container fills the entire screen in Fullscreen mode */
+.map-viewport:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: #000;
+}
+
+/* 🚀 Critical: Keep HUD elements on top layer */
+.map-viewport:fullscreen .tactical-zoom-hud,
+.map-viewport:fullscreen .engine-switch-container,
+.map-viewport:fullscreen .map-variety-picker,
+.map-viewport:fullscreen .tactical-mode-toggle-container,
+.map-viewport:fullscreen .tactical-snap-controls {
+    z-index: 9999 !important; /* Higher than the map layer */
+    position: absolute;
+}
+
+/* Fix zoom buttons positioning in fullscreen if they look off */
+.map-viewport:fullscreen .tactical-zoom-hud {
+    top: 20px;
+    left: 20px;
+}
+
+
+
+
+

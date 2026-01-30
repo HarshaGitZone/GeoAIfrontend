@@ -168,47 +168,47 @@ const PotentialSection = ({ factors, score }) => {
   );
 };
 
-const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) => {
-  const map = useMap();
+// const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) => {
+//   const map = useMap();
 
-  // Handle map clicks
-  useMapEvents({
-    click(e) {
-      const clickedLat = e.latlng.lat;
-      const clickedLng = e.latlng.lng;
+//   // Handle map clicks
+//   useMapEvents({
+//     click(e) {
+//       const clickedLat = e.latlng.lat;
+//       const clickedLng = e.latlng.lng;
 
-      if (isSelectingB) {
-        onSelectB(clickedLat, clickedLng);
-      } else {
-        setLat(clickedLat.toString());
-        setLng(clickedLng.toString());
-      }
-    },
-  });
+//       if (isSelectingB) {
+//         onSelectB(clickedLat, clickedLng);
+//       } else {
+//         setLat(clickedLat.toString());
+//         setLng(clickedLng.toString());
+//       }
+//     },
+//   });
 
-  // 🔥 THIS IS THE MISSING PIECE — recenter map on coord change
-  useEffect(() => {
-    const nLat = parseFloat(lat);
-    const nLng = parseFloat(lng);
+//   // 🔥 THIS IS THE MISSING PIECE — recenter map on coord change
+//   useEffect(() => {
+//     const nLat = parseFloat(lat);
+//     const nLng = parseFloat(lng);
 
 
-  if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return;
+//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return;
 
-    map.whenReady(() => {
-      map.flyTo([nLat, nLng], map.getZoom(), {
-        animate: true,
-        duration: 1.2,
-      });
-    });
-  }, [lat, lng, map]);
+//     map.whenReady(() => {
+//       map.flyTo([nLat, nLng], map.getZoom(), {
+//         animate: true,
+//         duration: 1.2,
+//       });
+//     });
+//   }, [lat, lng, map]);
 
-  // Marker
-  const nLat = parseFloat(lat);
-  const nLng = parseFloat(lng);
-  if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
+//   // Marker
+//   const nLat = parseFloat(lat);
+//   const nLng = parseFloat(lng);
+//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
 
-  return <Marker position={[nLat, nLng]} />;
-};
+//   return <Marker position={[nLat, nLng]} />;
+// };
 
 
 
@@ -532,9 +532,62 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
 //     </>
 //   );
 // };
-const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng, isSelectingB, setBLatInput, setBLngInput }) => {
+// const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng, isSelectingB, setBLatInput, setBLngInput, isTacticalMode}) => {
+//   const map = useMap();
+
+//   useMapEvents({
+//     click(e) {
+//       const clickedLat = e.latlng.lat.toString();
+//       const clickedLng = e.latlng.lng.toString();
+
+//       if (isSelectingB) {
+//         setBLatInput(clickedLat);
+//         setBLngInput(clickedLng);
+//       } else {
+//         setLat(clickedLat);
+//         setLng(clickedLng);
+//       }
+//     },
+//   });
+
+//   useEffect(() => {
+//     // 🔵 Snap to Site A
+//     window.snapToA = () => {
+//       const nLat = parseFloat(latA);
+//       const nLng = parseFloat(lngA);
+//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+//     };
+
+//     // 🔴 Snap to Site B
+//     window.snapToB = () => {
+//       const nLat = parseFloat(latB);
+//       const nLng = parseFloat(lngB);
+//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+//     };
+
+//     // 🟢 Snap to Live Pointer (The Fix)
+//     window.snapToLive = () => {
+//       const nLat = parseFloat(currentLat);
+//       const nLng = parseFloat(currentLng);
+//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+//     };
+
+//     return () => { 
+//       delete window.snapToA; 
+//       delete window.snapToB; 
+//       delete window.snapToLive; // Cleanup
+//     };
+//   }, [map, latA, lngA, latB, lngB, currentLat, currentLng]); // Added current coords as dependencies
+
+/* --- TACTICAL MAP CONTROLLER --- */
+const TacticalMapController = ({ 
+  latA, lngA, latB, lngB, currentLat, currentLng, 
+  setLat, setLng, isSelectingB, setBLatInput, setBLngInput, 
+  isTacticalMode 
+}) => {
   const map = useMap();
 
+  // 🖱️ Interaction Logic: Routes clicks based on selection mode
   useMapEvents({
     click(e) {
       const clickedLat = e.latlng.lat.toString();
@@ -550,68 +603,72 @@ const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng,
     },
   });
 
+  // ⚡ Snap Logic: Attaches functions to global window for HUD access
   useEffect(() => {
-    // 🔵 Snap to Site A
     window.snapToA = () => {
       const nLat = parseFloat(latA);
       const nLng = parseFloat(lngA);
-      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14, { animate: true });
     };
 
-    // 🔴 Snap to Site B
     window.snapToB = () => {
       const nLat = parseFloat(latB);
       const nLng = parseFloat(lngB);
-      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14, { animate: true });
     };
 
-    // 🟢 Snap to Live Pointer (The Fix)
     window.snapToLive = () => {
       const nLat = parseFloat(currentLat);
       const nLng = parseFloat(currentLng);
-      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
+      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14, { animate: true });
     };
 
     return () => { 
       delete window.snapToA; 
       delete window.snapToB; 
-      delete window.snapToLive; // Cleanup
+      delete window.snapToLive; 
     };
-  }, [map, latA, lngA, latB, lngB, currentLat, currentLng]); // Added current coords as dependencies
+  }, [map, latA, lngA, latB, lngB, currentLat, currentLng]);
 
+  // 🎨 Icon Factory
   const createIcon = (color) => new L.Icon({
     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
   });
 
+  // Convert inputs to numbers safely for rendering
   const posA = [parseFloat(latA), parseFloat(lngA)];
   const posB = [parseFloat(latB), parseFloat(lngB)];
   const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
 
+  // 🚀 THE FIXED RETURN: Properly contained within the function braces
   return (
     <>
-      {Number.isFinite(posA[0]) && (
+      {/* 🔵 SITE A: Visible only if Tactical Mode is ON */}
+      {isTacticalMode && Number.isFinite(posA[0]) && (
         <Marker position={posA} icon={createIcon('blue')}>
-          <Popup>Site A: Analyzed</Popup>
+          <Popup>Site A: Analyzed Target</Popup>
         </Marker>
       )}
 
-      {Number.isFinite(posB[0]) && (
+      {/* 🔴 SITE B: Visible only if Tactical Mode is ON */}
+      {isTacticalMode && Number.isFinite(posB[0]) && (
         <Marker position={posB} icon={createIcon('red')}>
-          <Popup>Site B: Comparison</Popup>
+          <Popup>Site B: Comparison Target</Popup>
         </Marker>
       )}
 
+      {/* 🟢 LIVE POINTER: Always visible */}
       {Number.isFinite(posLive[0]) && (
         <Marker position={posLive} icon={createIcon('green')}>
-          <Popup>Current Selection</Popup>
+          <Popup>Current Selection (Neutral)</Popup>
         </Marker>
       )}
     </>
   );
 };
-
+  
 export default function LandSuitabilityChecker() {
   // 1. Add new state at the top of your component
   // 1. Ensure zoom is at the top level
@@ -646,7 +703,7 @@ const toggleFullScreen = () => {
     document.exitFullscreen();
   }
 };
-
+const [isTacticalMode, setIsTacticalMode] = useState(false);
 const [mapMode, setMapMode] = useState("2D"); // "2D" or "3D"
 const [active3DStyle, setActive3DStyle] = useState("satellite");
   const initialAnalysisRef = useRef(false); // Flag to prevent double execution on mount
@@ -898,7 +955,7 @@ const handleSubmit = useCallback(async (e) => {
     if (results[0].status === 'fulfilled') {
       const analysisData = results[0].value;
       setResult(analysisData);
-      const coordsA = { lat, lng };
+      // const coordsA = { lat, lng };
       setAnalyzedCoords({ lat, lng });
       localStorage.setItem("geo_lat_analyzed", lat);
     localStorage.setItem("geo_lng_analyzed", lng);
@@ -1766,6 +1823,7 @@ const intel = data.strategic_intelligence || {};
 
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
         <section className="map-container" style={{ flex: 1, position: 'relative' }}>
+        
         {/* TACTICAL ZOOM CONTROLS (Left side of map) */}
           <div className="tactical-zoom-hud">
             <button onClick= {handleZoomIn}>+</button>
@@ -1773,6 +1831,7 @@ const intel = data.strategic_intelligence || {};
             <button onClick= {handleZoomOut}>−</button>
           </div>
         {/* TACTICAL ENGINE TOGGLE */}
+ 
         <div className="engine-switch-container">
   <button 
     className={`switch-btn ${mapMode === "2D" ? "active" : ""}`}
@@ -1827,69 +1886,37 @@ const intel = data.strategic_intelligence || {};
         </select>
       )}
     </div>
-   <div className="tactical-snap-controls">
-  {/* Add a button for the Live pointer too so you don't get lost! */}
-  <button className="snap-btn btn-live" onClick={() => window.snapToLive?.()} title="Snap to Current Selection">📍</button>
-  
-  <div className="snap-divider" />
+   {/* TACTICAL MASTER TOGGLE */}
+   
+  <div className="tactical-mode-toggle-container">
+    <span className="toggle-label">3 Ptr</span>
+    <label className="switch-attractive">
+      <input 
+        type="checkbox" 
+        checked={isTacticalMode} 
+        onChange={() => setIsTacticalMode(!isTacticalMode)} 
+      />
+      <span className="slider-attractive"></span>
+    </label>
+  </div>
 
-  <button 
-    className={`snap-btn btn-a ${lat === analyzedCoords.lat ? 'active-match' : ''}`} 
-    onClick={() => window.snapToA?.()}
-  >
-    A
-  </button>
-  
-  <button 
-    className={`snap-btn btn-b ${lat === analyzedCoordsB.lat ? 'active-match' : ''}`} 
-    onClick={() => window.snapToB?.()}
-  >
-    B
-  </button>
-</div>
-  <div
+  {isTacticalMode && (
+    <div className="tactical-snap-controls animate-slide-in">
+       <button className="snap-btn btn-a" onClick={() => window.snapToA?.()}>A</button>
+       <button className="snap-btn btn-b" onClick={() => window.snapToB?.()}>B</button>
+       <button className="snap-btn btn-live" onClick={() => window.snapToLive?.()}>📍</button>
+    </div>
+  )}
+
+{/* <div className="map-viewport" style={{ height: "100%", width: "100%" }}> */}
+<div
   ref={mapViewportRef}
   className="map-viewport"
   style={{ height: "100%", width: "100%" }}
 >
-    {mapMode === "2D" ? (
-    //   <MapContainer 
-    //     center={[parseFloat(lat), parseFloat(lng)]} 
-    //     zoom={zoom} 
-    //     // key={`minimap-${zoom}`}
-        
-    //     zoomControl={false} 
-    //     style={{ height: "100%", width: "100%" }}
 
-    //   >
-    //     {/* 🚀 ADD THIS LINE HERE */}
-    // <MapRecenter lat={lat} lng={lng} />
-        
-    //      <ZoomSync zoom={zoom} /> 
-    //     <TileLayer url={varieties[mapVariety]} />
-    //     {/* ✅ RESTORED SPECTRAL LAYERS (NDVI, Heat, Flow) */}
-    // {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
-    //   <TileLayer 
-    //     key={activeSpectral} 
-    //     url={spectralLayers[activeSpectral]} 
-    //     opacity={0.6} 
-    //     zIndex={300} 
-    //   />
-    // )}
-    //     <Marker position={[parseFloat(lat), parseFloat(lng)]} />
-    //      {/* ✅ THIS RESTORES CLICK SELECTION */}
-    // <MapClickHandler
-    //   setLat={setLat}
-    //   setLng={setLng}
-    //   setZoom={setZoom}
-    // />
-    //   </MapContainer>
-//     <MapContainer
-//   center={[parseFloat(lat), parseFloat(lng)]}
-//   zoom={zoom}
-//   zoomControl={false}
-//   style={{ height: "100%", width: "100%" }}
-// >
+    {mapMode === "2D" ? (
+    
 <MapContainer
 key={`map-${lat}-${lng}-${zoom}`} // Forces a hard reset on change
 center={[parseFloat(lat), parseFloat(lng)]} 
@@ -1934,6 +1961,7 @@ center={[parseFloat(lat), parseFloat(lng)]}
   isSelectingB={isSelectingB}
   setBLatInput={setBLatInput}
   setBLngInput={setBLngInput}
+  isTacticalMode={isTacticalMode}
   />
 
 </MapContainer>
@@ -1949,6 +1977,12 @@ center={[parseFloat(lat), parseFloat(lng)]}
         isDarkMode={isDarkMode} 
         activeStyle={active3DStyle} 
         interactive={true}
+        // 🚀 ADD THESE PROPS TO SYNC WITH 3D
+    isTacticalMode={isTacticalMode}
+    latA={analyzedCoords.lat}
+    lngA={analyzedCoords.lng}
+    latB={analyzedCoordsB.lat}
+    lngB={analyzedCoordsB.lng}
       />
     )}
     </div>
