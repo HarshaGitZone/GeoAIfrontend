@@ -1823,7 +1823,12 @@ const intel = data.strategic_intelligence || {};
 
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
         <section className="map-container" style={{ flex: 1, position: 'relative' }}>
-        
+        {/* 🎯 MOVE THE REF TO WRAP EVERYTHING */}
+  <div
+    ref={mapViewportRef}
+    className="map-viewport"
+    style={{ height: "100%", width: "100%", position: "relative", background: "#000" }}
+  >
         {/* TACTICAL ZOOM CONTROLS (Left side of map) */}
           <div className="tactical-zoom-hud">
             <button onClick= {handleZoomIn}>+</button>
@@ -1908,12 +1913,6 @@ const intel = data.strategic_intelligence || {};
     </div>
   )}
 
-{/* <div className="map-viewport" style={{ height: "100%", width: "100%" }}> */}
-<div
-  ref={mapViewportRef}
-  className="map-viewport"
-  style={{ height: "100%", width: "100%" }}
->
 
     {mapMode === "2D" ? (
     
