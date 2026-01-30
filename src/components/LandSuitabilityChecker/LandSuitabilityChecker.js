@@ -167,22 +167,22 @@ const PotentialSection = ({ factors, score }) => {
     </div>
   );
 };
-const MapClickHandler = ({ setLat, setLng, setZoom }) => {
-  // const map = useMap();
+// const MapClickHandler = ({ setLat, setLng, setZoom }) => {
+//   // const map = useMap();
 
-  useMapEvents({
-    click(e) {
-      setLat(e.latlng.lat.toString());
-      setLng(e.latlng.lng.toString());
-      // setZoom(map.getZoom());
-    },
-      zoomend() {
-      // setZoom(map.getZoom());
-    }
-  });
+//   useMapEvents({
+//     click(e) {
+//       setLat(e.latlng.lat.toString());
+//       setLng(e.latlng.lng.toString());
+//       // setZoom(map.getZoom());
+//     },
+//       zoomend() {
+//       // setZoom(map.getZoom());
+//     }
+//   });
 
-  return null;
-};
+//   return null;
+// };
 
 // const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSelectB }) => {
 //   const map = useMap();
@@ -240,24 +240,80 @@ const MapClickHandler = ({ setLat, setLng, setZoom }) => {
 
 //   return <Marker position={[nLat, nLng]} />;
 // };
+// const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) => {
+//   useMapEvents({
+//     click(e) {
+//       if (isSelectingB) {
+//         onSelectB(e.latlng.lat, e.latlng.lng);
+//       } else {
+//         setLat(e.latlng.lat.toString());
+//         setLng(e.latlng.lng.toString());
+//       }
+//     },
+//   });
+
+//   const nLat = parseFloat(lat);
+//   const nLng = parseFloat(lng);
+
+//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
+//   return <Marker position={[nLat, nLng]} />;
+// };
 const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) => {
+  const map = useMap();
+
+  // Handle map clicks
   useMapEvents({
     click(e) {
+      const clickedLat = e.latlng.lat;
+      const clickedLng = e.latlng.lng;
+
       if (isSelectingB) {
-        onSelectB(e.latlng.lat, e.latlng.lng);
+        onSelectB(clickedLat, clickedLng);
       } else {
-        setLat(e.latlng.lat.toString());
-        setLng(e.latlng.lng.toString());
+        setLat(clickedLat.toString());
+        setLng(clickedLng.toString());
       }
     },
   });
 
+  // 🔥 THIS IS THE MISSING PIECE — recenter map on coord change
+  useEffect(() => {
+    const nLat = parseFloat(lat);
+    const nLng = parseFloat(lng);
+
+//     if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+//       map.flyTo([nLat, nLng], map.getZoom(), {
+//         animate: true,
+//         duration: 1.2,
+//       });
+//     }
+//   }, [lat, lng, map]);
+//    const nLat = parseFloat(lat);
+//   const nLng = parseFloat(lng);
+
+//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
+
+//   return <Marker position={[nLat, nLng]} />;
+// };
+  if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return;
+
+    map.whenReady(() => {
+      map.flyTo([nLat, nLng], map.getZoom(), {
+        animate: true,
+        duration: 1.2,
+      });
+    });
+  }, [lat, lng, map]);
+
+  // Marker
   const nLat = parseFloat(lat);
   const nLng = parseFloat(lng);
-
   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
+
   return <Marker position={[nLat, nLng]} />;
 };
+
+
 
 
 // const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral,mapMode,         // ADD THIS
@@ -366,6 +422,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
         dragging={false} 
         style={{ height: "100%", width: "100%" }}
       >
+        {/* 🚀 THIS IS THE FIX: It watches lat/lng and moves the engine */}
         <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
         {/* ✅ RESTORED FOR MINIMAP */}
         {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
@@ -458,6 +515,26 @@ const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) =
 
 //   return null;
 // };
+
+// Add this at the TOP of your file (outside LandSuitabilityChecker)
+// const MapRecenter = ({ lat, lng }) => {
+//   const map = useMap();
+
+//   useEffect(() => {
+//     const nLat = parseFloat(lat);
+//     const nLng = parseFloat(lng);
+
+//     if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+//       map.flyTo([nLat, nLng], map.getZoom(), {
+//         animate: true,
+//         duration: 1.2,
+//       });
+//     }
+//   }, [lat, lng, map]);
+
+//   return null;
+// };
+
 export default function LandSuitabilityChecker() {
   // 1. Add new state at the top of your component
   // 1. Ensure zoom is at the top level
@@ -1213,15 +1290,15 @@ const [activeSpectral, setActiveSpectral] = useState("standard");
 
 //   return null;
 // };
-const ZoomSync = ({ zoom }) => {
-  const map = useMap();
+// const ZoomSync = ({ zoom }) => {
+//   const map = useMap();
 
-  useEffect(() => {
-    map.setZoom(zoom);
-  }, [zoom, map]);
+//   useEffect(() => {
+//     map.setZoom(zoom);
+//   }, [zoom, map]);
 
-  return null;
-};
+//   return null;
+// };
 
 const renderTabContent = (data, coords, name, isFullWidth) => {
   // If isFullWidth (Single Analysis), use your 'results-grid' class
@@ -1693,27 +1770,43 @@ const intel = data.strategic_intelligence || {};
     //   setZoom={setZoom}
     // />
     //   </MapContainer>
-    <MapContainer
-  center={[parseFloat(lat), parseFloat(lng)]}
+//     <MapContainer
+//   center={[parseFloat(lat), parseFloat(lng)]}
+//   zoom={zoom}
+//   zoomControl={false}
+//   style={{ height: "100%", width: "100%" }}
+// >
+<MapContainer
+center={[parseFloat(lat), parseFloat(lng)]} 
   zoom={zoom}
   zoomControl={false}
   style={{ height: "100%", width: "100%" }}
 >
-  {/* <MapRecenter lat={lat} lng={lng} /> */}
-  <ZoomSync zoom={zoom} />
+
+ {/* <MapRecenter lat={lat} lng={lng} /> */}
+  {/* <ZoomSync zoom={zoom} /> */}
   <TileLayer url={varieties[mapVariety]} />
 
   {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
     <TileLayer url={spectralLayers[activeSpectral]} opacity={0.6} />
   )}
-
+{/* 
   <Marker position={[parseFloat(lat), parseFloat(lng)]} />
 
   <MapClickHandler
     setLat={setLat}
     setLng={setLng}
     setZoom={setZoom}
-  />
+  /> */}
+  <LocationMarker
+  lat={lat}
+  lng={lng}
+  setLat={setLat}
+  setLng={setLng}
+  isSelectingB={isSelectingB}
+  onSelectB={handleCompareSelect}
+/>
+
 </MapContainer>
 
     ) : (
