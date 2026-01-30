@@ -174,37 +174,91 @@ const MapClickHandler = ({ setLat, setLng, setZoom }) => {
     click(e) {
       setLat(e.latlng.lat.toString());
       setLng(e.latlng.lng.toString());
-      setZoom(map.getZoom());
+      // setZoom(map.getZoom());
+    },
+      zoomend() {
+      // setZoom(map.getZoom());
     }
   });
 
   return null;
 };
 
-const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSelectB }) => {
-  const map = useMap();
+// const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSelectB }) => {
+//   const map = useMap();
+//   useMapEvents({
+//     click(e) {
+//       if (isSelectingB) onSelectB(e.latlng.lat, e.latlng.lng);
+//       else { 
+//         setLat(e.latlng.lat.toString()); 
+//         setLng(e.latlng.lng.toString()); 
+//       }
+//     },
+//     zoomend() { setZoom(map.getZoom()); },
+//   });
+
+//   // useEffect(() => {
+//   //   const nLat = parseFloat(lat);
+//   //   const nLng = parseFloat(lng);
+//   //   if (!isNaN(nLat) && !isNaN(nLng)) {
+//   //     map.setView([nLat, nLng], map.getZoom());
+//   //   }
+//   // }, [lat, lng, map]);
+
+// //   const markerPos = [parseFloat(lat) || 0, parseFloat(lng) || 0];
+// //   return <Marker position={markerPos} />;
+// // };
+// const nLat = parseFloat(lat);
+// const nLng = parseFloat(lng);
+
+// if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
+
+// return <Marker position={[nLat, nLng]} />;
+// }
+
+// const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSelectB }) => {
+//   const map = useMap();
+
+//   useMapEvents({
+//     click(e) {
+//       if (isSelectingB) {
+//         onSelectB(e.latlng.lat, e.latlng.lng);
+//       } else { 
+//         setLat(e.latlng.lat.toString()); 
+//         setLng(e.latlng.lng.toString()); 
+//       }
+//     },
+//     zoomend() {
+//       setZoom(map.getZoom());
+//     },
+//   });
+
+//   const nLat = parseFloat(lat);
+//   const nLng = parseFloat(lng);
+
+//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
+
+//   return <Marker position={[nLat, nLng]} />;
+// };
+const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) => {
   useMapEvents({
     click(e) {
-      if (isSelectingB) onSelectB(e.latlng.lat, e.latlng.lng);
-      else { 
-        setLat(e.latlng.lat.toString()); 
-        setLng(e.latlng.lng.toString()); 
+      if (isSelectingB) {
+        onSelectB(e.latlng.lat, e.latlng.lng);
+      } else {
+        setLat(e.latlng.lat.toString());
+        setLng(e.latlng.lng.toString());
       }
     },
-    zoomend() { setZoom(map.getZoom()); },
   });
 
-  useEffect(() => {
-    const nLat = parseFloat(lat);
-    const nLng = parseFloat(lng);
-    if (!isNaN(nLat) && !isNaN(nLng)) {
-      map.setView([nLat, nLng], map.getZoom());
-    }
-  }, [lat, lng, map]);
+  const nLat = parseFloat(lat);
+  const nLng = parseFloat(lng);
 
-  const markerPos = [parseFloat(lat) || 0, parseFloat(lng) || 0];
-  return <Marker position={markerPos} />;
+  if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
+  return <Marker position={[nLat, nLng]} />;
 };
+
 
 // const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral,mapMode,         // ADD THIS
 //   active3DStyle }) => {
@@ -307,7 +361,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
         center={[nLat, nLng]} 
         // zoom={15} 
         zoom={zoom}               // ✅ REQUIRED: Pass the state
-    key={`map-2d-${zoom}`}
+    // key={`map-2d-${zoom}`}
         zoomControl={false} 
         dragging={false} 
         style={{ height: "100%", width: "100%" }}
@@ -322,7 +376,7 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
             zIndex={100} 
           />
         )}
-        <Marker position={[nLat, nLng]} />
+        {/* <Marker position={[nLat, nLng]} /> */}
         <LocationMarker 
        lat={latVal} lng={lngVal} 
        setLat={setLat} setLng={setLng} 
@@ -386,20 +440,45 @@ const LocationMarker = ({ lat, lng, setLat, setLng, setZoom, isSelectingB, onSel
     </>
   );
 });
+const MapRecenter = ({ lat, lng }) => {
+  const map = useMap();
 
+  useEffect(() => {
+    const nLat = parseFloat(lat);
+    const nLng = parseFloat(lng);
+
+    if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+      // .flyTo creates a smooth animation; use .setView for an instant jump
+      map.flyTo([nLat, nLng], map.getZoom(), {
+        animate: true,
+        duration: 1.5
+      });
+    }
+  }, [lat, lng, map]);
+
+  return null;
+};
 export default function LandSuitabilityChecker() {
   // 1. Add new state at the top of your component
   // 1. Ensure zoom is at the top level
 // const [zoom, setZoom] = useState(13);
 
 // 2. Wrap zoom in a function that the buttons call
+// const handleZoomIn = () => {
+//   setZoom(prev => Math.min(prev + 1, 20)); // Limit to max 20
+// };
+
+// const handleZoomOut = () => {
+//   setZoom(prev => Math.max(prev - 1, 2)); // Limit to min 2
+// };
 const handleZoomIn = () => {
-  setZoom(prev => Math.min(prev + 1, 20)); // Limit to max 20
+  setZoom(z => Math.min(z + 1, 20));
 };
 
 const handleZoomOut = () => {
-  setZoom(prev => Math.max(prev - 1, 2)); // Limit to min 2
+  setZoom(z => Math.max(z - 1, 2));
 };
+
 // 3. FULLSCREEN FIX: Add a null check to avoid the error you saw
 const toggleFullScreen = () => {
   const mapElement = mapViewportRef.current;
@@ -1125,6 +1204,25 @@ const [activeSpectral, setActiveSpectral] = useState("standard");
       </div>
     </div>
   );
+//   const ZoomSync = ({ zoom }) => {
+//   const map = useMap();
+
+//   useEffect(() => {
+//     map.setZoom(zoom);
+//   }, [zoom, map]);
+
+//   return null;
+// };
+const ZoomSync = ({ zoom }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setZoom(zoom);
+  }, [zoom, map]);
+
+  return null;
+};
+
 const renderTabContent = (data, coords, name, isFullWidth) => {
   // If isFullWidth (Single Analysis), use your 'results-grid' class
   // If not (Compare Mode), use 'column-stack' to fit inside the narrow pane
@@ -1292,6 +1390,7 @@ return (
   }
 
 
+
 if (activeTab === "infrastructure") {
 const intel = data.strategic_intelligence || {}; 
   // Carbon Intelligence: Potential based on vegetation biomass
@@ -1423,8 +1522,8 @@ const intel = data.strategic_intelligence || {};
   );
 }
 
-  // Fallback return to avoid "undefined" errors
-  return null;
+  // // Fallback return to avoid "undefined" errors
+  // return null;
 };
   return (
     <div className="app-shell">
@@ -1498,9 +1597,9 @@ const intel = data.strategic_intelligence || {};
         <section className="map-container" style={{ flex: 1, position: 'relative' }}>
         {/* TACTICAL ZOOM CONTROLS (Left side of map) */}
           <div className="tactical-zoom-hud">
-            <button onClick={() => handleZoomIn(1)}>+</button>
+            <button onClick= {handleZoomIn}>+</button>
             <div className="zoom-divider" />
-            <button onClick={() => handleZoomOut(-1)}>−</button>
+            <button onClick= {handleZoomOut}>−</button>
           </div>
         {/* TACTICAL ENGINE TOGGLE */}
         <div className="engine-switch-container">
@@ -1563,31 +1662,60 @@ const intel = data.strategic_intelligence || {};
   style={{ height: "100%", width: "100%" }}
 >
     {mapMode === "2D" ? (
-      <MapContainer 
-        center={[parseFloat(lat), parseFloat(lng)]} 
-        zoom={zoom} 
-        key={`minimap-${zoom}`}
-        zoomControl={false} 
-        style={{ height: "100%", width: "100%" }}
-      >
-        <TileLayer url={varieties[mapVariety]} />
-        {/* ✅ RESTORED SPECTRAL LAYERS (NDVI, Heat, Flow) */}
-    {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
-      <TileLayer 
-        key={activeSpectral} 
-        url={spectralLayers[activeSpectral]} 
-        opacity={0.6} 
-        zIndex={300} 
-      />
-    )}
-        <Marker position={[parseFloat(lat), parseFloat(lng)]} />
-         {/* ✅ THIS RESTORES CLICK SELECTION */}
-    <MapClickHandler
-      setLat={setLat}
-      setLng={setLng}
-      setZoom={setZoom}
-    />
-      </MapContainer>
+    //   <MapContainer 
+    //     center={[parseFloat(lat), parseFloat(lng)]} 
+    //     zoom={zoom} 
+    //     // key={`minimap-${zoom}`}
+        
+    //     zoomControl={false} 
+    //     style={{ height: "100%", width: "100%" }}
+
+    //   >
+    //     {/* 🚀 ADD THIS LINE HERE */}
+    // <MapRecenter lat={lat} lng={lng} />
+        
+    //      <ZoomSync zoom={zoom} /> 
+    //     <TileLayer url={varieties[mapVariety]} />
+    //     {/* ✅ RESTORED SPECTRAL LAYERS (NDVI, Heat, Flow) */}
+    // {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+    //   <TileLayer 
+    //     key={activeSpectral} 
+    //     url={spectralLayers[activeSpectral]} 
+    //     opacity={0.6} 
+    //     zIndex={300} 
+    //   />
+    // )}
+    //     <Marker position={[parseFloat(lat), parseFloat(lng)]} />
+    //      {/* ✅ THIS RESTORES CLICK SELECTION */}
+    // <MapClickHandler
+    //   setLat={setLat}
+    //   setLng={setLng}
+    //   setZoom={setZoom}
+    // />
+    //   </MapContainer>
+    <MapContainer
+  center={[parseFloat(lat), parseFloat(lng)]}
+  zoom={zoom}
+  zoomControl={false}
+  style={{ height: "100%", width: "100%" }}
+>
+  {/* <MapRecenter lat={lat} lng={lng} /> */}
+  <ZoomSync zoom={zoom} />
+  <TileLayer url={varieties[mapVariety]} />
+
+  {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+    <TileLayer url={spectralLayers[activeSpectral]} opacity={0.6} />
+  )}
+
+  <Marker position={[parseFloat(lat), parseFloat(lng)]} />
+
+  <MapClickHandler
+    setLat={setLat}
+    setLng={setLng}
+    setZoom={setZoom}
+  />
+</MapContainer>
+
     ) : (
       <ProMap 
         lat={lat} 
