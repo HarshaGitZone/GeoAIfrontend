@@ -116,6 +116,7 @@ const handleNavMouseLeave = () => {
       >
         <div className="nav-content-shell">
           {/* LEFT: History & DateTime (Hidden on Mobile) */}
+          
           <div className="nav-group left">
             {!isSmallScreen && (
               <div className="compact-sys">
@@ -123,21 +124,7 @@ const handleNavMouseLeave = () => {
                 <span className="time-val">{currentTime.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' , second: '2-digit' })}</span>
               </div>
             )}
-            <button className={`icon-btn ${showHistoryTable ? "active" : ""}`} onClick={() => setShowHistoryTable(true)}>🕒</button>
-          </div>
-
-          {/* CENTER: Logo */}
-          <div className="nav-group center">
-            <div className="brand-wrap">
-              <div className="status-dot" />
-              <h1 className="logo">Geo<span>AI</span></h1>
-            </div>
-          </div>
-
-          {/* RIGHT: Palette, Team & Tools */}
-          <div className="nav-group right">
-            
-            {/* Horizontal Dropping Palette with Timer Logic */}
+             {/* Horizontal Dropping Palette with Timer Logic */}
             <div className="palette-wrapper" 
                  onMouseEnter={handleMouseEnterPalette} 
                  onMouseLeave={handleMouseLeavePalette}>
@@ -172,6 +159,21 @@ const handleNavMouseLeave = () => {
             >
               {isAudioEnabled ? "🔊" : "🔇"}
             </button>
+            <button className={`icon-btn ${showHistoryTable ? "active" : ""}`} onClick={() => setShowHistoryTable(true)}>🕒</button>
+          </div>
+            
+          {/* CENTER: Logo */}
+          <div className="nav-group center">
+            <div className="brand-wrap">
+              <div className="status-dot" />
+              <h1 className="logo">Geo<span>AI</span></h1>
+            </div>
+          </div>
+
+          {/* RIGHT: Palette, Team & Tools */}
+          <div className="nav-group right">
+            
+           
             <div className="team-trigger-wrapper">
               <button className={`team-btn ${showTeam ? "active" : ""}`} onClick={() => setShowTeam(!showTeam)}>Team</button>
               <div className={`compact-team-pane ${showTeam ? "show" : ""}`}>

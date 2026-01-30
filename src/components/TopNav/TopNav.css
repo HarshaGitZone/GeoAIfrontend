@@ -2207,3 +2207,701 @@
     align-items: center;
     justify-content: center;
 }
+
+
+
+
+
+/* 5. Center group stays locked in the middle */
+.nav-group.center {
+  flex: 0 0 auto; /* Don't let the logo expand */
+  padding: 0 40px; /* Essential gap between logo and icons */
+  display: flex;
+  justify-content: center;
+}
+
+
+
+.date-val { font-size: 10px; font-weight: 700; color: var(--accent-color); }
+.time-val { font-size: 12px; font-family: monospace; }
+
+/* 1. Main Container: Force elements to hug the center logo */
+.nav-content-shell {
+  display: flex;
+  justify-content: center; /* Pulls everything inward */
+  align-items: center;
+  gap: 30px; /* Base gap between the Left, Center, and Right blocks */
+  width: 100%;
+}
+
+/* 2. Left Group: Compact and closer to logo */
+.nav-group.left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px; /* Tight spacing between icons */
+  flex: 1;
+}
+
+/* 3. Right Group: Mirror alignment */
+.nav-group.right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex: 1;
+}
+
+/* 4. Center Logo: Fixed width to prevent shifting */
+.nav-group.center {
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+/* 5. Date & Time: Force into a single row */
+.compact-sys {
+  display: flex;
+  flex-direction: row !important; /* Forces side-by-side */
+  align-items: center;
+  gap: 10px; /* Space between date and time */
+  margin-right: 15px; /* Separation from the first button */
+  white-space: nowrap; /* Prevents breaking into two lines */
+}
+
+.date-val, .time-val {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* 6. Buttons: Uniform sizing for a "neat" look */
+.icon-btn, 
+.palette-trigger, 
+.mode-toggle,
+.audio-toggle {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+
+
+
+
+
+
+/* --- SURGICAL CENTERED HUD FOR SMALLER SCREENS --- */
+@media (max-width: 850px) {
+  /* 1. Force the shell to shrink around the content rather than fill the width */
+  .nav-content-shell {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important; /* Extremely tight gap between Left, Center, Right */
+    width: fit-content !important;
+    margin: 0 auto !important;
+    padding: 0 10px !important;
+  }
+
+  /* 2. Stop side groups from pushing to the edges */
+  .nav-group.left, 
+  .nav-group.right {
+    flex: 0 0 auto !important; /* Removes the flex: 1 that pushes them away */
+    gap: 4px !important; /* Icon-to-icon tight spacing */
+  }
+
+  /* 3. Ensure the Center Logo doesn't take extra space */
+  .nav-group.center {
+    flex: 0 0 auto !important;
+    padding: 0 4px !important;
+  }
+
+  /* 4. Telemetry: Compact single row */
+  .compact-sys {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 5px !important;
+    margin-right: 5px !important;
+  }
+
+  .date-val, .time-val {
+    font-size: 9px !important;
+    font-weight: 800 !important;
+  }
+
+  /* 5. Precision Button Sizing */
+  .icon-btn, 
+  .palette-trigger, 
+  .mode-toggle, 
+  .audio-toggle {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    font-size: 0.9rem !important;
+    border-radius: 4px !important;
+  }
+
+  .team-btn {
+    height: 28px !important;
+    padding: 0 6px !important;
+    font-size: 9px !important;
+    min-width: unset !important;
+  }
+
+  /* 6. Hide the status dot on mobile to save more space if needed */
+  .status-dot {
+    margin-right: 4px !important;
+    width: 6px !important;
+    height: 6px !important;
+  }
+}
+
+
+
+/* --- FULL-WIDTH FLAT HUD FOR SMALLER SCREENS --- */
+@media (max-width: 850px) {
+  /* 1. Snap the Navbar to the very top and full width */
+  .geo-navbar {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    border-radius: 0 !important; /* Removes the rounded "pill" look */
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 50px !important; /* Fixed compact height */
+    background: rgba(0, 0, 0, 0.95) !important; /* Stronger dark background for contrast */
+  }
+
+  /* 2. Center the content unit within that full width */
+  .nav-content-shell {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 12px !important; /* Tight spacing between groups */
+    height: 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* 3. Ensure side groups collapse inward to the center */
+  .nav-group.left, 
+  .nav-group.right {
+    flex: 0 0 auto !important; 
+    gap: 6px !important;
+  }
+
+  /* 4. Precision Button Sizing for the flat bar */
+  .icon-btn, 
+  .palette-trigger, 
+  .mode-toggle, 
+  .audio-toggle {
+    width: 32px !important;
+    height: 32px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 4px !important;
+  }
+
+  /* 5. Team button adjustment */
+  .team-btn {
+    height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 10px !important;
+  }
+
+  /* 6. Logo scale for top bar */
+  .logo {
+    font-size: 1.2rem !important;
+  }
+
+  /* 7. Date/Time compression */
+  .compact-sys {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    margin-right: 4px !important;
+  }
+
+  .date-val, .time-val {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+  }
+}
+
+
+
+
+/* --- REFINE HISTORY SLIDER FOR MOBILE --- */
+@media (max-width: 850px) {
+  
+  /* 1. Force the Modal Card to occupy the full width but allow internal scrolling */
+  .history-table-card {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 10px auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; /* Lock the card itself */
+  }
+
+  /* 2. Target the wrapper exactly as named in your JSX */
+  .history-table-container {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important; /* THIS IS THE SLIDER */
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important; /* Smooth swipe for touchscreens */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+  }
+
+  /* 3. Force the table to be wide enough to require scrolling */
+  .history-table {
+    width: 100% !important;
+    min-width: 750px !important; /* Increased to ensure all columns (Scan, Score, Action) fit */
+    border-collapse: collapse !important;
+    table-layout: auto !important;
+  }
+
+  /* 4. Cell styling to prevent text wrapping that makes rows too tall */
+  .history-table th, 
+  .history-table td {
+    white-space: nowrap !important; /* Keeps "Date & Time" in one line */
+    padding: 10px 15px !important;
+  }
+
+  /* 5. Visual Cue: Ensure the scrollbar is visible to the audience */
+  .history-table-container::-webkit-scrollbar {
+    height: 6px !important;
+    display: block !important;
+  }
+
+  .history-table-container::-webkit-scrollbar-thumb {
+    background: var(--accent-color, #06b6d4) !important;
+    border-radius: 10px !important;
+  }
+}
+
+
+/* --- CRITICAL LEFT-ALIGNMENT FIX FOR HISTORY SLIDER --- */
+@media (max-width: 850px) {
+  /* 1. Force the card to align to the left of the viewport */
+  .history-table-card {
+    display: block !important; /* Switch from flex to block to stop auto-centering logic */
+    width: 95vw !important;
+    margin: 20px auto !important; /* Centers the card box, but not the content inside */
+    text-align: left !important;
+  }
+
+  /* 2. Ensure the container starts at pixel 0 */
+  .history-table-container {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    /* This ensures that if the content is larger than the screen, it starts at the left */
+    justify-content: flex-start !important; 
+  }
+
+  /* 3. Force the table to behave like a standard block element */
+  .history-table {
+    display: table !important;
+    margin: 0 !important; /* Remove any auto-margins that might center it */
+    min-width: 800px !important; /* High min-width to ensure scrolling is triggered */
+    border-spacing: 0;
+  }
+
+  /* 4. Ensure the first column (Site) is locked to the left */
+  .history-table th:first-child, 
+  .history-table td:first-child {
+    padding-left: 15px !important;
+    text-align: left !important;
+  }
+
+  /* 5. Visual Cue: Glow on the left to indicate start */
+  .history-table-container {
+    background: linear-gradient(to right, rgba(6, 182, 212, 0.05), transparent 50px);
+  }
+}
+
+
+
+
+@media (max-width: 850px) {
+  /* Position the dropdown directly under the trigger */
+  .palette-wrapper {
+    position: relative !important;
+  }
+
+  .palette-dropdown {
+    position: absolute !important;
+    top: 110% !important; /* Moves it below the icon */
+    left: 0 !important;
+    transform: none !important; /* Remove any centering transforms */
+    display: flex !important;
+    flex-wrap: wrap !important; /* Wraps colors to new rows if needed */
+    width: 120px !important; /* Fixed width to prevent horizontal overflow */
+    background: rgba(0, 0, 0, 0.9) !important;
+    padding: 8px !important;
+    border-radius: 8px !important;
+    z-index: 1000 !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5) !important;
+  }
+
+  /* Ensure the color dots are large enough to tap but compact */
+  .color-dot {
+    width: 24px !important;
+    height: 24px !important;
+    margin: 4px !important;
+  }
+}
+
+
+@media (max-width: 850px) {
+  /* Force the modal card to stop centering internally */
+  .history-table-card {
+    display: block !important; 
+    width: 96vw !important;
+    padding: 10px !important;
+    text-align: left !important;
+  }
+
+  /* Force the scroll container to anchor to the absolute left */
+  .history-table-container {
+    display: block !important; 
+    width: 100% !important;
+    overflow-x: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  /* Ensure the table itself does not have auto-margins */
+  .history-table {
+    margin: 0 !important;
+    min-width: 700px !important; /* Adjust based on your columns */
+    border-collapse: collapse !important;
+  }
+
+  /* Padding for the first column so it doesn't touch the glass edge */
+  .history-table th:first-child, 
+  .history-table td:first-child {
+    padding-left: 12px !important;
+  }
+}
+
+
+@media (max-width: 850px) {
+  .palette-wrapper {
+    position: relative !important;
+  }
+
+  .palette-dropdown {
+    position: absolute !important;
+    top: 45px !important; /* Clear height of your flat navbar */
+    left: 0 !important; /* Anchors to the left edge of the wrapper */
+    transform: none !important;
+    display: flex !important;
+    flex-direction: row !important; /* Keep colors in a neat row */
+    width: max-content !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8) !important;
+   
+    z-index: 2000 !important;
+  }
+
+  .color-dot {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 4px !important;
+  }
+}
+
+
+
+@media (max-width: 850px) {
+  /* 1. Force the Modal Card to align to the absolute left and span full width */
+  .history-table-card {
+    display: block !important; 
+    width: 100vw !important; /* Spans entire phone width */
+    max-width: 100vw !important;
+    margin: 0 !important; /* Removes auto-centering */
+    padding: 15px 5px !important; /* Minimal side padding */
+    border-radius: 0 !important; /* Fits flat against the screen */
+    position: fixed !important;
+    left: 0 !important;
+    top: 50px !important; /* Sits exactly below your flat navbar */
+  }
+
+  /* 2. Ensure the container has no internal gaps on the left */
+  .history-table-container {
+    display: block !important; 
+    width: 100% !important;
+    overflow-x: auto !important; /* Enables horizontal stretching */
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  /* 3. Let the table stretch as far as it needs to the right */
+  .history-table {
+    margin: 0 !important;
+    width: auto !important;
+    min-width: 850px !important; /* Higher min-width guarantees scrolling starts at the far right */
+    border-collapse: collapse !important;
+  }
+
+  /* 4. Column Anchor: Ensure the first column is visible at pixel 0 */
+  .history-table th:first-child, 
+  .history-table td:first-child {
+    padding-left: 15px !important;
+    text-align: left !important;
+    position: sticky !important; /* Optional: keeps site name visible while sliding */
+    left: 0;
+    background: #0a0a0a; /* Match your modal background */
+    z-index: 10;
+  }
+}
+
+
+@media (max-width: 850px) {
+  /* Ensure the Modal Card spans full width to provide a large viewport */
+  .history-table-card {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important; /* Remove padding to maximize horizontal space */
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Fixed Header: Ensures the title is always centered and visible */
+  .history-table-card .modal-header {
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    justify-content: center; /* Centers the "Analysis History" text */
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: #0d1117;
+    z-index: 30;
+    border-bottom: 1px solid var(--accent-color);
+  }
+
+  /* The Scroll Container */
+  .history-table-container {
+    display: block !important;
+    width: 100vw !important;
+    overflow-x: auto !important; /* Enable horizontal slider */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 !important;
+  }
+
+  /* Force the Table to expand fully to the right */
+  .history-table {
+    display: table !important; /* Required for horizontal overflow */
+    width: auto !important; 
+    min-width: 900px !important; /* Guarantees the right columns are "off-screen" at start */
+    margin: 0 !important;
+    border-collapse: collapse;
+  }
+
+  /* Row & Cell Visibility */
+  .history-table th, 
+  .history-table td {
+    white-space: nowrap !important; /* Prevents columns from squishing */
+    padding: 12px 15px !important;
+    text-align: left;
+  }
+
+  /* Ensure the first column is stuck to the left for context */
+  .history-table th:first-child, 
+  .history-table td:first-child {
+    position: sticky !important;
+    left: 0;
+    background: #0d1117 !important; /* Match background to hide overlapping text */
+    z-index: 20;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+  }
+
+  /* Make sure the Action Button (Extreme Right) is fully visible */
+  .history-table td:last-child {
+    padding-right: 30px !important; /* Extra buffer so it's not cut off by the screen edge */
+  }
+}
+
+
+/* --- DUAL-AXIS SCROLLING & FIXED CENTERED HEADER --- */
+@media (max-width: 850px) {
+  /* 1. Modal Card: Occupies most of the screen vertically */
+  .history-table-card {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 85vh !important; /* Forces a height to enable vertical scroll */
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; /* Keeps scroll inside the container */
+    border-radius: 0;
+  }
+
+  /* 2. Centered Header Logic */
+  .history-table-card .modal-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important; /* Forces title to the absolute center */
+    padding: 15px !important;
+    background: #0d1117 !important;
+    border-bottom: 1px solid var(--accent-color);
+    flex: 0 0 auto; /* Keeps header size fixed */
+    position: relative; /* Context for absolute close button */
+  }
+
+  .history-table-card .modal-header h3 {
+    margin: 0 !important;
+    font-size: 1.1rem !important;
+    text-align: center !important;
+    color: #fff !important;
+    width: 100%;
+  }
+
+  /* 3. The Close Button: Anchored to the side so it doesn't push the title */
+  .history-table-card .modal-close {
+    position: absolute !important;
+    right: 15px !important;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+  }
+
+  /* 4. The Container: Handles both horizontal and vertical movement */
+  .history-table-container {
+    flex: 1 !important; /* Takes up remaining modal height */
+    width: 100vw !important;
+    overflow-x: auto !important; /* Horizontal slider for columns */
+    overflow-y: auto !important; /* Vertical slider for rows */
+    display: block !important;
+    -webkit-overflow-scrolling: touch;
+    border: none !important;
+  }
+
+  /* 5. Table Geometry: Prevent shrinking to force horizontal scroll */
+  .history-table {
+    min-width: 950px !important; /* Ensures right-side columns are hidden initially */
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: auto !important;
+  }
+
+  /* 6. Sticky Row Header: Keep table headers visible while scrolling down */
+  .history-table thead tr {
+    position: sticky !important;
+    top: 0;
+    z-index: 40;
+    background: #161b22;
+  }
+
+  /* 7. Sticky First Column: Keep site name visible while scrolling right */
+  .history-table th:first-child, 
+  .history-table td:first-child {
+    position: sticky !important;
+    left: 0 !important;
+    background: #0d1117 !important;
+    z-index: 35;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+  }
+}
+
+
+/* --- ANALYSIS HISTORY HEADING CENTER FIX --- */
+@media (max-width: 850px) {
+  /* 1. Anchor the header to the screen viewport, not the table width */
+  .history-table-card .modal-header {
+    position: sticky !important;
+    left: 0 !important;   /* Critical: Locks title to phone screen center */
+    width: 100vw !important; /* Force width to match device screen */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background: #0d1117 !important; /* Match your background color */
+    padding: 15px 0 !important;
+    z-index: 100 !important;
+    border-bottom: 2px solid var(--accent-color);
+  }
+
+  /* 2. Centering the text inside the anchored header */
+  .history-table-card .modal-header h3 {
+    margin: 0 !important;
+    text-align: center !important;
+    width: 100% !important;
+    font-size: 1.1rem !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px;
+    white-space: nowrap;
+    position: relative; /* Context for the 'X' button */
+  }
+
+  /* 3. Keep the 'X' button in the corner without affecting center alignment */
+  .history-table-card .modal-close {
+    position: absolute !important;
+    right: 15px !important;
+    margin: 0 !important;
+  }
+}
+
+
+/* --- Z-INDEX LAYER PRIORITY FIX --- */
+
+/* The dark background that covers the map */
+.modal-overlay {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85); /* Darken map more for contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Set higher than Map (400) and Nav (1000) */
+  z-index: 9999 !important; 
+  backdrop-filter: blur(5px); /* Blurs the map layers behind the history */
+}
+
+/* The actual History Card */
+.history-table-card {
+  z-index: 10000 !important; /* One level higher than the overlay */
+  /* ... existing styles ... */
+}
+
+/* Ensure the Expanded QR also stays on top */
+.qr-expanded-overlay {
+  z-index: 10001 !important;
+}
+
+
