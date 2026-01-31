@@ -7357,10 +7357,6 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
   z-index: 1000;
 }
 
-/* 2️⃣ Engine Style box */
-.map-variety-picker {
-  top: 60px;
-}
 
 
 
@@ -7423,17 +7419,6 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
   z-index: 1000;
 }
 
-/* Tactical HUD — compact pill, right-aligned */
-.tactical-mode-toggle-container {
-  top: 15px;
-  /* right:120px; */
-  margin-left: auto;    /* ensures it hugs right edge */
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-}
-
 /* A / B / 📍 — directly below Tactical HUD, right-aligned */
 .tactical-snap-controls {
   top: 55px;
@@ -7447,9 +7432,59 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
 /* 1️⃣ 2D / 3D toggle (top-most) */
 .engine-switch-container {
   top: 14px;
-  right:20px;
+  right:2px;
+}
+/* 2️⃣ Engine Style box */
+.map-variety-picker {
+  top: 55px;
+  right: 2px;
+}
+/* --- FORCE DARK CONTROLS IN LIGHT THEME --- */
+.engine-switch-container {
+    background: rgba(13, 17, 23, 0.9) !important; /* Force dark background */
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 6px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
+/* 2D / 3D Text Styling */
+.engine-switch-container .switch-btn {
+    color: rgba(255, 255, 255, 0.6) !important; /* Grey out inactive */
+    background: transparent !important;
+    border: none !important;
+    font-weight: 700 !important;
+}
+
+/* The Active Mode (e.g., the Blue 2D button) */
+.engine-switch-container .switch-btn.active {
+    background: #00d4ff !important; /* Tactical Cyan */
+    color: #000 !important;
+    border-radius: 8px !important;
+}
+
+/* Fullscreen Button Visibility */
+.fullscreen-btn {
+    color: white !important;
+    background: transparent !important;
+    border: none !important;
+    opacity: 0.8 !important;
+}
+
+.fullscreen-btn:hover {
+    opacity: 1 !important;
+    transform: scale(1.1) !important;
+}
+
+/* Vertical Divider logic */
+.vertical-divider {
+    border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+    height: 20px !important;
+    margin: 0 8px !important;
+}
 
 
 
@@ -7589,7 +7624,7 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
     pointer-events: auto !important;
     display: flex !important;
     flex-direction: row !important;
-    gap: 2px !important;
+    gap: 3px !important;
     padding-right: 1px; /* Visual alignment with the switch */
     animation: slideUpHUD 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
@@ -7615,8 +7650,61 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
 .tactical-snap-controls {
     position: absolute !important; 
     bottom: 60px !important; /* 🚀 This will now work */
-    right: 0 !important;
+    right: 5px !important;
     display: flex !important;
     flex-direction: row !important;
-    gap: 2px !important;
+    gap: 1px !important;
+}
+
+
+/* Normal State - Centered on the left */
+.tactical-zoom-hud {
+    position: absolute !important;
+    /* 🚀 Centering Logic */
+    top: 50% !important;
+    left: 20px !important;
+    transform: translateY(-50%) !important; 
+    
+    z-index: 9999 !important;
+    display: flex;
+    flex-direction: column;
+    background: rgba(13, 17, 23, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* 🚀 FULLSCREEN SPECIFIC OVERRIDE */
+/* This forces the browser to maintain the center position 
+   instead of defaulting to the top safe-area */
+.map-viewport:fullscreen .tactical-zoom-hud {
+    top: 50% !important;
+    left: 30px !important; /* Slightly more space from edge in fullscreen */
+    transform: translateY(-50%) !important;
+    z-index: 2147483647 !important;
+}
+
+/* Button & Divider styling */
+.tactical-zoom-hud button {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tactical-zoom-hud button:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.zoom-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    width: 70%;
+    margin: 0 auto;
 }

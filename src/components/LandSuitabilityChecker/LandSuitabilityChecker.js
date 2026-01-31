@@ -1919,7 +1919,7 @@ const intel = data.strategic_intelligence || {};
      
   {/* Wrap the top part in a row-content div */}
   <div className="toggle-row-content">
-    <span className="toggle-label">3 Ptr</span>
+    <span className="toggle-label">Geo-Triad</span>
     <label className="switch-attractive">
       <input 
         type="checkbox" 
