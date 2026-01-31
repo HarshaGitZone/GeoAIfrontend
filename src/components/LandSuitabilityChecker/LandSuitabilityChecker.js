@@ -1857,7 +1857,7 @@ const intel = data.strategic_intelligence || {};
 </div>
     
     <div className="map-variety-picker">
-      <label className="picker-header">🗺️ Engine style</label>
+      <label className="picker-header">🗺️ Map Variety</label>
       {mapMode === "2D" ? (
         <>
           <select value={mapVariety} onChange={(e) => setMapVariety(e.target.value)} className="variety-select">
@@ -1893,7 +1893,7 @@ const intel = data.strategic_intelligence || {};
     </div>
    {/* TACTICAL MASTER TOGGLE */}
    
-  <div className="tactical-mode-toggle-container">
+  {/* <div className="tactical-mode-toggle-container">
     <span className="toggle-label">3 Ptr</span>
     <label className="switch-attractive">
       <input 
@@ -1911,7 +1911,32 @@ const intel = data.strategic_intelligence || {};
        <button className="snap-btn btn-b" onClick={() => window.snapToB?.()}>B</button>
        <button className="snap-btn btn-live" onClick={() => window.snapToLive?.()}>📍</button>
     </div>
+  )} */}
+ 
+
+
+   <div className="tactical-mode-toggle-container">
+     
+  {/* Wrap the top part in a row-content div */}
+  <div className="toggle-row-content">
+    <span className="toggle-label">3 Ptr</span>
+    <label className="switch-attractive">
+      <input 
+        type="checkbox" 
+        checked={isTacticalMode} 
+        onChange={() => setIsTacticalMode(!isTacticalMode)} 
+      />
+      <span className="slider-attractive"></span>
+    </label>
+  </div>
+   {isTacticalMode && (
+    <div className="tactical-snap-controls animate-slide-in">
+       <button className="snap-btn btn-a" onClick={() => window.snapToA?.()}>A</button>
+       <button className="snap-btn btn-b" onClick={() => window.snapToB?.()}>B</button>
+       <button className="snap-btn btn-live" onClick={() => window.snapToLive?.()}>📍</button>
+    </div>
   )}
+</div>
 
 
     {mapMode === "2D" ? (

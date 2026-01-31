@@ -7277,35 +7277,8 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
   z-index: 1000;
 }
 
-/* 1️⃣ 2D / 3D toggle (top) */
-.engine-switch-container {
-  top: 14px;
-}
 
-/* 2️⃣ Engine style + spectral layers */
-.map-variety-picker {
-  top: 64px;
-}
 
-/* 3️⃣ Tactical HUD — COMPACT BUTTON (FIXED) */
-.tactical-mode-toggle-container {
-  top: 210px;               /* sits below spectral buttons */
-  width: auto;              /* ❌ no full width */
-  padding: 6px 10px;
-  border-radius: 999px;
-
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  box-shadow:
-    0 8px 22px rgba(0, 0, 0, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-}
 
 /* Remove any inherited full-width behavior */
 .tactical-mode-toggle-container {
@@ -7384,35 +7357,12 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
   z-index: 1000;
 }
 
-/* 1️⃣ 2D / 3D toggle (top-most) */
-.engine-switch-container {
-  top: 14px;
-}
-
 /* 2️⃣ Engine Style box */
 .map-variety-picker {
-  top: 64px;
+  top: 60px;
 }
 
-/* 3️⃣ Tactical HUD toggle — SMALL PILL */
-.tactical-mode-toggle-container {
-  top: 210px;               /* directly below Engine Style */
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
 
-  padding: 6px 12px;
-  border-radius: 999px;
-  width: fit-content;
-
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  box-shadow:
-    0 8px 22px rgba(0, 0, 0, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-}
 
 /* Tactical HUD label */
 .tactical-mode-toggle-container .toggle-label {
@@ -7424,17 +7374,11 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
   white-space: nowrap;
 }
 
-/* 4️⃣ A / B / 📍 buttons — EXACTLY below Tactical HUD */
-.tactical-snap-controls {
-  top: 252px;               /* HUD top + HUD height + spacing */
-  display: flex;
-  gap: 10px;
-}
 
 /* Individual snap buttons */
 .snap-btn {
-  width: 42px;
-  height: 42px;
+  width: 30px;
+  height: 32px;
   border-radius: 12px;
   font-weight: 700;
   font-size: 14px;
@@ -7481,7 +7425,8 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
 
 /* Tactical HUD — compact pill, right-aligned */
 .tactical-mode-toggle-container {
-  top: 170px;
+  top: 15px;
+  /* right:120px; */
   margin-left: auto;    /* ensures it hugs right edge */
   display: inline-flex;
   align-items: center;
@@ -7491,11 +7436,18 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
 
 /* A / B / 📍 — directly below Tactical HUD, right-aligned */
 .tactical-snap-controls {
-  top: 200px;
+  top: 55px;
+   /* right:110px; */
   margin-left: auto;
   display: flex;
   gap: 3px;
   justify-content: flex-end;
+}
+
+/* 1️⃣ 2D / 3D toggle (top-most) */
+.engine-switch-container {
+  top: 14px;
+  right:20px;
 }
 
 
@@ -7527,4 +7479,144 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
 
 
 
+/* --- THE TACTICAL HUD CLUSTER (Bottom Right) --- */
+.tactical-mode-toggle-container {
+    /* Absolute Anchor */
+    position: absolute !important;
+    bottom: 0px !important; 
+    right: 0px !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 5000 !important;
 
+    /* Layout Engine */
+    display: flex !important;
+    /* 🚀 THIS IS THE KEY: Flips order so buttons appear ABOVE the toggle */
+    flex-direction: column-reverse !important; 
+    align-items: flex-end !important;
+    gap: 12px !important;
+    
+    /* Visual Container */
+    background: rgba(13, 17, 23, 0.85) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+    padding: 10px !important;
+    width: auto !important;
+    height: auto !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+    pointer-events: auto !important;
+}
+
+/* Row containing the Toggle and "3 Ptr" label */
+.toggle-row-content {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    white-space: nowrap !important;
+}
+
+
+.snap-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important; /* Keep them circular */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Individual Button Colors */
+.btn-a { background: rgba(59, 130, 246, 0.9) !important; color: white !important; }
+.btn-b { background: rgba(239, 68, 68, 0.9) !important; color: white !important; }
+.btn-live { background: rgba(16, 185, 129, 0.9) !important; color: black !important; }
+
+.snap-btn:hover {
+    transform: scale(1.1) !important;
+    filter: brightness(1.2) !important;
+}
+
+@keyframes slideUpHUD {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* --- THE TACTICAL HUD CLUSTER (Bottom Right) --- */
+.tactical-mode-toggle-container {
+    position: absolute !important;
+    bottom: 40px !important; 
+    right: 0px !important;
+    z-index: 5000 !important;
+
+    /* No background here - let children float */
+    display: flex !important;
+    flex-direction: column-reverse !important; 
+    align-items: flex-end !important;
+    gap: 12px !important;
+    
+    width: auto !important;
+    height: auto !important;
+    background: none !important; /* 🚀 KEY: Remove container box */
+    box-shadow: none !important;
+    pointer-events: none !important; /* 🚀 Allow clicking map between buttons */
+}
+
+/* Re-apply the nice styling ONLY to the bottom toggle row */
+.toggle-row-content {
+    pointer-events: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px !important;
+    background: rgba(13, 17, 23, 0.9) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 30px !important;
+    padding: 6px 14px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* The buttons appearing ABOVE */
+.tactical-snap-controls {
+    pointer-events: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 2px !important;
+    padding-right: 1px; /* Visual alignment with the switch */
+    animation: slideUpHUD 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.snap-btn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+}
+
+@keyframes slideUpHUD {
+    from { opacity: 0; transform: translateY(20px) scale(0.5); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.tactical-snap-controls {
+    position: absolute !important; 
+    bottom: 60px !important; /* 🚀 This will now work */
+    right: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 2px !important;
+}
