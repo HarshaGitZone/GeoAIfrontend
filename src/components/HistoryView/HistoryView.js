@@ -6,10 +6,57 @@ import { API_BASE } from "../../config/api";
 
 const RANGES = ['1W', '1M', '1Y', '10Y'];
 
-export default function HistoryView({ data, locationName, onClose, lat, lng }) {
+// 5 categories aligned with backend aggregator (same formula)
+const CATEGORY_FACTORS = {
+  'Physical Terrain': ['slope', 'elevation'],
+  'Hydrology': ['flood', 'water', 'drainage'],
+  'Environmental': ['vegetation', 'soil', 'pollution'],
+  'Climatic': ['rainfall', 'thermal', 'intensity'],
+  'Socio-Economic': ['landuse', 'infrastructure', 'population'],
+};
+const CATEGORY_KEYS = ['physical', 'environmental', 'hydrology', 'climatic', 'socio_econ'];
+const CATEGORY_LABELS = {
+  physical: 'Physical Terrain',
+  environmental: 'Environmental',
+  hydrology: 'Hydrology',
+  climatic: 'Climatic',
+  socio_econ: 'Socio-Economic',
+};
+
+// Helper function to flatten nested factors structure
+const flattenFactors = (factors) => {
+  if (!factors) return {};
+  
+  const flat = {};
+  
+  // Check if factors is already flat (backward compatibility)
+  const firstKey = Object.keys(factors)[0];
+  if (firstKey && typeof factors[firstKey] !== 'object') {
+    return factors; // Already flat
+  }
+  
+  // Flatten nested structure
+  Object.entries(factors).forEach(([category, categoryFactors]) => {
+    if (typeof categoryFactors === 'object' && categoryFactors !== null) {
+      Object.entries(categoryFactors).forEach(([factorKey, factorData]) => {
+        if (typeof factorData === 'object' && factorData !== null) {
+          flat[factorKey] = factorData.value ?? factorData.score ?? 50;
+        } else {
+          flat[factorKey] = factorData ?? 50;
+        }
+      });
+    }
+  });
+  
+  return flat;
+};
+
+export default function HistoryView({ data, locationName, onClose, lat, lng, isDarkMode, standalone }) {
   const [rangeIndex, setRangeIndex] = useState(3); 
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [historyBundle, setHistoryBundle] = useState(null); 
+  const [historyBundle, setHistoryBundle] = useState(null);
+  const [currentFactors, setCurrentFactors] = useState(null);
+  const [currentCategoryScores, setCurrentCategoryScores] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
 
@@ -43,16 +90,23 @@ export default function HistoryView({ data, locationName, onClose, lat, lng }) {
         const text = await response.text();
         const result = JSON.parse(text); 
         setHistoryBundle(result.history_bundle || null);
+        setCurrentFactors(result.current_factors || flattenFactors(data?.factors));
+        setCurrentCategoryScores(result.current_category_scores || null);
       } catch (err) {
         console.error("Historical reconstruction failed:", err);
+        // Fallback to flattening from passed data
+        setCurrentFactors(flattenFactors(data?.factors));
       } finally {
         setIsLoading(false);
       }
     };
     if (lat && lng) preFetchHistory();
-  }, [lat, lng]);
+  }, [lat, lng, data?.factors]);
 
   const activeHistory = historyBundle ? historyBundle[timeRange] : null;
+  
+  // Use currentFactors (flat) for display, fallback to flattening data.factors
+  const flatFactors = currentFactors || flattenFactors(data?.factors);
 
   const getPreviousValue = (key, currentVal) => {
     if (!activeHistory || !activeHistory.drifts) return currentVal;
@@ -192,19 +246,25 @@ const VisualForensics = ({ forensics }) => {
             {forensics.intensity}%
           </span>
         </div>
+        {forensics.telemetry?.interpretation && (
+          <div className="forensics-telemetry">
+            <span className="label">Resolution</span>
+            <span className="value">~{forensics.telemetry.resolution_m_per_px}m/px · {forensics.telemetry.interpretation}</span>
+          </div>
+        )}
         <div className="stat-desc">
-          {getDynamicInsight(forensics.intensity, forensics.baseline_year)}
+          {forensics.reasoning || getDynamicInsight(forensics.intensity, forensics.baseline_year)}
         </div>
       </div>
     </div>
   );
 };
   return (
-    <div className="history-page-overlay">
+    <div className={`history-page-overlay ${standalone ? 'full-page-standalone' : ''}`}>
       <div className="history-content-wrapper">
         <header className="history-header-responsive">
           <div className="header-top-row">
-            <button className="back-link-glass" onClick={onClose}>← EXIT ANALYSIS</button>
+            <button className="back-link-glass" onClick={onClose}>{standalone ? '← Back to Map' : '← EXIT ANALYSIS'}</button>
             <div className="live-clock-responsive">
               {currentTime.toLocaleDateString()} | {currentTime.toLocaleTimeString()}
             </div>
@@ -273,8 +333,12 @@ const VisualForensics = ({ forensics }) => {
             <h3>Terrain Reconstruction Archive</h3>
             <div className="snapshot-grid">
               {snapshots.map((snap) => {
+                // Use flattened factors for current snapshot
+                const currentLanduse = flatFactors?.landuse ?? 50;
+                const currentProximity = flatFactors?.proximity ?? flatFactors?.infrastructure ?? 50;
+                
                 const snapData = snap.key === 'Today' 
-                  ? { terrain: { nature_density: data.factors.landuse, urban_density: data.factors.proximity } } 
+                  ? { terrain: { nature_density: currentLanduse, urban_density: currentProximity } } 
                   : historyBundle?.[snap.key];
                 const isSelected = timeRange === snap.key;
 
@@ -285,13 +349,13 @@ const VisualForensics = ({ forensics }) => {
                       <span className="snap-year">{snap.year}</span>
                     </div>
                     <div className="mini-map-container">
-                      <div className="map-render" style={{ background: `linear-gradient(135deg, #1a472a ${snapData?.terrain?.nature_density}%, #334155 ${snapData?.terrain?.urban_density}%)` }}>
+                      <div className="map-render" style={{ background: `linear-gradient(135deg, #1a472a ${snapData?.terrain?.nature_density ?? 50}%, #334155 ${snapData?.terrain?.urban_density ?? 50}%)` }}>
                         <div className="map-grid-overlay"></div>
                       </div>
                     </div>
                     <div className="snap-stats">
-                      <span>Nature: {snapData?.terrain?.nature_density?.toFixed(0)}%</span>
-                      <span>Urban: {snapData?.terrain?.urban_density?.toFixed(0)}%</span>
+                      <span>Nature: {snapData?.terrain?.nature_density?.toFixed(0) ?? 50}%</span>
+                      <span>Urban: {snapData?.terrain?.urban_density?.toFixed(0) ?? 50}%</span>
                     </div>
                   </div>
                 );
@@ -299,23 +363,59 @@ const VisualForensics = ({ forensics }) => {
             </div>
           </section>
 
+          {/* Category Drift Summary (5 categories, how much each changed) */}
+          {activeHistory?.category_drifts && (
+            <section className="insight-card-new category-drift-summary">
+              <h3>Category Drift Summary ({timeRange})</h3>
+              <p className="category-drift-desc">Change since baseline: positive = improved, negative = declined.</p>
+              <div className="category-drift-grid">
+                {CATEGORY_KEYS.map(catKey => {
+                  const drift = activeHistory.category_drifts[catKey] ?? 0;
+                  const past = activeHistory.category_scores?.[catKey];
+                  const current = currentCategoryScores?.[catKey];
+                  return (
+                    <div key={catKey} className={`category-drift-item ${drift >= 0 ? 'improved' : 'declined'}`}>
+                      <span className="cat-label">{CATEGORY_LABELS[catKey] || catKey}</span>
+                      <span className="cat-change">{drift >= 0 ? '+' : ''}{drift.toFixed(1)} pts</span>
+                      {past != null && <span className="cat-past">Past: {Number(past).toFixed(0)}</span>}
+                      {current != null && <span className="cat-curr">Current: {Number(current).toFixed(0)}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
           <div className="details-grid-responsive">
-            {/* CARD 1: Factor Drifts */}
+            {/* Factor Drift Details grouped by 5 categories */}
             <section className="insight-card-new factor-drifts-card">
-              <h3>Factor Drift Details</h3>
+              <h3>Factor Drift Details by Category</h3>
               <div className="factors-scroll-container">
-                {Object.keys(data.factors).map(key => (
-                  <FactorBar 
-                    key={key} 
-                    label={key.replace('_', ' ').toUpperCase()} 
-                    value={data.factors[key]} 
-                    previousValue={getPreviousValue(key, data.factors[key])} 
-                  />
-                ))}
+                {CATEGORY_KEYS.map(catKey => {
+                  const factorsInCat = CATEGORY_FACTORS[CATEGORY_LABELS[catKey]] || [];
+                  return (
+                    <div key={catKey} className="factor-category-block">
+                      <h4 className="factor-category-title">{CATEGORY_LABELS[catKey]}</h4>
+                      {factorsInCat.map(key => {
+                        const rawVal = flatFactors[key] ?? (key === 'infrastructure' ? flatFactors.proximity : null) ?? (key === 'slope' ? flatFactors.landslide : null);
+                        const currentVal = typeof rawVal === 'object' ? (rawVal?.value ?? 50) : (Number(rawVal) ?? 50);
+                        const prevVal = getPreviousValue(key, currentVal);
+                        return (
+                          <FactorBar
+                            key={key}
+                            label={key.replace(/_/g, ' ').toUpperCase()}
+                            value={currentVal}
+                            previousValue={prevVal}
+                          />
+                        );
+                      })}
+                    </div>
+                  );
+                })}
               </div>
             </section>
 
-            {/* CARD 2: AI Analysis & Velocity */}
+            {/* AI Analysis & Velocity */}
             <section className="insight-card-new ai-analysis-card">
               <h3>GeoGPT {timeRange} Analysis</h3>
               <div className="velocity-gauge-container">
@@ -334,36 +434,51 @@ const VisualForensics = ({ forensics }) => {
                 <p className="summary-text">Temporal analysis indicates a <span className="highlight">{totalShift.toFixed(1)}%</span> net shift.</p>
                 <div className="analysis-stats">
                   <div className="stat-row"><span>Baseline Score</span><span>{activeHistory?.score?.toFixed(1) || '---'}</span></div>
-                  <div className="stat-row"><span>Climate Variance</span><span>{Math.abs(activeHistory?.drifts?.rainfall || 0).toFixed(1)}%</span></div>
-                  <div className="stat-row"><span>Land Use Change</span><span>{Math.abs(activeHistory?.drifts?.landuse || 0).toFixed(1)}%</span></div>
+                  <div className="stat-row"><span>Climate Variance</span><span>{Math.abs(activeHistory?.drifts?.rainfall || 0).toFixed(1)} pts</span></div>
+                  <div className="stat-row"><span>Land Use Change</span><span>{Math.abs(activeHistory?.drifts?.landuse || 0).toFixed(1)} pts</span></div>
+                  {activeHistory?.category_drifts && (
+                    <>
+                      <div className="stat-row"><span>Physical</span><span>{(activeHistory.category_drifts.physical ?? 0) >= 0 ? '+' : ''}{(activeHistory.category_drifts.physical ?? 0).toFixed(1)}</span></div>
+                      <div className="stat-row"><span>Socio-Economic</span><span>{(activeHistory.category_drifts.socio_econ ?? 0) >= 0 ? '+' : ''}{(activeHistory.category_drifts.socio_econ ?? 0).toFixed(1)}</span></div>
+                    </>
+                  )}
                 </div>
               </div>
             </section>
 
-            {/* Locked 2030 Predictive Section with Numerical Risk Bars */}
+            {/* GeoGPT 2030 Planning Forecast + factors to work on */}
             <section className="insight-card-new forecast-card glass-glow">
               <div className="card-header-flex">
                 <h3><span className="sparkle-icon">✨</span> GeoGPT 2030 Planning Forecast</h3>
                 <span className="future-badge">PREDICTIVE</span>
               </div>
-              
               <div className="forecast-content">
                 <p className="forecast-text">
-                  {stableForecast?.text || activeHistory?.forecast || "Analyzing historical momentum to project 2030 viability..."}
+                  {stableForecast?.text || (typeof activeHistory?.forecast === 'string' ? activeHistory.forecast : activeHistory?.forecast?.text) || "Analyzing historical momentum to project 2030 viability..."}
                 </p>
-                
+                {(stableForecast?.factors_to_improve?.length > 0) && (
+                  <div className="factors-to-improve">
+                    <h4>Factors to work on (to make the area more suitable)</h4>
+                    <ul>
+                      {stableForecast.factors_to_improve.map((item, idx) => (
+                        <li key={idx} className="improve-item">
+                          <strong>{item.factor}</strong> (score: {item.current_score}) — {item.suggested_action}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div className="risk-indicator-grid">
                   <div className="risk-item">
                     <label>Heat Island Risk</label>
                     <div className="risk-bar">
-                        {/* Dynamic Width based on Backend risk score */}
-                        <div className="fill high" style={{width: `${stableForecast?.heat_risk || 0}%`, transition: 'width 1s ease-in-out'}}></div>
+                      <div className="fill high" style={{width: `${stableForecast?.heat_risk || 0}%`, transition: 'width 1s ease-in-out'}}></div>
                     </div>
                   </div>
                   <div className="risk-item">
                     <label>Urban Saturation</label>
                     <div className="risk-bar">
-                        <div className="fill mid" style={{width: `${stableForecast?.urban_risk || 0}%`, transition: 'width 1s ease-in-out'}}></div>
+                      <div className="fill mid" style={{width: `${stableForecast?.urban_risk || 0}%`, transition: 'width 1s ease-in-out'}}></div>
                     </div>
                   </div>
                 </div>

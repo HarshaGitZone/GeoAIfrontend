@@ -3914,6 +3914,41 @@ html, body, #root, .app-shell {
   background: rgba(128, 128, 128, 0.03);
 }
 
+.radar-chart-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radar-five-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.radar-cat-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(45, 138, 138, 0.15);
+  color: var(--text-primary, #0f172a);
+  border: 1px solid rgba(45, 138, 138, 0.35);
+}
+
+[data-theme="dark"] .radar-cat-badge {
+  background: rgba(45, 138, 138, 0.2);
+  color: #f8fafc;
+}
+
+.radar-chart-inner {
+  position: relative;
+  min-height: 260px;
+}
+
 /* Fix comparison layout height issue */
 .compare-pane-ditto {
   flex: 1;
@@ -7707,4 +7742,416 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
     background: rgba(255, 255, 255, 0.2);
     width: 70%;
     margin: 0 auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- Categorized Factors Styling --- */
+.categories-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 10px;
+}
+
+.factor-category-group {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.factor-category-group:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.category-sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cat-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--primary-color, #3b82f6);
+  opacity: 0.9;
+}
+
+.cat-score-pill {
+  font-size: 10px;
+  font-family: 'Monaco', monospace;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.bars-container.categorized {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+/* Glassmorphic card adjustments */
+.factors-card.glass-morphic {
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.subtitle {
+  font-size: 10px;
+  opacity: 0.6;
+  text-transform: uppercase;
+  margin-top: -4px;
+}
+
+
+
+/* Container for the 5 Categories */
+.categories-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+/* Individual Category Groups */
+.factor-category-group {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+/* Header inside the category (e.g., Hydrology 85%) */
+.category-sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cat-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cat-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--primary-color, #3b82f6);
+  text-transform: uppercase;
+}
+
+.cat-score-badge {
+  font-family: 'Monaco', monospace;
+  font-size: 0.7rem;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Grid for the 15 factors */
+.bars-container.categorized {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+/* Total Suitability Summary at bottom of card */
+.total-score-footer {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent);
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+
+/* --- CATEGORIZED LAYOUT --- */
+.categories-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.factor-category-group {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 14px;
+  transition: all 0.3s ease;
+}
+
+.factor-category-group:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateX(4px);
+}
+
+.category-sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cat-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cat-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #60a5fa; /* Tactical Blue */
+}
+
+.cat-score-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.bars-container.categorized {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+/* TOTAL SUMMATION BAR */
+.suitability-summation-bar {
+  margin-top: 10px;
+  padding: 15px;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent);
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid #10b981;
+}
+
+.suitability-summation-bar label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.summation-value strong {
+  font-size: 18px;
+  color: #10b981;
+}
+
+/* ============================================
+   EVIDENCE SECTION - DARK PROFESSIONAL THEME
+   Matches the original 8-factor format
+   ============================================ */
+
+.evidence-section-container {
+  background: #0a0a0a;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.evidence-title {
+  color: #3b82f6;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #222;
+}
+
+.evidence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.evidence-item {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 18px 20px;
+  border-left: 5px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.evidence-item:hover {
+  transform: translateX(4px);
+}
+
+/* Color variations based on score */
+.evidence-item.evidence-green {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border-left-color: #10b981;
+}
+
+.evidence-item.evidence-yellow {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+  border-left-color: #f59e0b;
+}
+
+.evidence-item.evidence-red {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+  border-left-color: #ef4444;
+}
+
+.evidence-header {
+  margin-bottom: 10px;
+}
+
+.evidence-factor-name {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.evidence-green .evidence-factor-name {
+  color: #34d399;
+}
+
+.evidence-yellow .evidence-factor-name {
+  color: #fbbf24;
+}
+
+.evidence-red .evidence-factor-name {
+  color: #f87171;
+}
+
+.evidence-description {
+  color: #d1d5db;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+  opacity: 0.95;
+}
+
+.evidence-source {
+  display: block;
+  color: #6b7280;
+  font-size: 11px;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Light theme overrides */
+[data-theme="light"] .evidence-section-container {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .evidence-title {
+  color: #1e40af;
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .evidence-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .evidence-item.evidence-green {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%);
+}
+
+[data-theme="light"] .evidence-item.evidence-yellow {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 100%);
+}
+
+[data-theme="light"] .evidence-item.evidence-red {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(239, 68, 68, 0.02) 100%);
+}
+
+[data-theme="light"] .evidence-factor-name {
+  color: #1f2937;
+}
+
+[data-theme="light"] .evidence-green .evidence-factor-name {
+  color: #059669;
+}
+
+[data-theme="light"] .evidence-yellow .evidence-factor-name {
+  color: #d97706;
+}
+
+[data-theme="light"] .evidence-red .evidence-factor-name {
+  color: #dc2626;
+}
+
+[data-theme="light"] .evidence-description {
+  color: #374151;
+}
+
+[data-theme="light"] .evidence-source {
+  color: #9ca3af;
+}
+
+/* Suitability snippet (water body / protected area on score card) */
+.suitability-snippet {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.snippet-water {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.12);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border-left: 3px solid #3b82f6;
+}
+.snippet-protected {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border-left: 3px solid #10b981;
 }

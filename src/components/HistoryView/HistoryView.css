@@ -1024,27 +1024,67 @@
 
 /* Theme Awareness */
 [data-theme="dark"] .history-page-overlay.full-page-standalone {
-    background: #0a0a0a;
+    background: var(--bg, #0a0a0a);
     color: #ffffff;
 }
 
 [data-theme="light"] .history-page-overlay.full-page-standalone {
-    background: #f1f5f9;
+    background: var(--bg, #f1f5f9);
     color: #0f172a;
 }
 
 /* 2. Loading and Sync States */
+.history-page-standalone-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: auto;
+    padding-top: 70px; /* below fixed TopNav */
+}
+
 .history-loading-full {
     height: 100vh;
     width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #0a0a0a;
+    gap: 1rem;
+    background: var(--bg, #0a0a0a);
     color: #3b82f6;
     font-family: monospace;
     font-size: 1.2rem;
     letter-spacing: 2px;
+}
+
+.history-loading-full .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(59, 130, 246, 0.3);
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.history-error-full {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    color: var(--text);
+}
+
+.history-error-full p {
+    margin: 0;
+    font-size: 1rem;
 }
 
 /* 3. Light Mode Visibility Fixes */
@@ -1302,3 +1342,67 @@
 
 .velocity-tag.accelerated { background: #ef444422; color: #ef4444; border: 1px solid #ef4444; }
 .velocity-tag.stable { background: #10b98122; color: #10b981; border: 1px solid #10b981; }
+
+/* Category Drift Summary (5 categories) */
+.category-drift-summary {
+  margin-bottom: 20px;
+}
+.category-drift-summary h3 { margin-bottom: 8px; }
+.category-drift-desc {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-bottom: 12px;
+}
+.category-drift-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+.category-drift-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+}
+.category-drift-item.improved { border-left: 3px solid #10b981; }
+.category-drift-item.declined { border-left: 3px solid #f59e0b; }
+.category-drift-item .cat-label { font-weight: 600; font-size: 0.9rem; }
+.category-drift-item .cat-change { font-size: 1rem; font-weight: 700; }
+.category-drift-item.improved .cat-change { color: #10b981; }
+.category-drift-item.declined .cat-change { color: #f59e0b; }
+.category-drift-item .cat-past, .category-drift-item .cat-curr { font-size: 0.8rem; opacity: 0.8; }
+
+/* Factor Drift by Category */
+.factor-category-block { margin-bottom: 20px; }
+.factor-category-title {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  color: var(--accent-blue, #3b82f6);
+}
+
+/* 2030 Factors to improve */
+.factors-to-improve {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.factors-to-improve h4 { font-size: 0.95rem; margin-bottom: 10px; }
+.factors-to-improve ul { margin: 0; padding-left: 20px; }
+.factors-to-improve .improve-item {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Forensics telemetry */
+.forensics-telemetry {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin-top: 8px;
+}
+.forensics-telemetry .label { font-weight: 600; margin-right: 6px; }

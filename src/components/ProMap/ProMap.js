@@ -572,47 +572,45 @@ const ProMap = ({
     outdoor: 'https://api.maptiler.com/maps/outdoor-v2/style.json'
   }), []);
 
-  // ⚡ TACTICAL SNAP LOGIC FOR 3D
-  // Redefines global snap functions to control the 3D camera while this component is active
-  useEffect(() => {
-    if (!mapRef.current) return;
-
+  // Helper: register global snap functions so A/B/Live buttons work in 3D (smooth fly from current view)
+  const registerSnapHandlers = useCallback((mapInstance) => {
+    if (!mapInstance || typeof mapInstance.easeTo !== 'function') return;
+    const dur = 1200;
     window.snapToA = () => {
-      if (latA && lngA) {
-        mapRef.current.easeTo({ 
-          center: [parseFloat(lngA), parseFloat(latA)], 
-          zoom: 16, // Zoom in closer for the "Close Up" effect
-          pitch: 60, // Tilt for 3D perspective
-          duration: 1200 
-        });
-      }
-    };
-
-    window.snapToB = () => {
-      if (latB && lngB) {
-        mapRef.current.easeTo({ 
-          center: [parseFloat(lngB), parseFloat(latB)], 
-          zoom: 16, 
+      const la = parseFloat(latA);
+      const lo = parseFloat(lngA);
+      if (Number.isFinite(la) && Number.isFinite(lo)) {
+        mapInstance.easeTo({
+          center: [lo, la],
+          zoom: 16,
           pitch: 60,
-          duration: 1200 
+          duration: dur
         });
       }
     };
-
-    window.snapToLive = () => {
-      mapRef.current.easeTo({ 
-        center: [parseFloat(lng), parseFloat(lat)], 
-        zoom: 16, 
-        pitch: 60,
-        duration: 1200 
-      });
+    window.snapToB = () => {
+      const la = parseFloat(latB);
+      const lo = parseFloat(lngB);
+      if (Number.isFinite(la) && Number.isFinite(lo)) {
+        mapInstance.easeTo({
+          center: [lo, la],
+          zoom: 16,
+          pitch: 60,
+          duration: dur
+        });
+      }
     };
-
-    return () => { 
-      // Cleanup to avoid memory leaks or conflicting with 2D logic on switch
-      delete window.snapToA; 
-      delete window.snapToB; 
-      delete window.snapToLive; 
+    window.snapToLive = () => {
+      const la = parseFloat(lat);
+      const lo = parseFloat(lng);
+      if (Number.isFinite(la) && Number.isFinite(lo)) {
+        mapInstance.easeTo({
+          center: [lo, la],
+          zoom: 16,
+          pitch: 60,
+          duration: dur
+        });
+      }
     };
   }, [lat, lng, latA, lngA, latB, lngB]);
 
@@ -698,6 +696,7 @@ const ProMap = ({
       mapRef.current = map;
       attachClickHandler(map);
       map.on('idle', () => add3DLogic(map));
+      map.once('load', () => registerSnapHandlers(mapRef.current));
 
       // 🟢 Live Pointer (Green Pulse)
       const el = document.createElement('div');
@@ -716,12 +715,11 @@ const ProMap = ({
 
       map.easeTo({
         center: [parseFloat(lng), parseFloat(lat)],
-        zoom: zoom,
+        zoom: map.getZoom(),
         duration: 600,
         essential: true
       });
 
-      // Update Live Pointer position
       if (markersRef.current.live) {
         markersRef.current.live.setLngLat([parseFloat(lng), parseFloat(lat)]);
       }
@@ -755,7 +753,26 @@ const ProMap = ({
       markersRef.current.b = null;
     }
 
-  }, [lat, lng, latA, lngA, latB, lngB, isTacticalMode, activeStyle, interactive, setLat, setLng, zoom, add3DLogic, attachClickHandler, styles]);
+    // Register A/B/Live snap so buttons work in 3D (map is guaranteed to exist here)
+    registerSnapHandlers(mapRef.current);
+
+    return () => {
+      delete window.snapToA;
+      delete window.snapToB;
+      delete window.snapToLive;
+    };
+  }, [lat, lng, latA, lngA, latB, lngB, isTacticalMode, activeStyle, interactive, setLat, setLng, add3DLogic, attachClickHandler, registerSnapHandlers, styles]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || typeof map.getCenter !== 'function') return;
+    map.easeTo({
+      center: map.getCenter(),
+      zoom: zoom,
+      duration: 400,
+      essential: true
+    });
+  }, [zoom]);
 
   return <div ref={mapContainer} className="pro-map-view" style={{ width: '100%', height: '100%' }} />;
 };

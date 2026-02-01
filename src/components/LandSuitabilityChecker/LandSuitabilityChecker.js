@@ -9,7 +9,6 @@ import ProMap from '../ProMap/ProMap';
 import "./LandSuitabilityChecker.css";
 import TopNav from "../TopNav/TopNav";
 import RadarChart from "../RadarChart/RadarChart"; 
-import HistoryView from "../HistoryView/HistoryView"; 
 import TerrainSlope from "../TerrainSlope/TerrainSlope";
 import WeatherCard from "../Weather/WeatherCard";
 import SnapshotGeo from "../SnapshotGeo/SnapshotGeo";
@@ -64,76 +63,245 @@ const isNearbyDevice = (lat1, lng1, deviceLoc) => {
 };
 
 // --- DYNAMIC INFERENCE ENGINE ---
-const getSitePotential = (factors,activeSpectral) => {
-  const potentials = [];
-  const f = factors;
+// const getSitePotential = (factors,activeSpectral) => {
+//   const potentials = [];
+//   const f = factors;
 
-  const hazards = Object.entries(f)
-    .filter(([key, val]) => (key === 'flood' || key === 'landslide' || key === 'pollution') && val < 45)
-    .map(([key]) => key.toUpperCase());
+//   const hazards = Object.entries(f)
+//     .filter(([key, val]) => (key === 'flood' || key === 'landslide' || key === 'pollution') && val < 45)
+//     .map(([key]) => key.toUpperCase());
+
+//   if (hazards.length > 0) {
+//     potentials.push({
+//       type: "Risk",
+//       label: "Environmental Constraints",
+//       class: "pot-red",
+//       icon: "⚠️",
+//       reason: `Warning: This site faces critical risks due to low safety scores in ${hazards.join(" & ")}. Development may require expensive mitigation or be restricted to conservation.`
+//     });
+//   }
+
+//   if (f.flood > 50 && f.landslide > 50 && f.pollution > 40) {
+//     const strength = f.pollution > 70 ? "pristine air quality" : "stable terrain";
+//     potentials.push({
+//       type: "Residential",
+//       label: "Residential Potential",
+//       class: "pot-green",
+//       icon: "🏠",
+//       reason: `Recommended for housing due to ${strength}. The site provides a safe foundation with manageable environmental risks.`
+//     });
+//   }
+
+//   if (f.soil > 60 || f.rainfall > 60) {
+//     const leadFactor = f.soil > f.rainfall ? "High Soil Nutrient Density" : "Abundant Rainfall Patterns";
+//     potentials.push({
+//       type: "Agricultural",
+//       label: "Agricultural Utility",
+//       class: "pot-blue",
+//       icon: "🚜",
+//       reason: `Viable for farming driven by ${leadFactor}. This land can support sustainable crop cycles if water management is maintained.`
+//     });
+//   }
+
+//   if (f.proximity > 60 && f.landuse > 40) {
+//     potentials.push({
+//       type: "Industrial",
+//       label: "Logistics & Industry",
+//       class: "pot-purple",
+//       icon: "🏭",
+//       reason: `Strategic for commercial use because it ranks top 20% in Infrastructure Proximity (${f.proximity.toFixed(0)}%). Ideal for warehouses or manufacturing.`
+//     });
+//   }
+//   // 3️⃣ HYDROLOGY INTELLIGENCE: Connect Flow to Flood Risk
+//   if (activeSpectral === "hydrology" && f.flood < 50) {
+//     potentials.push({
+//       type: "Risk",
+//       label: "Hydrological Trap",
+//       class: "pot-red",
+//       icon: "🌊",
+//       reason: "Overlay reveals physics-based water accumulation at this coordinate. Stormwater will likely pool here due to the terrain slope."
+//     });
+//   }
+
+//   // 2️⃣ THERMAL INTELLIGENCE: Residential Livability
+//   if (activeSpectral === "thermal" && f.pollution < 60) {
+//     potentials.push({
+//       type: "Climate",
+//       label: "Urban Heat Island",
+//       class: "pot-blue",
+//       icon: "🌡️",
+//       reason: "Site absorbs high solar radiation. Residential planning should include green roofing to mitigate cooling costs."
+//     });
+//   }
+//   return potentials;
+// };
+const getSitePotential = (factors, activeSpectral) => {
+  const potentials = [];
+
+  if (!factors) return potentials;
+
+  // --------------------------------------------------
+  // NORMALIZE FACTORS (single source of truth)
+  // --------------------------------------------------
+  const f = {
+    // Hydrology (3)
+    flood: factors?.hydrology?.flood?.value ?? 50,
+    water: factors?.hydrology?.water?.value ?? 50,
+    drainage: factors?.hydrology?.drainage?.value ?? 50,
+    // Environmental (3)
+    pollution: factors?.environmental?.pollution?.value ?? 50,
+    soil: factors?.environmental?.soil?.value ?? 50,
+    vegetation: factors?.environmental?.vegetation?.value ?? 50,
+    // Climatic (3)
+    rainfall: factors?.climatic?.rainfall?.value ?? 50,
+    thermal: factors?.climatic?.thermal?.value ?? 50,
+    heatIntensity: factors?.climatic?.intensity?.value ?? 50,
+    // Socio-economic (3)
+    infrastructure: factors?.socio_econ?.infrastructure?.value ?? 50,
+    landuse: factors?.socio_econ?.landuse?.value ?? 50,
+    population: factors?.socio_econ?.population?.value ?? 50,
+    // Physical (2)
+    slope: factors?.physical?.slope?.value ?? 50,
+    elevation: factors?.physical?.elevation?.value ?? 50,
+  };
+
+  // --------------------------------------------------
+  // 1️⃣ HARD RISK DETECTION (RESTRICTION ZONE)
+  // --------------------------------------------------
+  const hazards = [];
+
+  if (f.flood < 40) hazards.push("FLOOD RISK");
+  if (f.pollution < 35) hazards.push("AIR QUALITY");
+  if ((f.slope ?? 100) < 35) hazards.push("STEEP TERRAIN");
+
+  if (f.drainage < 40) hazards.push("POOR DRAINAGE");
+  if (f.heatIntensity > 70) hazards.push("HIGH HEAT STRESS");
 
   if (hazards.length > 0) {
+    const detail = [];
+    if (f.flood < 40) detail.push(`flood safety ${f.flood.toFixed(0)}/100`);
+    if (f.pollution < 35) detail.push(`air quality ${f.pollution.toFixed(0)}/100`);
+    if ((f.slope ?? 100) < 35) detail.push(`slope suitability ${(f.slope ?? 0).toFixed(0)}/100 (steep)`);
+    if (f.drainage < 40) detail.push(`drainage ${f.drainage.toFixed(0)}/100`);
+    if (f.heatIntensity > 70) detail.push(`heat stress ${f.heatIntensity.toFixed(0)}/100`);
     potentials.push({
       type: "Risk",
-      label: "Environmental Constraints",
+      label: "Development Constraints",
       class: "pot-red",
       icon: "⚠️",
-      reason: `Warning: This site faces critical risks due to low safety scores in ${hazards.join(" & ")}. Development may require expensive mitigation or be restricted to conservation.`
+      reason: `Critical limitations: ${hazards.join(" & ")}. ${detail.length ? `Numericals: ${detail.join("; ")}. ` : ""}Construction may require advanced mitigation or be restricted to conservation or low-impact usage.`,
     });
   }
 
-  if (f.flood > 50 && f.landslide > 50 && f.pollution > 40) {
-    const strength = f.pollution > 70 ? "pristine air quality" : "stable terrain";
+  // --------------------------------------------------
+  // 2️⃣ RESIDENTIAL SUITABILITY
+  // --------------------------------------------------
+  if (
+    f.flood > 55 &&
+    f.pollution > 50 &&
+    f.thermal > 55 &&
+    f.infrastructure > 50 &&
+    (f.slope ?? 50) > 70
+  ) {
+    const comfortDriver =
+      f.pollution > 70
+        ? "clean air quality"
+        : f.thermal > 70
+        ? "comfortable climate conditions"
+        : "stable terrain conditions";
+
     potentials.push({
       type: "Residential",
-      label: "Residential Potential",
+      label: "Residential Development",
       class: "pot-green",
       icon: "🏠",
-      reason: `Recommended for housing due to ${strength}. The site provides a safe foundation with manageable environmental risks.`
+      reason: `Well-suited for housing due to ${comfortDriver}, manageable flood exposure, and good infrastructure accessibility.`,
     });
   }
 
-  if (f.soil > 60 || f.rainfall > 60) {
-    const leadFactor = f.soil > f.rainfall ? "High Soil Nutrient Density" : "Abundant Rainfall Patterns";
+  // --------------------------------------------------
+  // 3️⃣ AGRICULTURAL POTENTIAL (only when vegetation supports it)
+  // --------------------------------------------------
+  const veg = f.vegetation ?? 50;
+  if (
+    veg >= 45 &&
+    ((f.soil > 60 && f.rainfall > 50) || (f.soil > 55 && f.water > 60))
+  ) {
+    const agriDriver =
+      f.soil > f.rainfall
+        ? "high soil fertility"
+        : "reliable rainfall and water availability";
+
     potentials.push({
       type: "Agricultural",
-      label: "Agricultural Utility",
+      label: "Agricultural Suitability",
       class: "pot-blue",
       icon: "🚜",
-      reason: `Viable for farming driven by ${leadFactor}. This land can support sustainable crop cycles if water management is maintained.`
+      reason: `Favorable for farming driven by ${agriDriver}. Vegetation index ${veg.toFixed(0)}/100 supports crop potential. Suitable for sustained crop cycles with moderate water management.`,
     });
   }
 
-  if (f.proximity > 60 && f.landuse > 40) {
+  // --------------------------------------------------
+  // 4️⃣ INDUSTRIAL / LOGISTICS POTENTIAL
+  // --------------------------------------------------
+  if (
+    f.infrastructure > 65 &&
+    f.landuse > 45 &&
+    f.flood > 50 &&
+    f.pollution > 40
+  ) {
     potentials.push({
       type: "Industrial",
-      label: "Logistics & Industry",
+      label: "Logistics & Industrial Use",
       class: "pot-purple",
       icon: "🏭",
-      reason: `Strategic for commercial use because it ranks top 20% in Infrastructure Proximity (${f.proximity.toFixed(0)}%). Ideal for warehouses or manufacturing.`
+      reason: `Strategically positioned: infrastructure ${f.infrastructure.toFixed(0)}/100, land-use ${f.landuse.toFixed(0)}/100, flood safety ${f.flood.toFixed(0)}/100, pollution ${f.pollution.toFixed(0)}/100. Compatible for logistics and industrial use.`,
     });
   }
-  // 3️⃣ HYDROLOGY INTELLIGENCE: Connect Flow to Flood Risk
+
+  // --------------------------------------------------
+  // 5️⃣ CONSERVATION / LOW-IMPACT ZONE (NEW, MEANINGFUL)
+  // --------------------------------------------------
+  if (
+    f.vegetation > 70 &&
+    f.landuse < 40 &&
+    f.population < 40
+  ) {
+    potentials.push({
+      type: "Conservation",
+      label: "Ecological Conservation Value",
+      class: "pot-green",
+      icon: "🌳",
+      reason:
+        "High vegetation density and low human footprint indicate strong ecological value. Best suited for conservation, eco-tourism, or carbon-offset initiatives.",
+    });
+  }
+
+  // --------------------------------------------------
+  // 6️⃣ SPECTRAL-AWARE WARNINGS (CONTEXTUAL)
+  // --------------------------------------------------
   if (activeSpectral === "hydrology" && f.flood < 50) {
     potentials.push({
       type: "Risk",
-      label: "Hydrological Trap",
+      label: "Hydrological Accumulation Zone",
       class: "pot-red",
       icon: "🌊",
-      reason: "Overlay reveals physics-based water accumulation at this coordinate. Stormwater will likely pool here due to the terrain slope."
+      reason:
+        "Hydrology overlay indicates water convergence and potential surface runoff accumulation during heavy rainfall events.",
     });
   }
 
-  // 2️⃣ THERMAL INTELLIGENCE: Residential Livability
-  if (activeSpectral === "thermal" && f.pollution < 60) {
+  if (activeSpectral === "thermal" && f.heatIntensity > 65) {
     potentials.push({
       type: "Climate",
-      label: "Urban Heat Island",
+      label: "Urban Heat Stress",
       class: "pot-blue",
       icon: "🌡️",
-      reason: "Site absorbs high solar radiation. Residential planning should include green roofing to mitigate cooling costs."
+      reason:
+        "Thermal overlay reveals elevated heat stress. Passive cooling, green roofing, and vegetation buffers are recommended.",
     });
   }
+
   return potentials;
 };
 
@@ -168,53 +336,7 @@ const PotentialSection = ({ factors, score }) => {
   );
 };
 
-// const LocationMarker = ({ lat, lng, setLat, setLng, isSelectingB, onSelectB }) => {
-//   const map = useMap();
 
-//   // Handle map clicks
-//   useMapEvents({
-//     click(e) {
-//       const clickedLat = e.latlng.lat;
-//       const clickedLng = e.latlng.lng;
-
-//       if (isSelectingB) {
-//         onSelectB(clickedLat, clickedLng);
-//       } else {
-//         setLat(clickedLat.toString());
-//         setLng(clickedLng.toString());
-//       }
-//     },
-//   });
-
-//   // 🔥 THIS IS THE MISSING PIECE — recenter map on coord change
-//   useEffect(() => {
-//     const nLat = parseFloat(lat);
-//     const nLng = parseFloat(lng);
-
-
-//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return;
-
-//     map.whenReady(() => {
-//       map.flyTo([nLat, nLng], map.getZoom(), {
-//         animate: true,
-//         duration: 1.2,
-//       });
-//     });
-//   }, [lat, lng, map]);
-
-//   // Marker
-//   const nLat = parseFloat(lat);
-//   const nLng = parseFloat(lng);
-//   if (!Number.isFinite(nLat) || !Number.isFinite(nLng)) return null;
-
-//   return <Marker position={[nLat, nLng]} />;
-// };
-
-
-
-
-// const FactorsSection = memo(({ data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, onOpenHistory, mapVariety, isCompareMode,activeSpectral,mapMode,         // ADD THIS
-//   active3DStyle }) => {
   const FactorsSection = memo(({ 
  
   data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, 
@@ -222,35 +344,110 @@ const PotentialSection = ({ factors, score }) => {
   active3DStyle, setLat, setLng, isSelectingB, handleCompareSelect,
   currentZoom, setCurrentZoom, zoom// ✅ CLEAN NAMES
 }) => {
-  // console.log("FULL DATA OBJECT RECEIVED:", data);
 
   const nLat = parseFloat(latVal);
   const nLng = parseFloat(lngVal);
   const isValidCoords = !isNaN(nLat) && !isNaN(nLng);
+const { factors, category_scores, suitability_score } = data;
 
+  // Metadata for categorized headers
+  const categoryConfig = {
+    physical_terrain: { icon: "⛰️", label: "Physical Terrain" },
+    hydrology: { icon: "💧", label: "Hydrology" },
+    environmental: { icon: "🌿", label: "Environmental" },
+    Climatic: { icon: "🌤️", label: "Climatic" },
+    socio_econ: { icon: "🏗️", label: "Socio-Economic" }
+  };
+  // const FactorCard = (
+  //   <div className="card factors-card">
+  //     <div className="factors-header">
+  //       <h3>Terrain Factors</h3>
+  //       <button className="view-toggle" onClick={() => setViewMode(viewMode === "bars" ? "radar" : "bars")}>
+  //           {viewMode === "bars" ? "🕸️ Radar View" : "📊 Bar View"}
+  //       </button>
+  //     </div>
+
+  //     {viewMode === "bars" ? (
+  //       <div className="bars-container">
+  //         {['rainfall', 'flood', 'landslide', 'soil', 'proximity', 'water', 'pollution', 'landuse'].map(f => (
+  //           <FactorBar key={f} label={f.charAt(0).toUpperCase() + f.slice(1)} value={data.factors[f] ?? 0} />
+  //         ))}
+  //       </div>
+  //     ) : (
+  //       <div className="radar-container" style={{ height: '300px', width: '100%', position: 'relative' }}>
+  //           <RadarChart key={`radar-${nLat}-${nLng}`} data={data.factors} isDarkMode={isDarkMode} />
+  //       </div>
+  //     )}
+  //   </div>
+  // );
+
+// --- UPDATED CATEGORIZED FACTOR CARD ---
   const FactorCard = (
-    <div className="card factors-card">
+    <div className="card factors-card glass-morphic">
       <div className="factors-header">
-        <h3>Terrain Factors</h3>
+        <div className="title-stack">
+          <h3>Terrain Intelligence</h3>
+          <p className="subtitle">15-Factor Geospatial Synthesis</p>
+        </div>
         <button className="view-toggle" onClick={() => setViewMode(viewMode === "bars" ? "radar" : "bars")}>
             {viewMode === "bars" ? "🕸️ Radar View" : "📊 Bar View"}
         </button>
       </div>
 
       {viewMode === "bars" ? (
-        <div className="bars-container">
-          {['rainfall', 'flood', 'landslide', 'soil', 'proximity', 'water', 'pollution', 'landuse'].map(f => (
-            <FactorBar key={f} label={f.charAt(0).toUpperCase() + f.slice(1)} value={data.factors[f] ?? 0} />
+        <div className="categories-wrapper">
+          {/* Loop through each of the 5 Major Folders */}
+          {Object.entries(factors).map(([catKey, catFactors]) => (
+            <div key={catKey} className="factor-category-group animate-in">
+              
+              {/* MAJOR CATEGORY HEADER */}
+              <div className="category-sub-header">
+                <div className="cat-title">
+                  <span className="cat-icon">{categoryConfig[catKey]?.icon || "📂"}</span>
+                  <span className="cat-label">{categoryConfig[catKey]?.label || catKey}</span>
+                </div>
+                <span className="cat-score-badge">
+                  {category_scores?.[catKey]?.toFixed(0) || 0}%
+                </span>
+              </div>
+              
+              {/* INDIVIDUAL SUB-FACTORS (The 15 Files) */}
+              <div className="bars-container categorized">
+                {Object.entries(catFactors).map(([fKey, fData]) => {
+                  const rawVal = typeof fData === 'object' ? (fData.scaled_score ?? fData.value) : fData;
+                  const displayVal = Math.min(100, Math.max(0, Number(rawVal) || 0));
+                  return (
+                  <FactorBar 
+                    key={fKey} 
+                    label={fKey.replace(/_/g, ' ').toUpperCase()} 
+                    value={displayVal}
+                  />
+                );})}
+              </div>
+            </div>
           ))}
+          
+         {/* TOTAL SUITABILITY SUMMARY */}
+          <div className="suitability-summation-bar">
+            <label>Aggregated Index</label>
+            <div className="summation-value">
+              <strong>{suitability_score?.toFixed(1)}%</strong>
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="radar-container" style={{ height: '300px', width: '100%', position: 'relative' }}>
-            <RadarChart key={`radar-${nLat}-${nLng}`} data={data.factors} isDarkMode={isDarkMode} />
-        </div>
-      )}
+  // Inside FactorsSection memo, update the RadarChart component call:
+) : (
+  <div className="radar-container" style={{ height: '350px', width: '100%', position: 'relative' }}>
+      <RadarChart 
+        key={`radar-${nLat}-${nLng}`} 
+        data={Object.values(factors).reduce((acc, cat) => ({ ...acc, ...cat }), {})} 
+        isDarkMode={isDarkMode}
+        categoryScores={category_scores}
+      />
+  </div>
+)}
     </div>
   );
-
   return (
     <>
       <div className={`card hero-card glass-morphic ${data.suitability_score < 40 ? 'danger-glow' : ''}`}>
@@ -283,14 +480,7 @@ const PotentialSection = ({ factors, score }) => {
             zIndex={100} 
           />
         )}
-        {/* <Marker position={[nLat, nLng]} /> */}
-        {/* <LocationMarker 
-       lat={latVal} lng={lngVal} 
-       setLat={setLat} setLng={setLng} 
-       setZoom={setCurrentZoom} 
-       isSelectingB={isSelectingB} 
-       onSelectB={handleCompareSelect} 
-    /> */}
+  
     {/* Use a simple Marker instead of LocationMarker to keep it static */}
     <Marker position={[nLat, nLng]} />
       </MapContainer>
@@ -330,7 +520,16 @@ const PotentialSection = ({ factors, score }) => {
           {data.suitability_score?.toFixed(1)}
         </div>
         <div className={`status-pill ${data.label?.toLowerCase().replace(/\s+/g, '-')}`}>{data.label}</div>
-{}
+        {(data.water_body_snippet || data.protected_snippet) && (
+          <div className="suitability-snippet">
+            {data.water_body_snippet && (
+              <span className="snippet-water">Located on: <strong>{data.water_body_snippet}</strong></span>
+            )}
+            {data.protected_snippet && (
+              <span className="snippet-protected">Protected / Forest: <strong>{data.protected_snippet}</strong></span>
+            )}
+          </div>
+        )}
           <div className="history-action-container">
           <button 
             className="history-pro-btn" 
@@ -350,249 +549,33 @@ const PotentialSection = ({ factors, score }) => {
     </>
   );
 });
-// const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng }) => {
-//   const map = useMap();
 
-//   // Listen for map clicks to move ONLY the "Live" pointer
-//   useMapEvents({
-//     click(e) {
-//       setLat(e.latlng.lat.toString());
-//       setLng(e.latlng.lng.toString());
-//     },
-//   });
-
-//   // Expose snap functions to the parent via a global (or better, use a ref)
-//   useEffect(() => {
-//     window.snapToA = () => {
-//       if (latA && lngA) map.flyTo([parseFloat(latA), parseFloat(lngA)], 16);
-//     };
-//     window.snapToB = () => {
-//       if (latB && lngB) map.flyTo([parseFloat(latB), parseFloat(lngB)], 16);
-//     };
-//     // Cleanup on unmount
-//     return () => {
-//       delete window.snapToA;
-//       delete window.snapToB;
-//     };
-//   }, [map, latA, lngA, latB, lngB]);
-
-//   const createIcon = (color) => new L.Icon({
-//     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-//     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-//     iconSize: [25, 41], iconAnchor: [12, 41]
-//   });
-
-//   return (
-//     <>
-//       {/* 📍 Permanent Site A (Blue) - Only shows if Analyzed */}
-//       {latA && lngA && <Marker position={[parseFloat(latA), parseFloat(lngA)]} icon={createIcon('blue')} />}
-
-//       {/* 📍 Permanent Site B (Red) - Only shows if Analyzed */}
-//       {latB && lngB && <Marker position={[parseFloat(latB), parseFloat(lngB)]} icon={createIcon('red')} />}
-
-//       {/* 📍 Live Shuffle Pointer (Green) - Always follows clicks */}
-//       <Marker position={[parseFloat(currentLat), parseFloat(currentLng)]} icon={createIcon('green')} />
-//     </>
-//   );
-// };
-/* --- TACTICAL MAP CONTROLLER --- */
-// const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng, mapVariety }) => {
-//   const map = useMap();
-
-//   // Handle map clicks to update only the "Exploring" pointer
-//   useMapEvents({
-//     click(e) {
-//       setLat(e.latlng.lat.toString());
-//       setLng(e.latlng.lng.toString());
-//     },
-//   });
-
-//   // Attach global snap functions so the buttons outside the map can reach in
-//   useEffect(() => {
-//     window.snapToA = () => {
-//       if (latA && lngA) map.flyTo([parseFloat(latA), parseFloat(lngA)], 16, { animate: true });
-//     };
-//     window.snapToB = () => {
-//       if (latB && lngB) map.flyTo([parseFloat(latB), parseFloat(lngB)], 16, { animate: true });
-//     };
-//     window.snapToLive = () => {
-//       map.flyTo([parseFloat(currentLat), parseFloat(currentLng)], 16);
-//     };
-
-//     return () => {
-//       delete window.snapToA;
-//       delete window.snapToB;
-//       delete window.snapToLive;
-//     };
-//   }, [map, latA, lngA, latB, lngB, currentLat, currentLng]);
-
-//   // Dynamic Icon Factory
-//   const getIcon = (color, isLive = false) => new L.Icon({
-//     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-//     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-//     iconSize: isLive ? [30, 48] : [25, 41], // Make the "Live" pointer slightly larger
-//     iconAnchor: [12, 41],
-//   });
-
-//   return (
-//     <>
-//       {/* 🔵 SITE A (Fixed Blue) */}
-//       {latA && lngA && (
-//         <Marker position={[parseFloat(latA), parseFloat(lngA)]} icon={getIcon('blue')}>
-//             <Popup><strong>Site A:</strong> Analyzed Target</Popup>
-//         </Marker>
-//       )}
-
-//       {/* 🔴 SITE B (Fixed Red) */}
-//       {latB && lngB && (
-//         <Marker position={[parseFloat(latB), parseFloat(lngB)]} icon={getIcon('red')}>
-//             <Popup><strong>Site B:</strong> Comparison Target</Popup>
-//         </Marker>
-//       )}
-
-//       {/* 🟢 LIVE POINTER (Shuffle/Green) */}
-//       <Marker position={[parseFloat(currentLat), parseFloat(currentLng)]} icon={getIcon('green', true)}>
-//           <Popup>Current Selection (Click Map to Move)</Popup>
-//       </Marker>
-//     </>
-//   );
-// };
-
-// const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng,isSelectingB, setBLatInput, setBLngInput }) => {
-//   const map = useMap();
-
-//   // Handle map clicks for the "Neutral/Green" pointer
-//   useMapEvents({
-//     click(e) {
-//     //   setLat(e.latlng.lat.toString());
-//     //   setLng(e.latlng.lng.toString());
-//     // },
-//     const clickedLat = e.latlng.lat.toString();
-//       const clickedLng = e.latlng.lng.toString();
-
-//       if (isSelectingB) {
-//         // 🎯 FIX: Update Location B text boxes specifically
-//         setBLatInput(clickedLat);
-//         setBLngInput(clickedLng);
-//       } else {
-//         // Update general selection (Site A / Green Pointer)
-//         setLat(clickedLat);
-//         setLng(clickedLng);
-//       }
-//     },
-//   });
-
-//   useEffect(() => {
-//     window.snapToA = () => {
-//       const nLat = parseFloat(latA);
-//       const nLng = parseFloat(lngA);
-//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
-//     };
-//     window.snapToB = () => {
-//       const nLat = parseFloat(latB);
-//       const nLng = parseFloat(lngB);
-//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
-//     };
-//     return () => { delete window.snapToA; delete window.snapToB; };
-//   }, [map, latA, lngA, latB, lngB]);
-
-//   const createIcon = (color) => new L.Icon({
-//     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-//     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-//     iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
-//   });
-
-//   // Convert inputs to numbers safely
-//   const posA = [parseFloat(latA), parseFloat(lngA)];
-//   const posB = [parseFloat(latB), parseFloat(lngB)];
-//   const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
-
-//   return (
-//     <>
-//       {/* 📍 SITE A (BLUE) - Render if analyzedCoords.lat exists */}
-//       {Number.isFinite(posA[0]) && (
-//         <Marker position={posA} icon={createIcon('blue')}>
-//           <Popup>Site A: Analyzed</Popup>
-//         </Marker>
-//       )}
-
-//       {/* 📍 SITE B (RED) - Render if analyzedCoordsB.lat exists */}
-//       {Number.isFinite(posB[0]) && (
-//         <Marker position={posB} icon={createIcon('red')}>
-//           <Popup>Site B: Comparison</Popup>
-//         </Marker>
-//       )}
-
-//       {/* 📍 LIVE POINTER (GREEN) - Always follows clicks */}
-//       {Number.isFinite(posLive[0]) && (
-//         <Marker position={posLive} icon={createIcon('green')}>
-//           <Popup>Current Selection</Popup>
-//         </Marker>
-//       )}
-//     </>
-//   );
-// };
-// const TacticalMapController = ({ latA, lngA, latB, lngB, currentLat, currentLng, setLat, setLng, isSelectingB, setBLatInput, setBLngInput, isTacticalMode}) => {
-//   const map = useMap();
-
-//   useMapEvents({
-//     click(e) {
-//       const clickedLat = e.latlng.lat.toString();
-//       const clickedLng = e.latlng.lng.toString();
-
-//       if (isSelectingB) {
-//         setBLatInput(clickedLat);
-//         setBLngInput(clickedLng);
-//       } else {
-//         setLat(clickedLat);
-//         setLng(clickedLng);
-//       }
-//     },
-//   });
-
-//   useEffect(() => {
-//     // 🔵 Snap to Site A
-//     window.snapToA = () => {
-//       const nLat = parseFloat(latA);
-//       const nLng = parseFloat(lngA);
-//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
-//     };
-
-//     // 🔴 Snap to Site B
-//     window.snapToB = () => {
-//       const nLat = parseFloat(latB);
-//       const nLng = parseFloat(lngB);
-//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
-//     };
-
-//     // 🟢 Snap to Live Pointer (The Fix)
-//     window.snapToLive = () => {
-//       const nLat = parseFloat(currentLat);
-//       const nLng = parseFloat(currentLng);
-//       if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14);
-//     };
-
-//     return () => { 
-//       delete window.snapToA; 
-//       delete window.snapToB; 
-//       delete window.snapToLive; // Cleanup
-//     };
-//   }, [map, latA, lngA, latB, lngB, currentLat, currentLng]); // Added current coords as dependencies
+/* --- Sync map center to state on pan (so zoom +/- uses current view) --- */
+const MapCenterSync = ({ setViewCenter }) => {
+  const map = useMap();
+  useMapEvents({
+    moveend() {
+      const c = map.getCenter();
+      if (c && setViewCenter) setViewCenter([c.lat, c.lng]);
+    },
+  });
+  return null;
+};
 
 /* --- TACTICAL MAP CONTROLLER --- */
 const TacticalMapController = ({ 
   latA, lngA, latB, lngB, currentLat, currentLng, 
   setLat, setLng, isSelectingB, setBLatInput, setBLngInput, 
-  isTacticalMode 
+  isTacticalMode, setViewCenter, setZoom 
 }) => {
   const map = useMap();
 
-  // 🖱️ Interaction Logic: Routes clicks based on selection mode
   useMapEvents({
     click(e) {
       const clickedLat = e.latlng.lat.toString();
       const clickedLng = e.latlng.lng.toString();
-
+      const pt = [e.latlng.lat, e.latlng.lng];
+      if (setViewCenter) setViewCenter(pt);
       if (isSelectingB) {
         setBLatInput(clickedLat);
         setBLngInput(clickedLng);
@@ -603,32 +586,38 @@ const TacticalMapController = ({
     },
   });
 
-  // ⚡ Snap Logic: Attaches functions to global window for HUD access
   useEffect(() => {
+    const duration = 1.2;
     window.snapToA = () => {
       const nLat = parseFloat(latA);
       const nLng = parseFloat(lngA);
-      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14, { animate: true });
+      if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+        map.flyTo([nLat, nLng], 16, { animate: true, duration });
+        if (setZoom) setZoom(16);
+      }
     };
-
     window.snapToB = () => {
       const nLat = parseFloat(latB);
       const nLng = parseFloat(lngB);
-      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14, { animate: true });
+      if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+        map.flyTo([nLat, nLng], 16, { animate: true, duration });
+        if (setZoom) setZoom(16);
+      }
     };
-
     window.snapToLive = () => {
       const nLat = parseFloat(currentLat);
       const nLng = parseFloat(currentLng);
-      if (!isNaN(nLat)) map.flyTo([nLat, nLng], 14, { animate: true });
+      if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+        map.flyTo([nLat, nLng], 16, { animate: true, duration });
+        if (setZoom) setZoom(16);
+      }
     };
-
-    return () => { 
-      delete window.snapToA; 
-      delete window.snapToB; 
-      delete window.snapToLive; 
+    return () => {
+      delete window.snapToA;
+      delete window.snapToB;
+      delete window.snapToLive;
     };
-  }, [map, latA, lngA, latB, lngB, currentLat, currentLng]);
+  }, [map, latA, lngA, latB, lngB, currentLat, currentLng, setZoom]);
 
   // 🎨 Icon Factory
   const createIcon = (color) => new L.Icon({
@@ -670,18 +659,7 @@ const TacticalMapController = ({
 };
   
 export default function LandSuitabilityChecker() {
-  // 1. Add new state at the top of your component
-  // 1. Ensure zoom is at the top level
-// const [zoom, setZoom] = useState(13);
 
-// 2. Wrap zoom in a function that the buttons call
-// const handleZoomIn = () => {
-//   setZoom(prev => Math.min(prev + 1, 20)); // Limit to max 20
-// };
-
-// const handleZoomOut = () => {
-//   setZoom(prev => Math.max(prev - 1, 2)); // Limit to min 2
-// };
 const handleZoomIn = () => {
   setZoom(z => Math.min(z + 1, 20));
 };
@@ -717,6 +695,11 @@ const [active3DStyle, setActive3DStyle] = useState("satellite");
   const [lat, setLat] = useState(() => localStorage.getItem("geo_lat") || "17.385");
   const [lng, setLng] = useState(() => localStorage.getItem("geo_lng") || "78.4867");
   const [zoom, setZoom] = useState(() => Number(localStorage.getItem("geo_zoom")) || 13);
+  const [viewCenter, setViewCenter] = useState(() => {
+    const slat = localStorage.getItem("geo_lat") || "17.385";
+    const slng = localStorage.getItem("geo_lng") || "78.4867";
+    return [parseFloat(slat) || 17.385, parseFloat(slng) || 78.4867];
+  });
   const [mapVariety, setMapVariety] = useState(() => localStorage.getItem("geo_map_style") || "streets");
   const [activeTab, setActiveTab] = useState("suitability");
   const [isDarkMode, setIsDarkMode] = useState(() => JSON.parse(localStorage.getItem("geo_theme")) ?? true);
@@ -755,10 +738,6 @@ const [analyzedCoordsB, setAnalyzedCoordsB] = useState(() => ({
   lat: localStorage.getItem("geo_lat_b_analyzed") || null,
   lng: localStorage.getItem("geo_lng_b_analyzed") || null
 }));
-  const [showHistory, setShowHistory] = useState(false); 
-  const [historyTargetData, setHistoryTargetData] = useState(null);
-  const [historyTargetName, setHistoryTargetName] = useState("");
-  const [historyTargetCoords, setHistoryTargetCoords] = useState({ lat: "", lng: "" });
 const [editingIndex, setEditingIndex] = useState(null);
   const [editingName, setEditingName] = useState("");
   const [savedPlaces, setSavedPlaces] = useState(() => JSON.parse(localStorage.getItem("savedPlaces")) || []);
@@ -1035,29 +1014,6 @@ const handleSubmit = useCallback(async (e) => {
 
 const mapViewportRef = useRef(null); // Reference for Fullscreen targeting
 
-// const toggleFullScreen = () => {
-//   // Check if current is not null before calling the API
-//   if (mapContainerRef.current) {
-//     if (!document.fullscreenElement) {
-//       mapContainerRef.current.requestFullscreen().catch(err => {
-//         console.warn(`Fullscreen error: ${err.message}`);
-//       });
-//     } else {
-//       document.exitFullscreen();
-//     }
-//   } else {
-//     console.error("Map container reference not found.");
-//   }
-// };
-
-  // --- NEW: Zoom Logic (shared between 2D and 3D) ---
-  // const handleZoom = (delta) => {
-  //   setZoom(prev => {
-  //     const next = prev + delta;
-  //     return Math.min(Math.max(next, 2), 20); // Scale range 2-20
-  //   });
-  // };
-// Monitor Coordinate Changes to Reset Names/Analysis for Site B
 useEffect(() => {
   const params = new URLSearchParams(window.location.search);
   // 1. Skip logic if currently loading a shared link
@@ -1363,20 +1319,11 @@ useEffect(() => {
     } catch (err) { alert("Backend starting up, please retry in 10s"); } finally { setNearbyLoadingB(false); }
   };
 
-  // const handleOpenHistory = (targetData, targetName, targetLat, targetLng) => {
-  //   setHistoryTargetData(targetData);
-  //   setHistoryTargetName(targetName);
-  //   setHistoryTargetCoords({ lat: targetLat, lng: targetLng });
-  //   setShowHistory(true);
-  // };
-  // Replace your existing handleOpenHistory with this
-const handleOpenHistory = useCallback(async (targetData, targetName, targetLat, targetLng) => {
-    setHistoryTargetName(targetName);
-    setHistoryTargetCoords({ lat: targetLat, lng: targetLng });
-    
-    // We pass the current data to the HistoryView so it can compare
-    setHistoryTargetData(targetData); 
-    setShowHistory(true);
+
+const handleOpenHistory = useCallback((targetData, targetName, targetLat, targetLng) => {
+    const base = `${window.location.origin}${(window.location.pathname || '/').replace(/\/?$/, '')}`;
+    const url = `${base}/history?lat=${encodeURIComponent(targetLat)}&lng=${encodeURIComponent(targetLng)}&name=${encodeURIComponent(targetName || 'Site A')}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
 }, []);
 
   const handleMyLocation = () => {
@@ -1413,42 +1360,243 @@ const [activeSpectral, setActiveSpectral] = useState("standard");
     setZoom(16);
   };
 
-  const EvidenceSection = ({ data }) => (
-    <div className="card evidence-card" style={{ height: 'auto' }}>
-      <h3>Evidence Details</h3>
-      <div className="evidence-list">
-        {['rainfall', 'flood', 'landslide', 'soil', 'proximity', 'water', 'pollution', 'landuse'].map(id => {
-          const val = data.factors[id] ?? 0;
-          const meta = data.explanation?.factors_meta?.[id];
-          if (!meta) return null;
-          return (
-            <div key={id} className={`evidence-entry tone-${val < 40 ? "red" : val < 70 ? "yellow" : "green"}`}>
-              <strong>{id.toUpperCase()} ({val.toFixed(1)})</strong>
-              <p>{meta.reason}</p>
-            </div>
-          );
-        })}
+  // const EvidenceSection = ({ data }) => (
+  //   <div className="card evidence-card" style={{ height: 'auto' }}>
+  //     <h3>Evidence Details</h3>
+  //     <div className="evidence-list">
+  //       {['rainfall', 'flood', 'landslide', 'soil', 'proximity', 'water', 'pollution', 'landuse'].map(id => {
+  //         const val = data.factors[id] ?? 0;
+  //         const meta = data.explanation?.factors_meta?.[id];
+  //         if (!meta) return null;
+  //         return (
+  //           <div key={id} className={`evidence-entry tone-${val < 40 ? "red" : val < 70 ? "yellow" : "green"}`}>
+  //             <strong>{id.toUpperCase()} ({val.toFixed(1)})</strong>
+  //             <p>{meta.reason}</p>
+  //           </div>
+  //         );
+  //       })}
+  //     </div>
+  //   </div>
+  // );
+  const EvidenceSection = ({ data }) => {
+    const meta = data.explanation?.factors_meta;
+
+    if (!meta) {
+      return (
+        <div className="card evidence-card">
+          <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+          <p>No evidence metadata available.</p>
+        </div>
+      );
+    }
+
+    // Factor display names (all 15 factors)
+    const factorLabels = {
+      // Physical (2)
+      slope: "SLOPE",
+      elevation: "ELEVATION", 
+      // Hydrology (3)
+      flood: "FLOOD",
+      water: "WATER",
+      drainage: "DRAINAGE",
+      // Environmental (3)
+      vegetation: "VEGETATION",
+      pollution: "POLLUTION",
+      soil: "SOIL",
+      // Climatic (3)
+      rainfall: "RAINFALL",
+      thermal: "THERMAL COMFORT",
+      intensity: "HEAT INTENSITY",
+      // Socio-Economic (3)
+      landuse: "LANDUSE",
+      infrastructure: "PROXIMITY",
+      population: "POPULATION"
+    };
+
+    // Generate evidence text if not provided
+    const generateEvidence = (factorKey, factor) => {
+      if (factor.evidence) return factor.evidence;
+      
+      const val = factor.value;
+      const raw = factor.raw;
+      const label = factor.label || "";
+      
+      // Generate detailed evidence based on factor type
+      switch(factorKey) {
+        case "slope":
+          if (val < 3) return `Slope: ${val}% gradient. VERY FLAT terrain. IDEAL for construction with minimal grading required. No slope stability concerns.`;
+          if (val < 8) return `Slope: ${val}% gradient. GENTLE slope. Suitable for most construction types with minor earthwork. Good natural drainage.`;
+          if (val < 15) return `Slope: ${val}% gradient. MODERATE slope. Requires careful site planning and grading. May need retaining structures.`;
+          if (val < 30) return `Slope: ${val}% gradient. STEEP terrain. HIGH construction costs due to extensive earthwork and stabilization requirements.`;
+          return `Slope: ${val}% gradient. VERY STEEP terrain. NOT SUITABLE for standard construction. Landslide and erosion risk elevated.`;
+        
+        case "elevation":
+          if (val < 50) return `Elevation: ${val}m above sea level. LOW elevation coastal/floodplain zone. Monitor for sea-level and flood risks.`;
+          if (val < 200) return `Elevation: ${val}m above sea level. LOW to MODERATE elevation. Good accessibility with manageable flood exposure.`;
+          if (val < 600) return `Elevation: ${val}m above sea level. MODERATE elevation. Optimal range for most construction activities.`;
+          if (val < 1500) return `Elevation: ${val}m above sea level. HIGH elevation. Consider temperature extremes and access logistics.`;
+          return `Elevation: ${val}m above sea level. VERY HIGH elevation. Challenging conditions - reduced oxygen, extreme weather.`;
+        
+        case "flood":
+          const waterDist = data?.factors?.hydrology?.water?.distance_km;
+          if (waterDist !== undefined) {
+            if (waterDist < 0.5) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water body. HIGH FLOOD RISK during monsoon/heavy rainfall.`;
+            if (waterDist < 1.5) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water. MODERATE risk - floods only with exceptional rainfall.`;
+            if (waterDist < 3.0) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water. LOW flood risk. Natural terrain provides protection.`;
+            return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Remote location ${waterDist.toFixed(2)}km from water sources. VERY LOW flood risk.`;
+          }
+          return `Flood safety score: ${val}/100. ${label}. Analysis based on regional hydrology patterns.`;
+        
+        case "water":
+          const dist = factor.distance_km;
+          if (dist !== undefined && dist !== null) {
+            if (dist < 0.02) return `Location is ON a water body. Score: 0/100. NOT SUITABLE for terrestrial construction.`;
+            if (dist < 0.5) return `Located approximately ${dist.toFixed(2)}km from nearest water body. CLOSE proximity - irrigation advantage but flood monitoring needed.`;
+            if (dist < 2.0) return `Located approximately ${dist.toFixed(2)}km from nearest water body. MODERATE water access for utility and agriculture needs.`;
+            return `Located approximately ${dist.toFixed(2)}km from nearest water body. DISTANT from surface water - may require well/borewell for water supply.`;
+          }
+          return `Water proximity score: ${val}/100. ${label}`;
+        
+        case "vegetation":
+          const ndvi = raw || (val / 100);
+          if (val < 20) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). BARE/BUILT-UP land detected. Urban or barren classification.`;
+          if (val < 40) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). SPARSE vegetation. Suitable for development with minimal clearing.`;
+          if (val < 60) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). MODERATE vegetation. Agricultural or mixed land cover.`;
+          return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). DENSE vegetation. May indicate forest/protected area - verify zoning.`;
+        
+        case "pollution":
+          const pm25 = raw;
+          if (pm25 !== null && pm25 !== undefined) {
+            if (pm25 < 10) return `PM2.5: ${pm25} µg/m³. EXCELLENT air quality. Below WHO Annual Guideline (10 µg/m³). OPTIMAL for residential development.`;
+            if (pm25 < 25) return `PM2.5: ${pm25} µg/m³. GOOD air quality. Acceptable for residential and commercial development.`;
+            if (pm25 < 50) return `PM2.5: ${pm25} µg/m³. MODERATE air quality. Exceeds WHO guidelines. Industrial/traffic sources may be nearby.`;
+            return `PM2.5: ${pm25} µg/m³. POOR air quality. Significantly exceeds safety standards. Air filtration recommended for habitation.`;
+          }
+          return `Air quality score: ${val}/100. Estimated using satellite aerosol data and regional baseline models.`;
+        
+        case "soil":
+          if (val >= 80) return `Soil quality score: ${val}/100. EXCELLENT bearing capacity and drainage. Ideal loam conditions for construction.`;
+          if (val >= 60) return `Soil quality score: ${val}/100. GOOD soil conditions. Standard foundation design adequate.`;
+          if (val >= 40) return `Soil quality score: ${val}/100. MODERATE soil quality. May require soil testing and foundation enhancement.`;
+          return `Soil quality score: ${val}/100. POOR soil conditions. Clayey/waterlogged terrain. Special foundations required.`;
+        
+        case "rainfall":
+          const rainMm = raw;
+          if (rainMm !== null && rainMm !== undefined) {
+            if (rainMm < 300) return `Rainfall: ${rainMm}mm/year. LOW rainfall - ARID conditions. IDEAL for construction, minimal flood risk. Irrigation required for agriculture.`;
+            if (rainMm < 800) return `Rainfall: ${rainMm}mm/year. MODERATE rainfall. Good balance for construction and agriculture with proper drainage.`;
+            if (rainMm < 1500) return `Rainfall: ${rainMm}mm/year. HIGH rainfall. Requires robust drainage systems. Moderate flood susceptibility.`;
+            return `Rainfall: ${rainMm}mm/year. EXCESSIVE rainfall. High flood and foundation damage risk. Monsoon region challenges.`;
+          }
+          return `Rainfall suitability score: ${val}/100. ${label}.`;
+        
+        case "thermal":
+          const tempData = raw;
+          if (tempData && typeof tempData === 'object' && tempData.temperature_c !== undefined) {
+            if (val >= 80) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. HIGHLY COMFORTABLE climate conditions.`;
+            if (val >= 60) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. COMFORTABLE conditions with minor seasonal extremes.`;
+            if (val >= 40) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. MARGINAL comfort - consider HVAC requirements.`;
+            return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. UNCOMFORTABLE - extreme heat/cold stress.`;
+          }
+          return `Thermal Comfort Index: ${val}/100. ${label}.`;
+        
+        case "intensity":
+          if (val < 25) return `Heat Stress Index: ${val}/100. LOW heat stress. Comfortable thermal conditions year-round.`;
+          if (val < 45) return `Heat Stress Index: ${val}/100. MODERATE heat stress. Some cooling measures recommended during peak hours.`;
+          if (val < 65) return `Heat Stress Index: ${val}/100. HIGH heat stress. Active cooling and ventilation essential.`;
+          return `Heat Stress Index: ${val}/100. EXTREME heat stress. Significant thermal management infrastructure required.`;
+        
+        case "landuse":
+          const classification = factor.classification || "Unknown";
+          if (val <= 15) return `Land-use Classification: ${classification}. Score: ${val}/100. PROTECTED/FOREST area. Legally non-buildable. Conservation zone detected.`;
+          if (val <= 40) return `Land-use Classification: ${classification}. Score: ${val}/100. RESTRICTED development potential. Environmental sensitivity detected.`;
+          if (val <= 70) return `Land-use Classification: ${classification}. Score: ${val}/100. MODERATE development potential. Agricultural or mixed-use zoning.`;
+          return `Land-use Classification: ${classification}. Score: ${val}/100. HIGH development potential. Urban/commercial zoning compatible.`;
+        
+        case "infrastructure":
+          if (val < 30) return `Infrastructure Score: ${val}/100. REMOTE location. Significant infrastructure investment needed for development.`;
+          if (val < 50) return `Infrastructure Score: ${val}/100. MODERATE access. May require access road development.`;
+          if (val < 70) return `Infrastructure Score: ${val}/100. GOOD road access. Optimal balance of connectivity and tranquility.`;
+          return `Infrastructure Score: ${val}/100. EXCELLENT accessibility with nearby road network.`;
+        
+        case "population":
+          const density = factor.density || raw;
+          if (density !== null && density !== undefined) {
+            if (density < 200) return `Population Density: ${density} people/km². SPARSE population. Rural/remote area. Limited services and labor availability.`;
+            if (density < 600) return `Population Density: ${density} people/km². MODERATE population. Balanced environment with available workforce and services.`;
+            if (density < 1200) return `Population Density: ${density} people/km². WELL POPULATED. Good access to services, labor, and markets.`;
+            return `Population Density: ${density} people/km². HIGHLY DENSE urban area. Congestion considerations but excellent market access.`;
+          }
+          return `Population Score: ${val}/100. ${label}.`;
+        
+        case "drainage":
+          if (val >= 80) return `Drainage Capacity: ${val}/100. EXCELLENT drainage. Well-drained terrain with high stream density. Low waterlogging risk.`;
+          if (val >= 60) return `Drainage Capacity: ${val}/100. GOOD drainage. Adequate surface water flow. Minor ponding during heavy rainfall.`;
+          if (val >= 40) return `Drainage Capacity: ${val}/100. MODERATE drainage. May require drainage improvements for construction.`;
+          return `Drainage Capacity: ${val}/100. POOR drainage. Flat/low-lying terrain prone to waterlogging.`;
+        
+        default:
+          return `Score: ${val}/100. ${label}`;
+      }
+    };
+
+    // Flatten all factors from all categories for display
+    const allFactors = [];
+    Object.entries(meta).forEach(([category, factors]) => {
+      Object.entries(factors).forEach(([factorKey, factor]) => {
+        allFactors.push({ category, factorKey, factor });
+      });
+    });
+
+    return (
+      <div className="evidence-section-container">
+        <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+
+        <div className="evidence-list">
+          {allFactors.map(({ category, factorKey, factor }) => {
+            // Get the numeric value for display and color coding
+            const displayValue = factor.value !== null && factor.value !== undefined 
+              ? (typeof factor.value === 'number' ? factor.value.toFixed(1) : factor.value)
+              : 'N/A';
+            
+            const numericValue = typeof factor.value === 'number' ? factor.value : 50;
+            
+            // Determine color class based on value
+            const colorClass = numericValue < 40 ? "red" : numericValue < 70 ? "yellow" : "green";
+            
+            // Get or generate evidence text
+            const evidenceText = generateEvidence(factorKey, factor);
+
+            return (
+              <div
+                key={`${category}-${factorKey}`}
+                className={`evidence-item evidence-${colorClass}`}
+              >
+                {/* Header: FACTOR_NAME (SCORE) */}
+                <div className="evidence-header">
+                  <strong className="evidence-factor-name">
+                    {factorLabels[factorKey] || factorKey.toUpperCase()} ({displayValue})
+                  </strong>
+                </div>
+
+                {/* Main evidence text - the detailed explanation */}
+                <p className="evidence-description">{evidenceText}</p>
+
+                {/* Source attribution */}
+                {factor.source && (
+                  <span className="evidence-source">
+                    Source: {factor.source}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
-  );
-//   const ZoomSync = ({ zoom }) => {
-//   const map = useMap();
+    );
+  };
 
-//   useEffect(() => {
-//     map.setZoom(zoom);
-//   }, [zoom, map]);
 
-//   return null;
-// };
-// const ZoomSync = ({ zoom }) => {
-//   const map = useMap();
-
-//   useEffect(() => {
-//     map.setZoom(zoom);
-//   }, [zoom, map]);
-
-//   return null;
-// };
 
 const renderTabContent = (data, coords, name, isFullWidth) => {
   // If isFullWidth (Single Analysis), use your 'results-grid' class
@@ -1591,11 +1739,13 @@ return (
           </div>
         </div>
         
-        {/* Responsive Footer - Theme specific colors handled via CSS */}
+        {/* Responsive Footer - Live telemetry from backend when available */}
         <div className="cnn-footer-telemetry">
-          <span>RES: 10m/px</span>
-          <span>SENSOR: SENTINEL-2 L2A</span>
+          <span>RES: {cnn?.telemetry?.resolution_m_per_px != null ? `${cnn.telemetry.resolution_m_per_px}m/px` : '10m/px'}</span>
+          <span>SENSOR: {cnn?.telemetry?.tile_url_source || 'SENTINEL-2 L2A'}</span>
+          <span>MODEL: {cnn?.telemetry?.model || 'CNN-V2 / MOBILE-NET'}</span>
           <span>TS: {new Date().toLocaleTimeString()}</span>
+          {cnn?.telemetry?.verified_by && <span>✓ {cnn.telemetry.verified_by}</span>}
         </div>
       </div>
  
@@ -1619,13 +1769,32 @@ return (
 
 
 if (activeTab === "infrastructure") {
-const intel = data.strategic_intelligence || {}; 
-  // Carbon Intelligence: Potential based on vegetation biomass
-    const carbonIntelligence = (data.factors.landuse * 0.75).toFixed(1); 
-    // Carbon Footprint: Estimated based on proximity & infrastructure
-    const liveFootprint = ((100 - data.factors.pollution + (100 - data.factors.proximity)) / 15).toFixed(1);
-    // ESG Score: Derived from soil, water, and pollution factors
-    const esgScore = Math.round((data.factors.soil + data.factors.pollution + data.factors.water) / 3);
+  const intel = data.strategic_intelligence || {};
+  // Use flat_factors (all 15) when available; else derive from nested data.factors
+  const flatF = data.flat_factors || (() => {
+    const f = data.factors || {};
+    const get = (cat, key) => {
+      const v = f[cat]?.[key];
+      return typeof v === 'object' && v !== null ? v.value : v;
+    };
+    return {
+      landuse: get('socio_econ', 'landuse') ?? 50,
+      pollution: get('environmental', 'pollution') ?? 50,
+      proximity: get('socio_econ', 'infrastructure') ?? 50,
+      soil: get('environmental', 'soil') ?? 50,
+      water: get('hydrology', 'water') ?? 50,
+      vegetation: get('environmental', 'vegetation') ?? 50
+    };
+  })();
+  const landuseVal = typeof flatF.landuse === 'number' ? flatF.landuse : 50;
+  const pollutionVal = typeof flatF.pollution === 'number' ? flatF.pollution : 50;
+  const proximityVal = typeof flatF.proximity === 'number' ? flatF.proximity : (typeof flatF.infrastructure === 'number' ? flatF.infrastructure : 50);
+  const soilVal = typeof flatF.soil === 'number' ? flatF.soil : 50;
+  const waterVal = typeof flatF.water === 'number' ? flatF.water : 50;
+  // Carbon Intelligence: Potential based on vegetation/landuse
+  const carbonIntelligence = (landuseVal * 0.75).toFixed(1);
+  const liveFootprint = ((100 - pollutionVal + (100 - proximityVal)) / 15).toFixed(1);
+  const esgScore = Math.round((soilVal + pollutionVal + waterVal) / 3);
   const esgColorClass = esgScore > 75 ? "grade-A" : esgScore > 50 ? "grade-B" : esgScore > 35 ? "grade-C" : "grade-F";
   
 
@@ -1687,7 +1856,7 @@ const intel = data.strategic_intelligence || {};
     </div>
     <div className="drawer-item">
       <span>🛡️ Biodiversity Buffer:</span>
-      <strong>{data.factors.landuse > 60 ? "PREMIUM" : "STANDARD"}</strong>
+      <strong>{landuseVal > 60 ? "PREMIUM" : "STANDARD"}</strong>
     </div>
   </div>
   
@@ -1754,19 +1923,7 @@ const intel = data.strategic_intelligence || {};
 };
   return (
     <div className="app-shell">
-      {/* <AudioLandscape 
-        factors={result?.factors} 
-        isEnabled={isAudioEnabled} 
-      /> */}
 
-      {/* <AudioLandscape 
-        factors={isCompareMode 
-          ? (mobileCompareSite === "A" ? result?.factors : compareResult?.factors) 
-          : result?.factors
-        } 
-        isEnabled={isAudioEnabled}
-        isLoading={loading || compareLoading}
-      /> */}
       <AudioLandscape 
   // Select factors based on which site is active in compare mode
   activeFactors={isCompareMode 
@@ -1891,28 +2048,6 @@ const intel = data.strategic_intelligence || {};
         </select>
       )}
     </div>
-   {/* TACTICAL MASTER TOGGLE */}
-   
-  {/* <div className="tactical-mode-toggle-container">
-    <span className="toggle-label">3 Ptr</span>
-    <label className="switch-attractive">
-      <input 
-        type="checkbox" 
-        checked={isTacticalMode} 
-        onChange={() => setIsTacticalMode(!isTacticalMode)} 
-      />
-      <span className="slider-attractive"></span>
-    </label>
-  </div>
-
-  {isTacticalMode && (
-    <div className="tactical-snap-controls animate-slide-in">
-       <button className="snap-btn btn-a" onClick={() => window.snapToA?.()}>A</button>
-       <button className="snap-btn btn-b" onClick={() => window.snapToB?.()}>B</button>
-       <button className="snap-btn btn-live" onClick={() => window.snapToLive?.()}>📍</button>
-    </div>
-  )} */}
- 
 
 
    <div className="tactical-mode-toggle-container">
@@ -1942,50 +2077,34 @@ const intel = data.strategic_intelligence || {};
     {mapMode === "2D" ? (
     
 <MapContainer
-key={`map-${lat}-${lng}-${zoom}`} // Forces a hard reset on change
-center={[parseFloat(lat), parseFloat(lng)]} 
+key={`map-${lat}-${lng}-${zoom}`}
+center={viewCenter}
   zoom={zoom}
   zoomControl={false}
   style={{ height: "100%", width: "100%" }}
 >
-
- {/* <MapRecenter lat={lat} lng={lng} /> */}
-  {/* <ZoomSync zoom={zoom} /> */}
+  <MapCenterSync setViewCenter={setViewCenter} />
   <TileLayer url={varieties[mapVariety]} />
 
   {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
     <TileLayer url={spectralLayers[activeSpectral]} opacity={0.6} />
   )}
-{/* 
-  <Marker position={[parseFloat(lat), parseFloat(lng)]} />
 
-  <MapClickHandler
+<TacticalMapController 
+    latA={analyzedCoords.lat}
+    lngA={analyzedCoords.lng}
+    latB={analyzedCoordsB.lat}
+    lngB={analyzedCoordsB.lng}
+    currentLat={lat}
+    currentLng={lng}
     setLat={setLat}
     setLng={setLng}
-    setZoom={setZoom}
-  /> */}
-  {/* <LocationMarker
-  lat={lat}
-  lng={lng}
-  setLat={setLat}
-  setLng={setLng}
-  isSelectingB={isSelectingB}
-  onSelectB={handleCompareSelect}
-/> */}
-<TacticalMapController 
-    latA={analyzedCoords.lat}   // From analyzed state
-    lngA={analyzedCoords.lng}
-    latB={analyzedCoordsB.lat}  // From analyzed state
-    lngB={analyzedCoordsB.lng}
-    currentLat={lat}            // The "Shuffle" lat
-    currentLng={lng}            // The "Shuffle" lng
-    setLat={setLat}             // Updates shuffle on click
-    setLng={setLng}
-    // 🚀 ADD THESE PROPS BELOW
   isSelectingB={isSelectingB}
   setBLatInput={setBLatInput}
   setBLngInput={setBLngInput}
   isTacticalMode={isTacticalMode}
+  setViewCenter={setViewCenter}
+  setZoom={setZoom}
   />
 
 </MapContainer>
@@ -2043,25 +2162,7 @@ center={[parseFloat(lat), parseFloat(lng)]}
                     </div>
                   )}
 
-                  {/* COMPARE MODE */}
-                  {/* {isCompareMode && (
-                    <div className="compare-layout-ditto" style={{ display: 'flex', height: '100%', width: '100%' }}>
-                      <div className="compare-pane-ditto">
-                        <h4 className="pane-header">{locationAName.toUpperCase()}</h4>
-                        {renderTabContent(result, analyzedCoords, locationAName, false)}
-                      </div>
-                      <div className="compare-pane-ditto">
-                        <h4 className="pane-header">{locationBName.toUpperCase() || "SITE B"}</h4>
-                        {compareResult ? (
-                          renderTabContent(compareResult, analyzedCoordsB, locationBName, false)
-                        ) : (
-                          <div className="empty-results">Waiting for Site B selection...</div>
-                        )}
-                      </div>
-                    </div>
-                  )} */}
-                  {/* Sub-Tabs for Mobile Comparison: Placed below the 3-tab bar */}
-                  {/* This UI element only appears during Comparison Mode on Mobile */}
+                
                   {isCompareMode && (
                     <div className="mobile-location-tabs glass-morphic only-mobile">
                       <button 
@@ -2176,12 +2277,6 @@ center={[parseFloat(lat), parseFloat(lng)]}
           </div>
         )}
       
-      {showHistory && historyTargetData && (
-        <HistoryView 
-          data={historyTargetData} locationName={historyTargetName} onClose={() => setShowHistory(false)} 
-          lat={historyTargetCoords.lat} lng={historyTargetCoords.lng} isDarkMode={isDarkMode}
-        />
-      )}
     </div>
   );
 }

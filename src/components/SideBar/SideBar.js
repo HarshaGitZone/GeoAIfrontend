@@ -516,20 +516,16 @@ const generateShareLink = () => {
   {isCompareMode && (
   <button 
     onClick={() => {
-      setIsCompareMode(false);      // Exit compare mode
-      setBLatInput("");             // Clear Lat B input
-      setBLngInput("");             // Clear Lng B input
-      setCompareResult(null);       // Remove analysis data for B
-      setSnapshotDataB(null);       // Clear Site B snapshot
-      setLocationBName("Site B");   // Reset name fallback
-      // 🎯 THE FIX: Clear the analyzed coordinates so the RED marker disappears
-          if (typeof analyzedCoordsB !== 'undefined') {
-             // If you passed setAnalyzedCoordsB as a prop:
-             // setAnalyzedCoordsB({ lat: null, lng: null }); 
-             // OR rely on the fact that analyzedCoordsB is usually derived in the parent
-          }
-          localStorage.removeItem("geo_lat_b_analyzed");
-          localStorage.removeItem("geo_lng_b_analyzed");
+      setIsCompareMode(false);
+      setShowLocationB(false);      // Close comparison UI
+      setBLatInput("");
+      setBLngInput("");
+      setCompareResult(null);
+      setSnapshotDataB && setSnapshotDataB(null);
+      setLocationBName("Site B");
+      if (setAnalyzedCoordsB) setAnalyzedCoordsB({ lat: null, lng: null });  // Remove red pointer
+      localStorage.removeItem("geo_lat_b_analyzed");
+      localStorage.removeItem("geo_lng_b_analyzed");
     }} 
     className="btn-cross" 
     title="Exit Compare"
@@ -629,7 +625,7 @@ const generateShareLink = () => {
       setShowLocationB(false);
       setIsCompareMode(false);
       setCompareResult(null);
-      setSnapshotDataB(null);
+      if (setSnapshotDataB) setSnapshotDataB(null);
       setBLatInput("");
       setBLngInput("");
       
