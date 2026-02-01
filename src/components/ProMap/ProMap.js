@@ -553,8 +553,8 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 const ProMap = ({ 
   lat, lng, setLat, setLng, factors, isDarkMode, activeStyle, zoom, 
   interactive = true,
-  // 🚀 Props for Tactical Sync
-  isTacticalMode, latA, lngA, latB, lngB 
+  isTacticalMode, latA, lngA, latB, lngB,
+  onMapLocationSelect
 }) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
@@ -572,44 +572,29 @@ const ProMap = ({
     outdoor: 'https://api.maptiler.com/maps/outdoor-v2/style.json'
   }), []);
 
-  // Helper: register global snap functions so A/B/Live buttons work in 3D (smooth fly from current view)
+  // Register global snap functions so A/B/Live buttons fly to the correct location in 3D (MapLibre: center is [lng, lat])
   const registerSnapHandlers = useCallback((mapInstance) => {
     if (!mapInstance || typeof mapInstance.easeTo !== 'function') return;
-    const dur = 1200;
+    const dur = 1200; // ms
     window.snapToA = () => {
-      const la = parseFloat(latA);
       const lo = parseFloat(lngA);
+      const la = parseFloat(latA);
       if (Number.isFinite(la) && Number.isFinite(lo)) {
-        mapInstance.easeTo({
-          center: [lo, la],
-          zoom: 16,
-          pitch: 60,
-          duration: dur
-        });
+        mapInstance.easeTo({ center: [lo, la], zoom: 16, pitch: 60, duration: dur, essential: true });
       }
     };
     window.snapToB = () => {
-      const la = parseFloat(latB);
       const lo = parseFloat(lngB);
+      const la = parseFloat(latB);
       if (Number.isFinite(la) && Number.isFinite(lo)) {
-        mapInstance.easeTo({
-          center: [lo, la],
-          zoom: 16,
-          pitch: 60,
-          duration: dur
-        });
+        mapInstance.easeTo({ center: [lo, la], zoom: 16, pitch: 60, duration: dur, essential: true });
       }
     };
     window.snapToLive = () => {
-      const la = parseFloat(lat);
       const lo = parseFloat(lng);
+      const la = parseFloat(lat);
       if (Number.isFinite(la) && Number.isFinite(lo)) {
-        mapInstance.easeTo({
-          center: [lo, la],
-          zoom: 16,
-          pitch: 60,
-          duration: dur
-        });
+        mapInstance.easeTo({ center: [lo, la], zoom: 16, pitch: 60, duration: dur, essential: true });
       }
     };
   }, [lat, lng, latA, lngA, latB, lngB]);
@@ -675,10 +660,11 @@ const ProMap = ({
       if (dx < 5 && dy < 5) {
         setLat(e.lngLat.lat.toString());
         setLng(e.lngLat.lng.toString());
+        if (onMapLocationSelect) onMapLocationSelect();
       }
       startPoint = null;
     });
-  }, [interactive, setLat, setLng]);
+  }, [interactive, setLat, setLng, onMapLocationSelect]);
 
   useEffect(() => {
     let map;
@@ -711,6 +697,7 @@ const ProMap = ({
       map.once('style.load', () => {
         add3DLogic(map);
         attachClickHandler(map);
+        registerSnapHandlers(mapRef.current); // Re-register after style load so A/B/Live work in 3D
       });
 
       map.easeTo({
@@ -753,15 +740,15 @@ const ProMap = ({
       markersRef.current.b = null;
     }
 
-    // Register A/B/Live snap so buttons work in 3D (map is guaranteed to exist here)
-    registerSnapHandlers(mapRef.current);
+    // Register A/B/Live snap so buttons work in 3D (run when map exists so handlers have latest coords)
+    if (mapRef.current) registerSnapHandlers(mapRef.current);
 
     return () => {
       delete window.snapToA;
       delete window.snapToB;
       delete window.snapToLive;
     };
-  }, [lat, lng, latA, lngA, latB, lngB, isTacticalMode, activeStyle, interactive, setLat, setLng, add3DLogic, attachClickHandler, registerSnapHandlers, styles]);
+  }, [lat, lng, latA, lngA, latB, lngB, isTacticalMode, activeStyle, interactive, setLat, setLng, onMapLocationSelect, add3DLogic, attachClickHandler, registerSnapHandlers, styles]);
 
   useEffect(() => {
     const map = mapRef.current;

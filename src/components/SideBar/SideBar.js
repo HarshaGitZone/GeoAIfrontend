@@ -628,16 +628,8 @@ const generateShareLink = () => {
       if (setSnapshotDataB) setSnapshotDataB(null);
       setBLatInput("");
       setBLngInput("");
-      
-      // 🎯 ADD THIS: Clear the map pointer state
-      // if (props.setAnalyzedCoordsB) {
-      //   props.setAnalyzedCoordsB({ lat: null, lng: null });
-      // }
-      // 🎯 THE FIX: Call the setter directly here too
-      if (setAnalyzedCoordsB) {
-        setAnalyzedCoordsB({ lat: null, lng: null });
-      }
-
+      setLocationBName("Site B");
+      if (setAnalyzedCoordsB) setAnalyzedCoordsB({ lat: null, lng: null });
       localStorage.removeItem("geo_lat_b_analyzed");
       localStorage.removeItem("geo_lng_b_analyzed");
     } else {
@@ -703,29 +695,21 @@ const generateShareLink = () => {
                   }}>✕</button> */}
                 
 <button 
-  onClick={() => {
+  onClick={(e) => {
+    e.stopPropagation();
+    setShowLocationB(false);
     setIsCompareMode(false);
     setBLatInput("");
     setBLngInput("");
     setCompareResult(null);
-    setSnapshotDataB(null);
+    if (setSnapshotDataB) setSnapshotDataB(null);
     setLocationBName("Site B");
-    
-    // 🎯 ADD THIS: Clear the coordinates the Map is watching
-    // Ensure you passed 'setAnalyzedCoordsB' as a prop from the parent
-    // if (props.setAnalyzedCoordsB) {
-    //    props.setAnalyzedCoordsB({ lat: null, lng: null });
-    // }
-    // 🎯 THE FIX: Call the setter directly (no 'props.')
-      if (setAnalyzedCoordsB) {
-        setAnalyzedCoordsB({ lat: null, lng: null });
-      }
-
+    if (setAnalyzedCoordsB) setAnalyzedCoordsB({ lat: null, lng: null });
     localStorage.removeItem("geo_lat_b_analyzed");
     localStorage.removeItem("geo_lng_b_analyzed");
   }} 
   className="btn-cross" 
-  title="Exit Compare"
+  title="Close comparison and stop B analysis"
 >
   ✕
 </button>
