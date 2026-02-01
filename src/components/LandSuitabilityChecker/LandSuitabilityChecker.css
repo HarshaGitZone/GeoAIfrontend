@@ -3536,8 +3536,8 @@ html, body, #root, .app-shell {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
-  width: 90%;
-  max-width: 900px;
+  width: 95%;
+  max-width: none;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
@@ -8215,4 +8215,9 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
   padding: 6px 10px;
   border-radius: 6px;
   border-left: 3px solid #10b981;
+}
+.evidence-factor-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;   /* 👈 THIS creates the space */
 }

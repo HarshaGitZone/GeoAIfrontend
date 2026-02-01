@@ -352,92 +352,114 @@
     overflow: hidden;
 }
 
-/* RESPONSIVE LOGIC */
-@media (max-width: 1024px) {
-    .history-main-grid {
-        grid-template-columns: 1fr; /* Stack Sidebar below main chart */
-        overflow-y: auto;
-        padding-bottom: 50px;
-    }
-
+/* RESPONSIVE LOGIC - Enhanced */
+@media (max-width: 1200px) {
     .history-content-wrapper {
-        width: 95%;
-        height: 95%;
+        max-width: 95%;
+        padding: 0 20px;
+    }
+    
+    .history-main-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .chart-container-responsive {
+        height: 300px;
     }
 }
 
-@media (max-width: 768px) {
-    /* Ensure the cards themselves stack elements inside them if needed */
+@media (max-width: 1024px) {
+    .history-page-overlay {
+        padding: 40px 15px;
+    }
+    
+    .history-main-grid {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
+    
+    .history-content-wrapper {
+        max-width: 100%;
+    }
+    
     .view-container-history {
-        padding: 10px;
-    }
-
-    /* Professional spacing for vertical flow */
-    .insight-card {
-        margin-bottom: 15px;
-        min-height: auto;
-    }
-
-    .radar-box-large {
-        height: 400px; /* Keep the chart large enough to read */
-    }
-
-    /* Stack Header elements */
-    .history-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        height: auto;
         padding: 15px;
     }
 }
 
-/* Ensure bars flow nicely one after the other */
-.bars-box-history {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+@media (max-width: 768px) {
+    .history-page-overlay {
+        padding: 20px 10px;
+    }
+    
+    .history-content-wrapper {
+        animation: slideUpReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    .view-container-history {
+        padding: 10px;
+        border-radius: 12px;
+    }
+    
+    .history-header-responsive {
+        flex-direction: column;
+        gap: 12px;
+        padding: 15px;
+    }
+    
+    .range-picker-responsive {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .range-picker-responsive button {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+    }
+    
+    .chart-container-responsive {
+        height: 200px;
+        margin-top: 15px;
+    }
+    
+    .details-grid-responsive {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .coord-badge-responsive {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+    
+    .live-clock-responsive {
+        font-size: 0.8rem;
+    }
 }
 
-
-
-
-.history-page-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    z-index: 2000;
-    overflow-y: auto; /* Enable page scroll for small screens */
-    color: white;
-}
-
-.history-content-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Header Logic */
-.history-header-responsive {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    background: rgba(255,255,255,0.03);
-    padding: 20px;
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-.header-top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* TABLET RESPONSIVENESS */
+@media (max-width: 900px) {
+    .details-grid-responsive {
+        grid-template-columns: 1fr;
+    }
+    
+    .factor-bars-history {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
+    
+    .factor-bar-item {
+        padding: 10px;
+    }
+    
+    .factor-bar-label {
+        font-size: 0.8rem;
+    }
+    
+    .factor-bar-value {
+        font-size: 0.9rem;
+    }
 }
 
 .live-clock-responsive {
@@ -451,6 +473,7 @@
     margin: 10px 0;
     background: linear-gradient(to right, #fff, #666);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 

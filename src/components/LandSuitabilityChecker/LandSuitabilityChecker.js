@@ -16,6 +16,7 @@ import { API_BASE } from "../../config/api";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AudioLandscape from "../AudioLandscape/AudioLandscape";
+import DigitalTwin from "../DigitalTwin/DigitalTwin";
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -355,7 +356,7 @@ const { factors, category_scores, suitability_score } = data;
     physical_terrain: { icon: "⛰️", label: "Physical Terrain" },
     hydrology: { icon: "💧", label: "Hydrology" },
     environmental: { icon: "🌿", label: "Environmental" },
-    Climatic: { icon: "🌤️", label: "Climatic" },
+    climatic: { icon: "🌤️", label: "Climatic" },
     socio_econ: { icon: "🏗️", label: "Socio-Economic" }
   };
   // const FactorCard = (
@@ -605,11 +606,45 @@ const TacticalMapController = ({
       }
     };
     window.snapToLive = () => {
-      const nLat = parseFloat(currentLat);
-      const nLng = parseFloat(currentLng);
-      if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
-        map.flyTo([nLat, nLng], 16, { animate: true, duration });
-        if (setZoom) setZoom(16);
+      // Check if map exists before proceeding
+      if (!map) {
+        console.warn('Map not initialized yet');
+        return;
+      }
+      
+      // Get actual device location using geolocation API
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const deviceLat = pos.coords.latitude;
+            const deviceLng = pos.coords.longitude;
+            if (Number.isFinite(deviceLat) && Number.isFinite(deviceLng)) {
+              map.flyTo([deviceLat, deviceLng], 16, { animate: true, duration });
+              if (setZoom) setZoom(16);
+              // Also update the lat/lng state to reflect device location
+              setLat(deviceLat.toString());
+              setLng(deviceLng.toString());
+            }
+          },
+          (error) => {
+            console.error('Error getting device location:', error);
+            // Fallback to currentLat/currentLng if geolocation fails
+            const nLat = parseFloat(currentLat);
+            const nLng = parseFloat(currentLng);
+            if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+              map.flyTo([nLat, nLng], 16, { animate: true, duration });
+              if (setZoom) setZoom(16);
+            }
+          }
+        );
+      } else {
+        // Fallback to currentLat/currentLng if geolocation not available
+        const nLat = parseFloat(currentLat);
+        const nLng = parseFloat(currentLng);
+        if (Number.isFinite(nLat) && Number.isFinite(nLng)) {
+          map.flyTo([nLat, nLng], 16, { animate: true, duration });
+          if (setZoom) setZoom(16);
+        }
       }
     };
     return () => {
@@ -617,7 +652,7 @@ const TacticalMapController = ({
       delete window.snapToB;
       delete window.snapToLive;
     };
-  }, [map, latA, lngA, latB, lngB, currentLat, currentLng, setZoom]);
+  }, [map, latA, lngA, latB, lngB, currentLat, currentLng, setZoom,setLat,setLng]);
 
   // 🎨 Icon Factory
   const createIcon = (color) => new L.Icon({
@@ -867,6 +902,7 @@ useEffect(() => {
     });
   }
 }, []);
+
 
 
 const handleSubmit = useCallback(async (e) => {
@@ -1549,54 +1585,50 @@ const [activeSpectral, setActiveSpectral] = useState("standard");
     });
 
     return (
-      <div className="evidence-section-container">
-        <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+        <div className="evidence-section-container">
+            <h3 className="evidence-title">EVIDENCE DETAILS</h3>
 
-        <div className="evidence-list">
-          {allFactors.map(({ category, factorKey, factor }) => {
-            // Get the numeric value for display and color coding
-            const displayValue = factor.value !== null && factor.value !== undefined 
-              ? (typeof factor.value === 'number' ? factor.value.toFixed(1) : factor.value)
-              : 'N/A';
-            
-            const numericValue = typeof factor.value === 'number' ? factor.value : 50;
-            
-            // Determine color class based on value
-            const colorClass = numericValue < 40 ? "red" : numericValue < 70 ? "yellow" : "green";
-            
-            // Get or generate evidence text
-            const evidenceText = generateEvidence(factorKey, factor);
+            <div className="evidence-list">
+                {allFactors.map(({ category, factorKey, factor }) => {
+                    const displayValue = factor.value !== null && factor.value !== undefined 
+                        ? (typeof factor.value === 'number' ? factor.value.toFixed(1) : factor.value)
+                        : 'N/A';
+                    
+                    const numericValue = typeof factor.value === 'number' ? factor.value : 50;
+                    
+                    const colorClass = numericValue < 40 ? "red" : numericValue < 70 ? "yellow" : "green";
+                    
+                    const evidenceText = generateEvidence(factorKey, factor);
 
-            return (
-              <div
-                key={`${category}-${factorKey}`}
-                className={`evidence-item evidence-${colorClass}`}
-              >
-                {/* Header: FACTOR_NAME (SCORE) */}
-                <div className="evidence-header">
-                  <strong className="evidence-factor-name">
-                    {factorLabels[factorKey] || factorKey.toUpperCase()} ({displayValue})
-                  </strong>
-                </div>
+                    return (
+                        <div
+                            key={`${category}-${factorKey}`}
+                            className={`evidence-item evidence-${colorClass}`}
+                        >
+                            <div className="evidence-header">
+                              <strong className={`evidence-factor-name ${colorClass}`}>
+                                {factorLabels[factorKey] || factorKey.toUpperCase()}
+                                <span className="evidence-score-inline">
+                                  ({displayValue})
+                                </span>
+                              </strong>
+                            </div>
 
-                {/* Main evidence text - the detailed explanation */}
-                <p className="evidence-description">{evidenceText}</p>
-
-                {/* Source attribution */}
-                {factor.source && (
-                  <span className="evidence-source">
-                    Source: {factor.source}
-                  </span>
-                )}
-              </div>
-            );
-          })}
+                            <div className="evidence-text">
+                                {evidenceText}
+                            </div>
+                            {factor.source && (
+                                <div className="evidence-source">
+                                    <small>Source: {factor.source}</small>
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
         </div>
-      </div>
     );
-  };
-
-
+};
 
 const renderTabContent = (data, coords, name, isFullWidth) => {
   // If isFullWidth (Single Analysis), use your 'results-grid' class
@@ -1647,276 +1679,335 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
   }
 
   if (activeTab === "environmental") {
+    const cnn = data?.cnn_analysis;
+    const confidence = cnn?.confidence || 0;
 
-const cnn = data?.cnn_analysis;
-const confidence = cnn?.confidence || 0;
+    // NEW: 3-Tier Tactical Color Logic
+    const getCnnTheme = (conf) => {
+      if (conf >= 70) return { color: "#10b981", label: "VERIFIED", note: "TARGET LOCKED", class: "high-conf", glow: "rgba(16, 185, 129, 0.2)" }; 
+      if (conf >= 40) return { color: "#3b82f6", label: "PROBABLE", note: "PATTERN RECOGNIZED", class: "mid-conf", glow: "rgba(59, 130, 246, 0.2)" }; 
+      return { color: "#ef4444", label: "UNCERTAIN", note: "SIGNAL INTERFERENCE", class: "low-conf", glow: "rgba(239, 68, 68, 0.2)" }; 
+    };
 
-// NEW: 3-Tier Tactical Color Logic
-const getCnnTheme = (conf) => {
-  if (conf >= 70) return { color: "#10b981", label: "VERIFIED", note: "TARGET LOCKED", class: "high-conf", glow: "rgba(16, 185, 129, 0.2)" }; 
-  if (conf >= 40) return { color: "#3b82f6", label: "PROBABLE", note: "PATTERN RECOGNIZED", class: "mid-conf", glow: "rgba(59, 130, 246, 0.2)" }; 
-  return { color: "#ef4444", label: "UNCERTAIN", note: "SIGNAL INTERFERENCE", class: "low-conf", glow: "rgba(239, 68, 68, 0.2)" }; 
-};
+    const cnnTheme = getCnnTheme(confidence);
 
-const cnnTheme = getCnnTheme(confidence);
-
-return (
-  <div className={containerClass}>
-    <div className={isFullWidth ? "col-1" : ""}>
-      
-      
-      {/* UPDATED CNN TACTICAL CARD */}
-      <div 
-        className={`card cnn-tactical-card glass-morphic animate-in ${cnnTheme.class}`} 
-        style={{ "--status-color": cnnTheme.color, "--status-glow": cnnTheme.glow }}
-      >
-        <div className="cnn-tactical-header">
-          <div className="cnn-title-group">
-            <span className="live-tag">LIVE TELEMETRY</span>
-            <h3>Visual Intelligence Scan</h3>
-          </div>
-          
-          <div className="tactical-header-right">
-            {/* Dedicated Space for Model Identity */}
-            <div className="model-id-badge">
-              <span className="model-label">ENGINE</span>
-              <span className="model-name">CNN-V2 / MOBILE-NET</span>
-            </div>
-            {/* Compact Status Badge - Uses dynamic 3-tier color */}
-            <div className="status-indicator-pill" style={{ backgroundColor: cnnTheme.color }}>
-              {confidence < 40 && <span className="mini-warn">⚠️</span>}
-              {cnnTheme.label}
-            </div>
-          </div>
-        </div>
-
-        <div className="cnn-tactical-layout">
-          <div className="cnn-visual-container">
-            <div className="cnn-frame" style={{ borderColor: cnnTheme.color }}>
-               <div className="cnn-image-feed" style={{ 
-                 backgroundImage: cnn?.image_sample ? `url(${cnn.image_sample})` : 'none',
-                 filter: confidence < 40 ? 'grayscale(0.4) contrast(1.1) brightness(0.9)' : 'none'
-               }}>
-                 {cnn?.image_sample && <div className="scan-telemetry-overlay"></div>}
-               </div>
-               {/* Fixed Tactical Corners */}
-               <div className="corner-bit tl"></div><div className="corner-bit tr"></div>
-               <div className="corner-bit bl"></div><div className="corner-bit br"></div>
-            </div>
-          </div>
-
-          <div className="cnn-data-grid">
-            <div className="cnn-stat-item">
-              <label>TERRAIN CLASSIFICATION: </label>
-              <strong className="cnn-class-text" style={{ color: cnnTheme.color }}>
-                {cnn?.class || "ANALYZING..."}
-              </strong>
+    return (
+  <>
+    <div className={containerClass}>
+      {/* COLUMN 1 */}
+      <div className={isFullWidth ? "col-1" : ""}>
+        {/* UPDATED CNN TACTICAL CARD */}
+        <div
+          className={`card cnn-tactical-card glass-morphic animate-in ${cnnTheme.class}`}
+          style={{ "--status-color": cnnTheme.color, "--status-glow": cnnTheme.glow }}
+        >
+          <div className="cnn-tactical-header">
+            <div className="cnn-title-group">
+              <span className="live-tag">LIVE TELEMETRY</span>
+              <h3>Visual Intelligence Scan</h3>
             </div>
 
-            <div className="cnn-stat-item">
-              <div className="label-row">
-                <label>SPECTRAL CONFIDENCE: </label>
-                <span className="confidence-value" style={{ color: cnnTheme.color }}>{confidence}%</span>
+            <div className="tactical-header-right">
+              <div className="model-id-badge">
+                <span className="model-label">ENGINE</span>
+                <span className="model-name">CNN-V2 / MOBILE-NET</span>
               </div>
-              <div className="tactical-progress-bg">
-                <div 
-                  className="tactical-progress-fill" 
-                  style={{ width: `${confidence}%`, backgroundColor: cnnTheme.color }}
-                ></div>
+
+              <div
+                className="status-indicator-pill"
+                style={{ backgroundColor: cnnTheme.color }}
+              >
+                {confidence < 40 && <span className="mini-warn">⚠️</span>}
+                {cnnTheme.label}
+              </div>
+            </div>
+          </div>
+
+          <div className="cnn-tactical-layout">
+            <div className="cnn-visual-container">
+              <div
+                className="cnn-frame"
+                style={{ borderColor: cnnTheme.color }}
+              >
+                <div
+                  className="cnn-image-feed"
+                  style={{
+                    backgroundImage: cnn?.image_sample
+                      ? `url(${cnn.image_sample})`
+                      : "none",
+                    filter:
+                      confidence < 40
+                        ? "grayscale(0.4) contrast(1.1) brightness(0.9)"
+                        : "none",
+                  }}
+                >
+                  {cnn?.image_sample && (
+                    <div className="scan-telemetry-overlay" />
+                  )}
+                </div>
+
+                <div className="corner-bit tl" />
+                <div className="corner-bit tr" />
+                <div className="corner-bit bl" />
+                <div className="corner-bit br" />
               </div>
             </div>
 
-            <div className="cnn-alert-box" style={{ borderLeftColor: cnnTheme.color, background: `${cnnTheme.color}15` }}>
-              <div className="alert-content">
-                <strong style={{ color: cnnTheme.color }}>{cnnTheme.note}</strong>
+            <div className="cnn-data-grid">
+              <div className="cnn-stat-item">
+                <label>TERRAIN CLASSIFICATION:</label>
+                <strong
+                  className="cnn-class-text"
+                  style={{ color: cnnTheme.color }}
+                >
+                  {cnn?.class || "ANALYZING..."}
+                </strong>
+              </div>
+
+              <div className="cnn-stat-item">
+                <div className="label-row">
+                  <label>SPECTRAL CONFIDENCE:</label>
+                  <span
+                    className="confidence-value"
+                    style={{ color: cnnTheme.color }}
+                  >
+                    {confidence}%
+                  </span>
+                </div>
+
+                <div className="tactical-progress-bg">
+                  <div
+                    className="tactical-progress-fill"
+                    style={{
+                      width: `${confidence}%`,
+                      backgroundColor: cnnTheme.color,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div
+                className="cnn-alert-box"
+                style={{
+                  borderLeftColor: cnnTheme.color,
+                  background: `${cnnTheme.color}15`,
+                }}
+              >
+                <strong style={{ color: cnnTheme.color }}>
+                  {cnnTheme.note}
+                </strong>
                 <p>
-                  {confidence < 40 
-                    ? "Terrain complexity exceeding standard spectral resolution." 
+                  {confidence < 40
+                    ? "Terrain complexity exceeding standard spectral resolution."
                     : `Visual markers confirm high correlation with ${cnn?.class} signatures.`}
                 </p>
               </div>
             </div>
           </div>
+
+          <div className="cnn-footer-telemetry">
+            <span>
+              RES:{" "}
+              {cnn?.telemetry?.resolution_m_per_px != null
+                ? `${cnn.telemetry.resolution_m_per_px}m/px`
+                : "10m/px"}
+            </span>
+            <span>SENSOR: {cnn?.telemetry?.tile_url_source || "SENTINEL-2 L2A"}</span>
+            <span>MODEL: {cnn?.telemetry?.model || "CNN-V2 / MOBILE-NET"}</span>
+            <span>TS: {new Date().toLocaleTimeString()}</span>
+            {cnn?.telemetry?.verified_by && (
+              <span>✓ {cnn.telemetry.verified_by}</span>
+            )}
+          </div>
         </div>
-        
-        {/* Responsive Footer - Live telemetry from backend when available */}
-        <div className="cnn-footer-telemetry">
-          <span>RES: {cnn?.telemetry?.resolution_m_per_px != null ? `${cnn.telemetry.resolution_m_per_px}m/px` : '10m/px'}</span>
-          <span>SENSOR: {cnn?.telemetry?.tile_url_source || 'SENTINEL-2 L2A'}</span>
-          <span>MODEL: {cnn?.telemetry?.model || 'CNN-V2 / MOBILE-NET'}</span>
-          <span>TS: {new Date().toLocaleTimeString()}</span>
-          {cnn?.telemetry?.verified_by && <span>✓ {cnn.telemetry.verified_by}</span>}
-        </div>
+
+        {/* Terrain shown only in single view */}
+        {isFullWidth && data?.terrain_analysis && (
+          <TerrainSlope terrain={data.terrain_analysis} />
+        )}
       </div>
- 
-        {/* {data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
-        </div> */}
-        {/* If Single View, Terrain shows here in col-1 */}
-        {isFullWidth && data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
+
+      {/* COLUMN 2 */}
+      <div className={isFullWidth ? "col-2" : ""}>
+        <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
+        <WeatherCard weather={data?.weather} />
       </div>
-        <div className={isFullWidth ? "col-2" : ""}>
-          <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
-          <WeatherCard weather={data?.weather} />
-          
-        </div>
-        {/* If Compare Mode, Terrain is forced to the bottom of the entire stack */}
-      {!isFullWidth && data.terrain_analysis && <TerrainSlope terrain={data.terrain_analysis} />}
     </div>
-  
-    );
+
+    {/* Compare-mode terrain always goes at bottom */}
+    {!isFullWidth && data?.terrain_analysis && (
+      <TerrainSlope terrain={data.terrain_analysis} />
+    )}
+  </>
+);
   }
 
 
-
-if (activeTab === "infrastructure") {
-  const intel = data.strategic_intelligence || {};
-  // Use flat_factors (all 15) when available; else derive from nested data.factors
-  const flatF = data.flat_factors || (() => {
-    const f = data.factors || {};
-    const get = (cat, key) => {
-      const v = f[cat]?.[key];
-      return typeof v === 'object' && v !== null ? v.value : v;
-    };
-    return {
-      landuse: get('socio_econ', 'landuse') ?? 50,
-      pollution: get('environmental', 'pollution') ?? 50,
-      proximity: get('socio_econ', 'infrastructure') ?? 50,
-      soil: get('environmental', 'soil') ?? 50,
-      water: get('hydrology', 'water') ?? 50,
-      vegetation: get('environmental', 'vegetation') ?? 50
-    };
-  })();
-  const landuseVal = typeof flatF.landuse === 'number' ? flatF.landuse : 50;
-  const pollutionVal = typeof flatF.pollution === 'number' ? flatF.pollution : 50;
-  const proximityVal = typeof flatF.proximity === 'number' ? flatF.proximity : (typeof flatF.infrastructure === 'number' ? flatF.infrastructure : 50);
-  const soilVal = typeof flatF.soil === 'number' ? flatF.soil : 50;
-  const waterVal = typeof flatF.water === 'number' ? flatF.water : 50;
-  // Carbon Intelligence: Potential based on vegetation/landuse
-  const carbonIntelligence = (landuseVal * 0.75).toFixed(1);
-  const liveFootprint = ((100 - pollutionVal + (100 - proximityVal)) / 15).toFixed(1);
-  const esgScore = Math.round((soilVal + pollutionVal + waterVal) / 3);
-  const esgColorClass = esgScore > 75 ? "grade-A" : esgScore > 50 ? "grade-B" : esgScore > 35 ? "grade-C" : "grade-F";
+  if (activeTab === "infrastructure") {
+    const intel = data.strategic_intelligence || {};
+    // Use flat_factors (all 15) when available; else derive from nested data.factors
+    const flatF = data.flat_factors || (() => {
+      const f = data.factors || {};
+      const get = (cat, key) => {
+        const v = f[cat]?.[key];
+        return typeof v === 'object' && v !== null ? v.value : v;
+      };
+      return {
+        landuse: get('socio_econ', 'landuse') ?? 50,
+        pollution: get('environmental', 'pollution') ?? 50,
+        proximity: get('socio_econ', 'infrastructure') ?? 50,
+        soil: get('environmental', 'soil') ?? 50,
+        water: get('hydrology', 'water') ?? 50,
+        vegetation: get('environmental', 'vegetation') ?? 50
+      };
+    })();
+    const landuseVal = typeof flatF.landuse === 'number' ? flatF.landuse : 50;
+    const pollutionVal = typeof flatF.pollution === 'number' ? flatF.pollution : 50;
+    const proximityVal = typeof flatF.proximity === 'number' ? flatF.proximity : (typeof flatF.infrastructure === 'number' ? flatF.infrastructure : 50);
+    const soilVal = typeof flatF.soil === 'number' ? flatF.soil : 50;
+    const waterVal = typeof flatF.water === 'number' ? flatF.water : 50;
+    // Carbon Intelligence: Potential based on vegetation/landuse
+    const carbonIntelligence = (landuseVal * 0.75).toFixed(1);
+    const liveFootprint = ((100 - pollutionVal + (100 - proximityVal)) / 15).toFixed(1);
+    const esgScore = Math.round((soilVal + pollutionVal + waterVal) / 3);
+    const esgColorClass = esgScore > 75 ? "grade-A" : esgScore > 50 ? "grade-B" : esgScore > 35 ? "grade-C" : "grade-F";
   
 
-  return (
-    
-    /* Use the dynamic containerClass instead of the hardcoded strategic-intel-grid */
-    <div className={containerClass}>
+    return (
       
-      {/* Column 1: Potential and Infrastructure Context */}
-      <div className={isFullWidth ? "col-1" : ""}>
-        <PotentialSection factors={data.factors} score={data.suitability_score} />
+      /* Use the dynamic containerClass instead of the hardcoded strategic-intel-grid */
+      <div className={containerClass}>
         
-  <div className="card glass-morphic intel-card">
-    <div className="intel-header">
-      <div className="title-group">
-        <h3>🌳 Sustainability Intelligence</h3>
-        <p className="subtitle">Lithospheric & Biomass Sequestration</p>
-      </div>
-      
-      {/* DYNAMIC COLOR CLASS ADDED HERE */}
-      <div className={`esg-score-circle ${esgColorClass}`}>
-        <span className="esg-val">{esgScore}</span>
-        <span className="esg-lab">ESG</span>
-      </div>
-    </div>
-
-  <div className="carbon-analysis-zone">
-    <div className="analysis-row">
-      <div className="analysis-item">
-        <label>Carbon Asset</label>
-        <span className="val-green">+{carbonIntelligence} <small>tCO2e/yr</small></span>
-        <div className="mini-progress-bg">
-          <div className="mini-progress-fill green" style={{ width: `${Math.min(carbonIntelligence * 2, 100)}%` }}></div>
-        </div>
-      </div>
-      <div className="analysis-item">
-        <label>Live Footprint</label>
-        <span className="val-red">-{liveFootprint} <small>tCO2e/yr</small></span>
-        <div className="mini-progress-bg">
-          <div className="mini-progress-fill red" style={{ width: `${Math.min(liveFootprint * 10, 100)}%` }}></div>
-        </div>
-      </div>
-    </div>
-
-    <div className="net-impact-summary">
-      <div className="impact-label">Net Ecosystem Impact</div>
-      <div className="impact-value">
-        { (carbonIntelligence - liveFootprint) > 0 ? "CARBON NEGATIVE (CLIMATE POSITIVE)" : "CARBON POSITIVE (CLIMATE RISK)" }
-      </div>
-    </div>
-  </div>
-
-  <div className="eligibility-drawer">
-    <div className="drawer-item">
-      <span>🌿 Conservation Credit Match:</span>
-      <strong className={esgScore > 65 ? "status-ok" : "status-no"}>
-        {esgScore > 65 ? "HIGHLY ELIGIBLE" : "INELIGIBLE"}
-      </strong>
-    </div>
-    <div className="drawer-item">
-      <span>🛡️ Biodiversity Buffer:</span>
-      <strong>{landuseVal > 60 ? "PREMIUM" : "STANDARD"}</strong>
-    </div>
-  </div>
-  
-  <p className="legal-disclaimer">Estimates based on biomass density and emission intensity.</p>
-</div>
-      </div>
-      {/* Column 2: Roadmap, Interventions, and Projections */}
-      <div className={isFullWidth ? "col-2" : "intel-col"}>
-        {/* Roadmap Card */}
-        <div className="card glass-morphic intel-card roadmap-card">
-          <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
-          <div className="roadmap-list">
-            {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
-              <div key={i} className="roadmap-item">
-                <div className="roadmap-task-info">
-                  <span className="task-name">{item.task}</span>
-                  <p className="tiny-note">{item.note}</p>
-                </div>
-                <span className="impact-tag">{item.impact} Boost</span>
+        {/* Column 1: Potential and Infrastructure Context */}
+        <div className={isFullWidth ? "col-1" : ""}>
+          <PotentialSection factors={data.factors} score={data.suitability_score} />
+          
+          <div className="card glass-morphic intel-card">
+            <div className="intel-header">
+              <div className="title-group">
+                <h3>🌳 Sustainability Intelligence</h3>
+                <p className="subtitle">Lithospheric & Biomass Sequestration</p>
               </div>
-            )) : <div className="nearby-empty">Site maintains Grade A stability.</div>}
+              
+              {/* DYNAMIC COLOR CLASS ADDED HERE */}
+              <div className={`esg-score-circle ${esgColorClass}`}>
+                <span className="esg-val">{esgScore}</span>
+                <span className="esg-lab">ESG</span>
+              </div>
+            </div>
+
+            <div className="carbon-analysis-zone">
+              <div className="analysis-row">
+                <div className="analysis-item">
+                  <label>Carbon Asset</label>
+                  <span className="val-green">+{carbonIntelligence} <small>tCO2e/yr</small></span>
+                  <div className="mini-progress-bg">
+                    <div className="mini-progress-fill green" style={{ width: `${Math.min(carbonIntelligence * 2, 100)}%` }}></div>
+                  </div>
+                </div>
+                <div className="analysis-item">
+                  <label>Live Footprint</label>
+                  <span className="val-red">-{liveFootprint} <small>tCO2e/yr</small></span>
+                  <div className="mini-progress-bg">
+                    <div className="mini-progress-fill red" style={{ width: `${Math.min(liveFootprint * 10, 100)}%` }}></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="net-impact-summary">
+                <div className="impact-label">Net Ecosystem Impact</div>
+                <div className="impact-value">
+                  { (carbonIntelligence - liveFootprint) > 0 ? "CARBON NEGATIVE (CLIMATE POSITIVE)" : "CARBON POSITIVE (CLIMATE RISK)" }
+                </div>
+              </div>
+            </div>
+
+            <div className="eligibility-drawer">
+              <div className="drawer-item">
+                <span>🌿 Conservation Credit Match:</span>
+                <strong className={esgScore > 65 ? "status-ok" : "status-no"}>
+                  {esgScore > 65 ? "HIGHLY ELIGIBLE" : "INELIGIBLE"}
+                </strong>
+              </div>
+              <div className="drawer-item">
+                <span>🛡️ Biodiversity Buffer:</span>
+                <strong>{landuseVal > 60 ? "PREMIUM" : "STANDARD"}</strong>
+              </div>
+            </div>
+            
+            <p className="legal-disclaimer">Estimates based on biomass density and emission intensity.</p>
           </div>
         </div>
+        
+        {/* Column 2: Roadmap, Interventions, and Projections */}
+        <div className={isFullWidth ? "col-2" : "intel-col"}>
+          {/* Roadmap Card */}
+          <div className="card glass-morphic intel-card roadmap-card">
+            <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
+            <div className="roadmap-list">
+              {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
+                <div key={i} className="roadmap-item">
+                  <div className="roadmap-task-info">
+                    <span className="task-name">{item.task}</span>
+                    <p className="tiny-note">{item.note}</p>
+                  </div>
+                  <span className="impact-tag">{item.impact} Boost</span>
+                </div>
+              )) : <div className="nearby-empty">Site maintains Grade A stability.</div>}
+            </div>
+          </div>
 
-        {/* Interventions Card */}
-        <div className="card glass-morphic intel-card prevention-card">
-          <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
-          <p className="subtitle">AI-driven preventative strategy</p>
-          <ul className="prevention-list">
-            {intel.interventions?.map((msg, i) => (
-              <li key={i}>{msg}</li>
-            ))}
-          </ul>
+          {/* Interventions Card */}
+          <div className="card glass-morphic intel-card prevention-card">
+            <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
+            <p className="subtitle">AI-driven preventative strategy</p>
+            <ul className="prevention-list">
+              {intel.interventions?.map((msg, i) => (
+                <li key={i}>{msg}</li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Future Projection Card */}
+          <div className="card glass-morphic intel-card prediction-card">
+            <div className="intel-header">
+              <h3>🚀 AI Future Projection (2036)</h3>
+              <div className="future-score-wrap">
+                <span className="current-mini">{data.suitability_score?.toFixed(1)}</span>
+                <span className="drift-arrow">→</span>
+                <span className="future-score">{intel.expected_score}%</span>
+              </div>
+            </div>
+            <div className="drift-metrics">
+              <div className="drift-row">
+                <span>Urbanization Risk:</span> 
+                <span className="val-red">{intel.metrics?.urban_sprawl}</span>
+              </div>
+              <div className="drift-row">
+                <span>Vegetation Loss:</span> 
+                <span className="val-red">{intel.metrics?.veg_loss}</span>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* Future Projection Card */}
-        <div className="card glass-morphic intel-card prediction-card">
+        
+        {/* Digital Twin Infrastructure Simulation - Separate Card */}
+        <div className="card glass-morphic intel-card digital-twin-card">
           <div className="intel-header">
-            <h3>🚀 AI Future Projection (2036)</h3>
-            <div className="future-score-wrap">
-              <span className="current-mini">{data.suitability_score?.toFixed(1)}</span>
-              <span className="drift-arrow">→</span>
-              <span className="future-score">{intel.expected_score}%</span>
-            </div>
+            <h3>🏗️ Digital Twin Infrastructure Simulation</h3>
+            <p className="subtitle">Active Development Impact Analysis</p>
           </div>
-          <div className="drift-metrics">
-            <div className="drift-row">
-              <span>Urbanization Risk:</span> 
-              <span className="val-red">{intel.metrics?.urban_sprawl}</span>
-            </div>
-            <div className="drift-row">
-              <span>Vegetation Loss:</span> 
-              <span className="val-red">{intel.metrics?.veg_loss}</span>
-            </div>
-          </div>
+          <DigitalTwin 
+            location={{ lat: lat, lng: lng, factors: data.factors }}
+            onImpactUpdate={(impactData) => {
+              console.log('Development impact:', impactData);
+              // You can update state here to show impact in real-time
+            }}
+          />
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   // // Fallback return to avoid "undefined" errors
   // return null;
@@ -2251,6 +2342,17 @@ center={viewCenter}
                   const accessCities = data.places.filter(p => p.type === "access_city");
                   const transit = data.places.filter(p => p.type === "transit");
 
+                  // Display all categories including new ones
+                  const allCategories = [
+                    { title: "🏫 Schools", items: schools },
+                    { title: "🏥 Hospitals", items: hospitals },
+                    { title: "🎓 Colleges & Universities", items: colleges },
+                    { title: "🛒 Markets & Shopping", items: markets },
+                    { title: "⛽ Petrol Bunks", items: petrolBunks },
+                    { title: "🏙️ Access Cities", items: accessCities },
+                    { title: "🚌 Transit", items: transit }
+                  ].filter(cat => cat.items.length > 0); // Only show categories with items
+
                   const Section = ({ title, items }) => (
                     <div className="nearby-section">
                       <h4>{title} ({items.length})</h4>
@@ -2269,22 +2371,17 @@ center={viewCenter}
 
                   return (
                     <>
-                      <Section title="🏫 Schools" items={schools} />
-                      <Section title="🏥 Hospitals" items={hospitals} />
-                      <Section title="🎓 Colleges & Universities" items={colleges} />
-                      <Section title="🛒 Markets & Shopping" items={markets} />
-                      <Section title="⛽ Petrol Bunks" items={petrolBunks} />
-                      <Section title="🏙️ Access Cities" items={accessCities} />
-                      <Section title="🚌 Transit" items={transit} />
+                      {allCategories.map((category, index) => (
+                        <Section key={index} title={category.title} items={category.items} />
+                      ))}
                     </>
                   );
-                })()
-                }
+                })()}
               </div>
             </div>
           </div>
-        )}
-      
+        
+      )}
     </div>
   );
 }
