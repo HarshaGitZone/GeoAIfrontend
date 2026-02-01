@@ -2246,6 +2246,10 @@ center={viewCenter}
                   const schools = data.places.filter(p => p.type === "school");
                   const hospitals = data.places.filter(p => p.type === "hospital");
                   const colleges = data.places.filter(p => p.type === "college" || p.type === "university");
+                  const markets = data.places.filter(p => p.type === "market");
+                  const petrolBunks = data.places.filter(p => p.type === "petrol_bunk");
+                  const accessCities = data.places.filter(p => p.type === "access_city");
+                  const transit = data.places.filter(p => p.type === "transit");
 
                   const Section = ({ title, items }) => (
                     <div className="nearby-section">
@@ -2268,6 +2272,10 @@ center={viewCenter}
                       <Section title="🏫 Schools" items={schools} />
                       <Section title="🏥 Hospitals" items={hospitals} />
                       <Section title="🎓 Colleges & Universities" items={colleges} />
+                      <Section title="🛒 Markets & Shopping" items={markets} />
+                      <Section title="⛽ Petrol Bunks" items={petrolBunks} />
+                      <Section title="🏙️ Access Cities" items={accessCities} />
+                      <Section title="🚌 Transit" items={transit} />
                     </>
                   );
                 })()

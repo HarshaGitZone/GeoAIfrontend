@@ -3524,90 +3524,108 @@ html, body, #root, .app-shell {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px);
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(8px);
 }
 
 .modal-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 16px;
   width: 90%;
-  /* max-width: 500px; */
-  max-height: 80vh;
+  max-width: 900px;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Light theme specific styling */
+[data-theme="light"] .modal-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .modal-header {
-  padding: 20px;
+  padding: 24px;
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+}
+
+[data-theme="light"] .modal-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .modal-header h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   color: var(--text);
+  font-weight: 700;
 }
 
 .modal-body {
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-  align-content: start;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 /* Sections - responsive grid layout */
 .nearby-section {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 14px;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(147, 51, 234, 0.08) 100%);
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.15);
   transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="light"] .nearby-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .nearby-section:hover {
-  background: rgba(59, 130, 246, 0.05);
-  border-color: rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(147, 51, 234, 0.12) 100%);
+  border-color: rgba(59, 130, 246, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="light"] .nearby-section:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .nearby-section h4 {
-  margin: 0 0 12px 0;
+  margin: 0 0 14px 0;
   color: var(--accent);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Items container */
 .nearby-items-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 /* Individual item card */
@@ -3615,62 +3633,105 @@ html, body, #root, .app-shell {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  padding: 8px 10px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
+}
+
+[data-theme="light"] .nearby-item {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
 }
 
 .nearby-item:hover {
   background: rgba(59, 130, 246, 0.15);
   border-color: rgba(59, 130, 246, 0.3);
-  transform: translateX(2px);
+  transform: translateX(4px);
+}
+
+[data-theme="light"] .nearby-item:hover {
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }
 
 .nearby-name {
   color: var(--text);
   flex: 1;
   font-weight: 500;
+  font-size: 13px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .nearby-distance {
-  color: rgba(59, 130, 246, 0.8);
+  color: var(--accent);
   font-size: 12px;
   margin-left: 8px;
-  font-weight: 600;
+  padding: 4px 8px;
   background: rgba(59, 130, 246, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  flex-shrink: 0;
+  border-radius: 12px;
+  font-weight: 600;
+  min-width: fit-content;
+}
+
+[data-theme="light"] .nearby-distance {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
 }
 
 /* Empty message */
 .nearby-empty {
   font-size: 13px;
   opacity: 0.7;
-  padding: 12px;
+  padding: 16px;
   text-align: center;
-  color: var(--text);
-  grid-column: 1 / -1;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .nearby-empty {
+  background: #f8fafc;
+  border: 1px dashed #e2e8f0;
+  color: #64748b;
 }
 
 /* Close button */
 .modal-close {
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+[data-theme="light"] .modal-close {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
 }
 
 .modal-close:hover {
-  color: white;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  transform: scale(1.05);
+}
+
+[data-theme="light"] .modal-close:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
 }
 
 /* ==================== RESPONSIVE NEARBY PLACES ==================== */
