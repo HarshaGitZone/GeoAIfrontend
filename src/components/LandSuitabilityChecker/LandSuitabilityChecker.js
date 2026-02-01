@@ -1365,8 +1365,14 @@ const handleOpenHistory = useCallback((targetData, targetName, targetLat, target
   const handleMyLocation = () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition((pos) => {
-      setLat(pos.coords.latitude.toString());
-      setLng(pos.coords.longitude.toString());
+      const deviceLat = pos.coords.latitude;
+      const deviceLng = pos.coords.longitude;
+      setLat(deviceLat.toString());
+      setLng(deviceLng.toString());
+      
+      // Also move the map view to the user's location
+      setViewCenter([deviceLat, deviceLng]);
+      setZoom(16);
     });
   };
 

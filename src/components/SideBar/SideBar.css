@@ -1415,284 +1415,149 @@ button.mini:hover, .btn-mono-tool:hover {
 
 
 .share-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999; /* Ensures it is above everything */
-  animation: modalFadeIn 0.25s ease-out;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 99999 !important;
 }
 
 .share-modal-card {
-  background: var(--card-bg, #1e293b); /* Fallback to dark if var not set */
-  border: 1px solid var(--accent-color);
-  padding: 30px;
-  border-radius: 20px;
-  width: 320px;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
-}
-
-.share-modal-close {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
-  border: none;
-  color: #94a3b8;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.qr-background {
-  background: white;
-  padding: 15px;
-  border-radius: 15px;
-  display: inline-block;
-  margin: 15px 0;
-}
-
-.share-qr-section p {
-  font-size: 13px;
-  opacity: 0.7;
-  margin-bottom: 20px;
-}
-
-.link-display-box {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-family: monospace;
-  margin-bottom: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  word-break: break-all;
-}
-
-@keyframes modalFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
-.share-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  animation: fadeInModal 0.3s ease;
-}
-
-.share-modal-card {
-  /* Using specific colors to prevent theme "blackout" issues */
-  background: var(--qr-card-bg, #1a1a1a);
-  color: #ffffff;
-  border: 1px solid var(--accent-color);
-  padding: 32px;
-  border-radius: 24px;
-  width: 340px;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-/* Theme Adaptation */
-[data-theme='light'] .share-modal-card {
-    --qr-card-bg: #ffffff;
-    color: #000000;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.qr-container-box {
-  background: white; /* Mandatory for scanning in dark mode */
-  padding: 16px;
-  border-radius: 16px;
-  display: inline-block;
-  margin-bottom: 12px;
-}
-
-.share-title {
-  margin: 0 0 20px 0;
-  font-size: 20px;
-  letter-spacing: -0.5px;
-}
-
-.share-subtitle {
-  font-size: 13px;
-  opacity: 0.7;
-  margin-bottom: 24px;
-  font-weight: 500;
-}
-
-.share-actions-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.share-full-btn {
-  width: 100%;
-  padding: 12px !important;
-  font-weight: 600;
-}
-
-.share-close-bottom {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: inherit !important;
-  padding: 4px !important;
-}
-
-[data-theme='light'] .share-close-bottom {
-    background: rgba(0, 0, 0, 0.05) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 30px !important;
+  border-radius: 16px !important;
+  width: 320px !important;
+  max-width: 90vw !important;
+  text-align: center !important;
+  position: relative !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
 }
 
 .share-modal-close-top {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: none;
-  border: none;
-  color: gray;
-  font-size: 20px;
-  cursor: pointer;
+  position: absolute !important;
+  top: 15px !important;
+  right: 15px !important;
+  background: none !important;
+  border: none !important;
+  color: #64748b !important;
+  font-size: 20px !important;
+  cursor: pointer !important;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease !important;
 }
 
-@keyframes fadeInModal {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+.share-modal-close-top:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: #000000 !important;
 }
 
-
-
-/* THE OVERLAY: Now restricted to the sidebar's boundaries */
-.share-modal-overlay {
-  position: absolute; /* Changed from fixed to absolute */
-  top: 0;
-  left: 0;
-  width: 100%; /* Matches current sidebar width */
-  height: 100%; /* Matches current sidebar height */
-  background: rgba(0, 0, 0, 0.9); /* Dark overlay */
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center; /* Centers vertically in sidebar */
-  justify-content: center; /* Centers horizontally in sidebar */
-  z-index: 1000; /* High enough to be over sidebar content */
-  border-radius: inherit; /* Matches sidebar rounded corners if any */
+.share-title {
+  margin: 0 0 20px 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #000000 !important;
 }
 
-/* THE MODAL CARD: Slimmed down to fit sidebar widths */
-.share-modal-card {
-  background: #111;
-  color: white;
-  padding: 20px;
-  border-radius: 16px;
-  width: 90%; /* Responsive to sidebar width */
-  max-width: 300px; /* Prevents it from getting too big */
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--accent-color);
-  text-align: center;
-  animation: modalSlideUp 0.3s ease;
-}
-
-/* Ensure the QR code fits the sidebar width */
 .qr-container-box {
   background: white !important;
-  margin-top:4px;
-  padding: 12px;
-  border-radius: 12px;
-  display: inline-block;
-  margin-bottom: 10px;
-}
-
-/* Smaller text for the compact sidebar view */
-.share-title {
-  font-size: 16px;
-  margin-bottom: 12px;
+  padding: 16px !important;
+  border-radius: 12px !important;
+  display: inline-block !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
 .share-subtitle {
-  font-size: 11px;
-  margin-bottom: 15px;
-  opacity: 0.8;
+  font-size: 13px !important;
+  opacity: 0.7 !important;
+  margin-bottom: 20px !important;
+  color: #000000 !important;
 }
 
-@keyframes modalSlideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.share-actions-vertical {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
 }
 
-
-/* High-contrast green button for the sidebar modal */
 .share-action-primary {
   width: 100% !important;
-  padding: 12px 0 !important;
-  background: #10b981 !important; /* Matches your emerald theme */
+  padding: 12px 20px !important;
+  background: #10b981 !important;
   color: white !important;
   border: none !important;
   border-radius: 8px !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.5px !important;
+  font-weight: 600 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
 
-/* Subtle secondary button */
-.share-action-secondary {
-  width: 100% !important;
-  padding: 10px 0 !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  color: #94a3b8 !important;
-  border-radius: 8px !important;
-  cursor: pointer !important;
-}
-
-/* Hover: Brighten and lift */
 .share-action-primary:hover {
-  background: #059669 !important; /* Slightly darker green */
-  transform: translateY(-2px); /* Lift effect */
-  box-shadow: 0 10px 15px rgba(16, 185, 129, 0.4) !important;
+  background: #059669 !important;
+  transform: translateY(-1px) !important;
 }
-/* Subtle secondary button */
+
 .share-action-secondary {
   width: 100% !important;
-  padding: 10px 0 !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  color: #94a3b8 !important;
+  padding: 10px 20px !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: #000000 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
   border-radius: 8px !important;
+  font-weight: 500 !important;
   cursor: pointer !important;
+  transition: all 0.2s ease !important;
 }
 
-/* Hover: Subtle highlight */
 .share-action-secondary:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
-  color: white !important;
+  background: rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Active: Fade slightly */
-.share-action-secondary:active {
-  background: rgba(255, 255, 255, 0.02) !important;
+/* Dark theme overrides */
+[data-theme="dark"] .share-modal-card {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .share-modal-close-top {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .share-modal-close-top:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .share-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .share-subtitle {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .share-action-secondary {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .share-action-secondary:hover {
+  background: #1e293b !important;
 }
 
 

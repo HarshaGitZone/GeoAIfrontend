@@ -209,6 +209,7 @@ const generateShareLink = () => {
   };
 
   return (
+    <>
     <aside
       className="sidebar glass-morphic"
       style={{
@@ -282,88 +283,11 @@ const generateShareLink = () => {
               🔗 Share this Link
             </button>
             
-          {isShareModalOpen && (
-            <div className="share-modal-overlay" onClick={() => setIsShareModalOpen(false)}>
-              <div className="share-modal-card" onClick={(e) => e.stopPropagation()}>
-                <button className="share-modal-close-top" onClick={() => setIsShareModalOpen(false)}>✕</button>
-                
-                <div className="share-modal-content">
-                  <h3 className="share-title">Share Analysis</h3>
-                  
-                  <div className="share-qr-section">
-                    <div className="qr-container-box">
-                      <QRCode 
-                        value={shareUrl} 
-                        size={180} 
-                        bgColor="#ffffff" 
-                        fgColor="#000000" 
-                        level="M"
-                      />
-                    </div>
-                    <p className="share-subtitle">
-                      {isCompareMode ? `${locationAName} vs ${locationBName}` : locationAName}
-                    </p>
-                  </div>
-
-                  <div className="share-link-section">
-                    {/* <div className="link-display-box">
-                      {shareUrl.substring(0, 35)}...
-                    </div> */}
-                    
-                    <div className="share-actions-vertical">
-                      <button 
-                        className="share-action-primary" 
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(shareUrl);
-                          alert("Link copied to clipboard!");
-                        }}
-                      >
-                        Copy Link
-                      </button>
-
-                      <button 
-                        className="share-action-secondary " 
-                        onClick={() => setIsShareModalOpen(false)}
-                      >
-                        Close
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          
           </div>
         </section>
 
-        {/* LOCATION A */}
-        {/* <section className="control-group compact-group">
-          <h3>📍 Location A: {locationAName}</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="compact-row">
-              <div className="field">
-                <label>Lat</label>
-                <input value={lat} onChange={(e) => setLat(e.target.value)} className="highlighted-box" />
-              </div>
-              <div className="field">
-                <label>Lng</label>
-                <input value={lng} onChange={(e) => setLng(e.target.value)} className="highlighted-box" />
-              </div>
-            </div>
-            <div className="compact-row" style={{ marginTop: "6px", gap: "4px" }}>
-              <button type="button" onClick={handleMyLocation} className="btn-save" style={{ flex: 1, padding: '6px 8px', fontSize: '11px' }}>📍 My Loc</button>
-              <button type="button" onClick={handleSavePlace} className="btn-save" style={{ flex: 1, padding: '6px 8px', fontSize: '11px' }}>⭐ Save</button>
-            </div>
-            <div className="compact-row" style={{ marginTop: "4px", gap: "4px" }}>
-              <button type="submit" className="btn-analyze" disabled={loading} style={{ flex: 1, padding: '6px 8px', fontSize: '11px' }}>
-                {loading ? "..." : "Analyze"}
-              </button>
-              <button type="button" onClick={handleNearbyPlaces} disabled={!result || nearbyLoading} className="btn-analyze" style={{ flex: 1, padding: '6px 8px', fontSize: '11px' }}>
-                {nearbyLoading ? "..." : "🏘️ NearBy Places"}
-              </button>
-            </div>
-          </form>
-        </section> */}
+       
         <section className="control-group compact-group">
   <h3>📍 Location A: {locationAName}</h3>
   <form onSubmit={handleSubmit}>
@@ -419,63 +343,6 @@ const generateShareLink = () => {
               ))}
             </select>
           </div>
-
-          {/* REDESIGNED COMPACT ROW: LAT, LNG, GO, EXIT */}
-          {/* <div className="compact-row" style={{ marginTop: "6px", gap: "3px", alignItems: "flex-end" }}>
-            <div className="field" style={{ flex: 0.8 }}>
-              <label className="input-label" style={{ fontSize: "9px" }}>Lat B</label>
-              <input
-                type="text"
-                value={bLatInput}
-                onChange={(e) => setBLatInput(e.target.value)}
-                className="highlighted-box"
-                style={{ padding: "4px", fontSize: "10px" }}
-              />
-            </div>
-            <div className="field" style={{ flex: 0.8 }}>
-              <label className="input-label" style={{ fontSize: "9px" }}>Lng B</label>
-              <input
-                type="text"
-                value={bLngInput}
-                onChange={(e) => setBLngInput(e.target.value)}
-                className="highlighted-box"
-                style={{ padding: "4px", fontSize: "10px" }}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={() => bLatInput && bLngInput && handleCompareSelect(bLatInput, bLngInput)}
-              disabled={!bLatInput || !bLngInput || compareLoading}
-              className="btn-analyze"
-              style={{
-                padding: "4px 6px",
-                fontSize: "10px",
-                flex: 0.4,
-                height: "22px",
-                background: "linear-gradient(135deg, #06b6d4, #0891b2)",
-              }}
-            >
-              {compareLoading ? "..." : "Go"}
-            </button>
-            {isCompareMode && (
-              <button 
-                onClick={() => setIsCompareMode(false)} 
-                className="btn-cross" 
-                title="Exit Compare"
-                style={{ 
-                  flex: 0.3, 
-                  height: "22px", 
-                  fontSize: "10px", 
-                  backgroundColor: "#ef4444",
-                  borderRadius: "4px",
-                  color: "white" 
-                }}
-              >
-                ✕
-              </button>
-            )}
-          </div> */}
-          {/* ROW 1: Lat, Lng, Go, X */}
 <div className="geo-unified-logic-row">
   <div className="field">
     <label>Lat B</label>
@@ -723,5 +590,37 @@ const generateShareLink = () => {
 
       <div className="sidebar-resizer" onMouseDown={startResizingSide} />
     </aside>
+    {/* 🚀 MOVE THE MODAL OUTSIDE THE ASIDE TAG 🚀 */}
+      {isShareModalOpen && (
+        <div className="share-modal-overlay" onClick={() => setIsShareModalOpen(false)}>
+          <div className="share-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="share-modal-close-top" onClick={() => setIsShareModalOpen(false)}>✕</button>
+            <div className="share-modal-content">
+              <h3 className="share-title">Share Analysis</h3>
+              <div className="share-qr-section">
+                <div className="qr-container-box">
+                  <QRCode value={shareUrl} size={180} level="M" />
+                </div>
+                <p className="share-subtitle">
+                  {isCompareMode ? `${locationAName} vs ${locationBName}` : locationAName}
+                </p>
+              </div>
+              <div className="share-actions-vertical">
+                <button 
+                  className="share-action-primary" 
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(shareUrl);
+                    alert("Link copied!");
+                  }}
+                >
+                  Copy Link
+                </button>
+                <button className="share-action-secondary" onClick={() => setIsShareModalOpen(false)}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      </>
   );
 }
