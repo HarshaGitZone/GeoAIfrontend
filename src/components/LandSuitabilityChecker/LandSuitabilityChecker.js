@@ -566,7 +566,7 @@ const MapCenterSync = ({ setViewCenter }) => {
 const TacticalMapController = ({ 
   latA, lngA, latB, lngB, currentLat, currentLng, 
   setLat, setLng, isSelectingB, setBLatInput, setBLngInput, 
-  isTacticalMode, setViewCenter, setZoom, onMapLocationSelect 
+  isTacticalMode, setViewCenter, setZoom 
 }) => {
   const map = useMap();
 
@@ -582,8 +582,6 @@ const TacticalMapController = ({
       } else {
         setLat(clickedLat);
         setLng(clickedLng);
-        // User selected a new location on map: clear A and B so only Live remains
-        if (onMapLocationSelect) onMapLocationSelect();
       }
     },
   });
@@ -636,24 +634,24 @@ const TacticalMapController = ({
   // 🚀 THE FIXED RETURN: Properly contained within the function braces
   return (
     <>
-      {/* 🔵 A: First analysis only – visible when 3-pointer toggle ON */}
+      {/* 🔵 SITE A: Visible only if Tactical Mode is ON */}
       {isTacticalMode && Number.isFinite(posA[0]) && (
         <Marker position={posA} icon={createIcon('blue')}>
-          <Popup>Site A (first analysis)</Popup>
+          <Popup>Site A: Analyzed Target</Popup>
         </Marker>
       )}
 
-      {/* 🔴 B: Second analysis only – visible when 3-pointer toggle ON */}
+      {/* 🔴 SITE B: Visible only if Tactical Mode is ON */}
       {isTacticalMode && Number.isFinite(posB[0]) && (
         <Marker position={posB} icon={createIcon('red')}>
-          <Popup>Site B (comparison)</Popup>
+          <Popup>Site B: Comparison Target</Popup>
         </Marker>
       )}
 
-      {/* 🟢 Live: Current selection – only pointer when toggle OFF; always shown when toggle ON */}
+      {/* 🟢 LIVE POINTER: Always visible */}
       {Number.isFinite(posLive[0]) && (
         <Marker position={posLive} icon={createIcon('green')}>
-          <Popup>Current location (Live)</Popup>
+          <Popup>Current Selection (Neutral)</Popup>
         </Marker>
       )}
     </>
@@ -1033,13 +1031,12 @@ useEffect(() => {
   if (matchedB) {
     // 3. Adopt saved name
     setLocationBName(matchedB.name);
-  } else if (analyzedCoordsB.lat && (bLatInput !== analyzedCoordsB.lat.toString() || bLngInput !== (analyzedCoordsB.lng?.toString() ?? ''))) {
-    // 4. User is typing new B: clear previous B pointer so only new B shows after compare
+  } else if (analyzedCoordsB.lat && bLatInput !== analyzedCoordsB.lat.toString()) {
+    // 4. Reset to "Site B" and clear old comparison data
     setLocationBName("Site B");
-    setAnalyzedCoordsB({ lat: null, lng: null });
-    setCompareResult(null);
+    // setCompareResult(null);
   }
-}, [bLatInput, bLngInput, analyzedCoordsB.lat, analyzedCoordsB.lng, savedPlaces]);
+}, [bLatInput, bLngInput, analyzedCoordsB.lat, savedPlaces]);
 
 useEffect(() => {
   const params = new URLSearchParams(window.location.search);
@@ -1194,17 +1191,10 @@ useEffect(() => {
     setUserQuery("");
 
     try {
-      const historyWithUser = [...chatHistory, userMessage];
       const response = await fetch(`${API_BASE}/ask_geogpt`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: queryToSend,
-          history: historyWithUser,
-          currentData: result,
-          locationName: locationAName,
-          compareData: compareResult,
-        }),
+        body: JSON.stringify({ query: queryToSend, currentData: result, locationName: locationAName, compareData: compareResult }),
       });
       const data = await response.json();
       setChatHistory(prev => [...prev, { role: 'assistant', content: data.answer }]);
@@ -1261,14 +1251,6 @@ useEffect(() => {
 
  
 
-
-  // When user selects a new location on the map: clear A and B so only Live (green) remains
-  const handleMapLocationSelect = useCallback(() => {
-    setAnalyzedCoords({ lat: null, lng: null });
-    setAnalyzedCoordsB({ lat: null, lng: null });
-    setShowLocationB(false);
-    setCompareResult(null);
-  }, []);
 
   const handleMouseMove = useCallback((e) => {
     if (isResizingSide.current) {
@@ -2123,7 +2105,6 @@ center={viewCenter}
   isTacticalMode={isTacticalMode}
   setViewCenter={setViewCenter}
   setZoom={setZoom}
-  onMapLocationSelect={handleMapLocationSelect}
   />
 
 </MapContainer>
@@ -2133,18 +2114,18 @@ center={viewCenter}
         lat={lat} 
         lng={lng} 
          zoom={zoom} 
-         setLat={setLat}
+         setLat={setLat}      // ✅ REQUIRED
   setLng={setLng} 
         factors={result?.factors} 
         isDarkMode={isDarkMode} 
         activeStyle={active3DStyle} 
         interactive={true}
+        // 🚀 ADD THESE PROPS TO SYNC WITH 3D
     isTacticalMode={isTacticalMode}
     latA={analyzedCoords.lat}
     lngA={analyzedCoords.lng}
     latB={analyzedCoordsB.lat}
     lngB={analyzedCoordsB.lng}
-    onMapLocationSelect={handleMapLocationSelect}
       />
     )}
     </div>
