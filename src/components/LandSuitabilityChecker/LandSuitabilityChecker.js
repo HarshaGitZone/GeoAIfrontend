@@ -306,22 +306,62 @@ const getSitePotential = (factors, activeSpectral) => {
   return potentials;
 };
 
+// const PotentialSection = ({ factors, score }) => {
+//   const recommendations = getSitePotential(factors);
+//   const rating = score > 80 ? "A" : score > 60 ? "B" : score > 40 ? "C" : "F";
+  
+//   return (
+//     <div className="card potential-card glass-morphic" style={{ marginBottom: '16px' }}>
+//       <div className="potential-header">
+//         <div className="title-stack">
+//           <h3>Site Potential Analysis</h3>
+//           <p className="subtitle">Algorithmic Terrain Synthesis</p>
+//         </div>
+//         <div className="rating-badge-container">
+//             <span className="rating-label">Grade</span>
+//             <span className={`rating-letter grade-${rating}`}>{rating}</span>
+//         </div>
+//       </div>
+//       <div className="recommendations-list">
+//         {recommendations.map((rec, idx) => (
+//           <div key={idx} className={`potential-item ${rec.class}`}>
+//             <div className="potential-tag-row">
+//               <span className="potential-icon">{rec.icon}</span>
+//               <span className="potential-label">{rec.label}</span>
+//             </div>
+//             <p className="potential-reason">{rec.reason}</p>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
 const PotentialSection = ({ factors, score }) => {
   const recommendations = getSitePotential(factors);
   const rating = score > 80 ? "A" : score > 60 ? "B" : score > 40 ? "C" : "F";
   
   return (
     <div className="card potential-card glass-morphic" style={{ marginBottom: '16px' }}>
-      <div className="potential-header">
+      <div className="potential-header enhanced-header">
         <div className="title-stack">
           <h3>Site Potential Analysis</h3>
           <p className="subtitle">Algorithmic Terrain Synthesis</p>
         </div>
-        <div className="rating-badge-container">
-            <span className="rating-label">Grade</span>
-            <span className={`rating-letter grade-${rating}`}>{rating}</span>
+        
+        {/* Force these to be side-by-side with a new wrapper class */}
+        <div className="geo-score-container">
+          <div className="index-box">
+            {/* <span className="geo-label">INDEX</span> */}
+            <span className="geo-value">{score?.toFixed(0)}%</span>
+          </div>
+          <div className={`grade-box grade-${rating}`}>
+            <span className="geo-label forced-white-label">GRADE</span>
+            <span className="geo-value">{rating}</span>
+          </div>
         </div>
       </div>
+
       <div className="recommendations-list">
         {recommendations.map((rec, idx) => (
           <div key={idx} className={`potential-item ${rec.class}`}>
@@ -336,7 +376,6 @@ const PotentialSection = ({ factors, score }) => {
     </div>
   );
 };
-
 
   const FactorsSection = memo(({ 
  
@@ -1990,8 +2029,8 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
           <div className="card glass-morphic intel-card potential-card">
             <div className="intel-header">
               <div className="potential-score-badge">
-                <span className="score-value">{data.suitability_score?.toFixed(0) || '---'}%</span>
-                <span className="score-label">SCORE</span>
+                {/* <span className="score-value">{data.suitability_score?.toFixed(0) || '---'}%</span>
+                <span className="score-label">SCORE</span> */}
               </div>
             </div>
             
@@ -2242,10 +2281,10 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
                 <h3>⛰️ Terrain & Slope Analysis</h3>
                 <p className="subtitle">Professional Assessment</p>
               </div>
-              <div className="terrain-score-badge">
+              {/* <div className="terrain-score-badge">
                 <span className="score-value">{data.factors?.physical?.slope?.value?.toFixed(1) || '---'}°</span>
                 <span className="score-label">SLOPE</span>
-              </div>
+              </div> */}
             </div>
             
             <div className="terrain-compact-grid">

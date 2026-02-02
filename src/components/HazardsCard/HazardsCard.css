@@ -421,3 +421,291 @@
 .hazards-card::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+
+/* Comprehensive Light Theme Fixes for HazardsCard - Make All Text Black */
+[data-theme='light'] .hazards-card {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .hazards-card h3 {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .hazards-card h4 {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .hazard-item label {
+  color: #333333 !important;
+}
+
+[data-theme='light'] .hazard-item span {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .hazard-item .plate-info {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .hazard-item .distance-info {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .hazard-item .fault-info {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .hazard-item .magnitude-info {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .hazard-item .building-info {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .recommendations li {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .seismic-summary {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .seismic-safe {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .seismic-safe .safe-desc {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .seismic-moderate {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .seismic-moderate .moderate-desc {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .seismic-high {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .seismic-high .high-desc {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .distance-warning {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .magnitude-warning {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .plate-desc {
+  color: #333333 !important;
+}
+
+[data-theme='light'] .fault-distance {
+  color: #333333 !important;
+}
+
+/* Risk-specific colors - Light Theme */
+[data-theme='light'] .fault-yes, [data-theme='light'] .volcano-yes {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .fault-no, [data-theme='light'] .volcano-no {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .flood-high {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .flood-moderate {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .flood-low {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .drought-high {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .drought-moderate {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .drought-low {
+  color: #059669 !important;
+}
+
+/* AQI-specific colors - Light Theme */
+[data-theme='light'] .aqi-good {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .aqi-moderate {
+  color: #16a34a !important;
+}
+
+[data-theme='light'] .aqi-unhealthy-for-sensitive-groups {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .aqi-unhealthy {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .aqi-very-unhealthy {
+  color: #991b1b !important;
+}
+
+[data-theme='light'] .aqi-hazardous {
+  color: #7f1d1d !important;
+}
+
+/* Population density colors - Light Theme */
+[data-theme='light'] .density-very-high {
+  color: #991b1b !important;
+}
+
+[data-theme='light'] .density-high {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .density-medium {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .density-low {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .density-very-low {
+  color: #16a34a !important;
+}
+
+/* Weather and Climate sections - Light Theme */
+[data-theme='light'] .weather-section h4 {
+  color: #1e40af !important;
+}
+
+[data-theme='light'] .climate-section h4 {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .geological-section h4 {
+  color: #7c3aed !important;
+}
+
+[data-theme='light'] .hydrological-section h4 {
+  color: #0891b2 !important;
+}
+
+/* Overall risk level - Light Theme */
+[data-theme='light'] .overall-risk {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .risk-level {
+  color: #000000 !important;
+}
+
+/* Loading state - Light Theme */
+[data-theme='light'] .hazards-loading p {
+  color: #000000 !important;
+}
+
+/* Fix side strip text visibility */
+[data-theme='light'] .hazards-side-strip span {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .hazards-side-strip span {
+  color: white !important;
+}
+
+/* Fix header text visibility */
+[data-theme='light'] .hazards-header h3 {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .hazards-header h3 {
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Fix all hazard item spans that use var(--text-color, #ffffff) */
+[data-theme='light'] .hazard-item span {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .hazard-item span {
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Fix specific hydrological hazard spans */
+[data-theme='light'] .hydrological-section .hazard-item span {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .hydrological-section .hazard-item span {
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Fix weather hazard spans */
+[data-theme='light'] .weather-section .hazard-item span {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .weather-section .hazard-item span {
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Fix geological hazard spans */
+[data-theme='light'] .geological-section .hazard-item span {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .geological-section .hazard-item span {
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Fix climate hazard spans */
+[data-theme='light'] .climate-section .hazard-item span {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .climate-section .hazard-item span {
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Fix overall risk display */
+[data-theme='light'] .overall-risk {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .overall-risk {
+  color: var(--text-color, #ffffff) !important;
+}
+
+[data-theme='light'] .risk-level {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .risk-level {
+  color: var(--text-color, #ffffff) !important;
+}
+
+/* Fix risk values with inline styles */
+[data-theme='light'] .risk-value {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .risk-value {
+  color: var(--text-color, #ffffff) !important;
+}

@@ -5781,7 +5781,111 @@ body:has(.tab-viewport.fullscreen) * .geogpt-fixed-container {
 
 
 
-/* Weather Card Styles for LandSuitabilityChecker.css */
+/* CNN Intelligence Card - Light Theme Fixes */
+[data-theme='light'] .cnn-tactical-card {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card h3 {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-tactical-header h3 {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-status {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-confidence {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-tactical-layout {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-metric {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-label {
+  color: #333333 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-value {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-insights {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-insights p {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .cnn-tactical-card .cnn-recommendation {
+  color: #000000 !important;
+}
+
+/* Weather Card - Light Theme Fixes */
+[data-theme='light'] .weather-card {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card h3 {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .weather-header h3 {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .weather-main {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .temperature {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .weather-description {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .weather-details {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .weather-item {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .weather-item label {
+  color: #333333 !important;
+}
+
+[data-theme='light'] .weather-card .weather-item span {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .weather-forecast {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .forecast-day {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .forecast-temp {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .weather-card .forecast-desc {
+  color: #000000 !important;
+}
 
 .weather-card {
   position: relative;
@@ -9929,6 +10033,24 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
+[data-theme='light'] .val-orange {
+  color: #d97706 !important;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+[data-theme='light'] .val-green {
+  color: #059669 !important;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+[data-theme='light'] .val-red {
+  color: #dc2626 !important;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
 .nearby-empty {
   text-align: center;
   padding: 20px;
@@ -10432,3 +10554,475 @@ body:has(.tab-viewport.fullscreen) .map-variety-picker {
     font-size: 0.75rem;
   }
 }
+
+
+/* --- Potential Analysis Header Fix --- */
+.potential-header.enhanced-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 15px;
+}
+
+.score-grade-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between % and Letter Grade */
+}
+
+/* The % Score Box */
+.score-mini-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 55px;
+}
+
+.score-mini-metric .metric-label,
+.grade-badge-mini .grade-label {
+  font-size: 8px;
+  color: #94a3b8;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.score-mini-metric .metric-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* The Letter Grade Badge */
+.grade-badge-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 8px;
+  min-width: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.grade-badge-mini .grade-letter {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+/* Color Coding for Grades */
+.grade-badge-mini.grade-A { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+.grade-badge-mini.grade-B { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; }
+.grade-badge-mini.grade-C { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+.grade-badge-mini.grade-F { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; }
+
+/* Responsive Handling */
+@media (max-width: 480px) {
+  .potential-header.enhanced-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .score-grade-wrapper {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 10px;
+  }
+}
+
+/* Container to force side-by-side layout */
+.geo-score-container {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  position: relative !important; /* Overrides any absolute positioning */
+  top: auto !important;
+  right: auto !important;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Individual boxes for Index and Grade */
+.index-box, .grade-box {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 60px;
+}
+
+/* Labels (INDEX / GRADE) */
+.geo-label {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  letter-spacing: 1px !important;
+  margin-bottom: 2px !important;
+}
+
+/* Big Numbers/Letters */
+.geo-value {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  color: #fff !important;
+}
+
+/* Grade Background Colors */
+.grade-box {
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+.grade-box.grade-A { background: #10b981 !important; }
+.grade-box.grade-B { background: #3b82f6 !important; }
+.grade-box.grade-C { background: #f59e0b !important; }
+.grade-box.grade-F { background: #ef4444 !important; }
+
+/* Light Theme Support */
+[data-theme='light'] .geo-score-container {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+[data-theme='light'] .geo-value {
+  color: #1e3a8a !important;
+}
+[data-theme='light'] .grade-box .geo-value {
+  color: #fff !important; /* Keep grade letter white for contrast */
+}
+
+/* Responsive: stack them only on very small screens */
+@media (max-width: 400px) {
+  .potential-header.enhanced-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .geo-score-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+
+/* Container Fix: Ensure standard flow to prevent overlapping */
+.geo-score-container {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+}
+
+/* FORCE VISIBILITY for the "GRADE" text */
+.forced-white-label {
+  display: block !important;
+  color: #ffffff !important; /* Pure White */
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  opacity: 1 !important; /* Ensure no transparency */
+  margin-bottom: 2px !important;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2) !important; /* Subtle depth */
+}
+
+/* FORCE VISIBILITY for the Letter (A, B, C, F) */
+.forced-white-text {
+  color: #ffffff !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+/* Ensure the background boxes are solid and dark enough for white text */
+.grade-box {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 6px 14px !important;
+  border-radius: 10px !important;
+  min-width: 65px !important;
+}
+
+.grade-box.grade-A { background: #10b981 !important; } /* Emerald Green */
+.grade-box.grade-B { background: #3b82f6 !important; } /* Royal Blue */
+.grade-box.grade-C { background: #f59e0b !important; } /* Amber Orange */
+.grade-box.grade-F { background: #ef4444 !important; } /* High-Alert Red */
+
+/* INDEX visibility (Standard Label) */
+.index-box .visible-label {
+  color: #64748b !important; /* Dark slate for contrast on light/dark backgrounds */
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+
+/* LIGHT THEME TARGETED FIX FOR DIGITAL TWIN & STRATEGIC LABELS */
+
+/* Target the "Tech Innovation Hub" type labels and simulation descriptions */
+[data-theme='light'] .digital-twin-card .impact-description,
+[data-theme='light'] .digital-twin-card .subtitle,
+[data-theme='light'] .intel-card .subtitle,
+[data-theme='light'] .insight-content span,
+[data-theme='light'] .terrain-recommendation .rec-title {
+    color: #334155 !important; /* Dark Slate Blue-Gray */
+    font-weight: 500 !important;
+}
+
+/* Target bold titles within those descriptions */
+[data-theme='light'] .digital-twin-card .impact-description strong,
+[data-theme='light'] .insight-content strong {
+    color: #1e293b !important; /* Deeper Slate */
+}
+
+/* Specific fix for "Smart Urbanization" or complexity labels */
+[data-theme='light'] .status-badge,
+[data-theme='light'] .impact-tag,
+[data-theme='light'] .task-name {
+    color: #1e3a8a !important; /* Navy Blue for high visibility */
+}
+
+/* Ensure secondary notes/tiny text are also visible */
+[data-theme='light'] .tiny-note,
+[data-theme='light'] .legal-disclaimer {
+    color: #64748b !important; /* Medium Slate Gray */
+    opacity: 1 !important;
+}
+
+/* Background adjustment for readability: 
+   If these labels sit inside smaller inner-containers */
+[data-theme='light'] .insight-item,
+[data-theme='light'] .roadmap-item {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Target any elements with white color specifically */
+[data-theme='light'] .digital-twin-card [style*="white"],
+[data-theme='light'] .digital-twin-card [style*="#ffffff"],
+[data-theme='light'] .digital-twin-card .text-white {
+  color: #334155 !important;
+}
+
+/* AGGRESSIVE WHITE TEXT OVERRIDE - Force all white to dark */
+[data-theme='light'] .digital-twin-card {
+  color: #334155 !important;
+}
+
+[data-theme='light'] .digital-twin-card * {
+  color: #334155 !important;
+}
+
+/* Override CSS variables that might be setting white color */
+[data-theme='light'] .digital-twin-card {
+  --text-color: #334155 !important;
+  --color: #334155 !important;
+  --primary-color: #1e3a8a !important;
+}
+
+/* Force override any element with color property */
+[data-theme='light'] .digital-twin-card *[color] {
+  color: #334155 !important;
+}
+
+/* Target specific elements that might still be white */
+[data-theme='light'] .digital-twin-card .title,
+[data-theme='light'] .digital-twin-card .name,
+[data-theme='light'] .digital-twin-card .label,
+[data-theme='light'] .digital-twin-card .content,
+[data-theme='light'] .digital-twin-card .text {
+  color: #334155 !important;
+}
+
+/* Override with higher specificity */
+[data-theme='light'] div.digital-twin-card * {
+  color: #334155 !important;
+}
+
+/* Final override for any stubborn white text */
+[data-theme='light'] .digital-twin-card *::before,
+[data-theme='light'] .digital-twin-card *::after {
+  color: #334155 !important;
+}
+
+/* ULTRA AGGRESSIVE WHITE TEXT KILLER - Target everything */
+[data-theme='light'] .digital-twin-card,
+[data-theme='light'] .digital-twin-card *,
+[data-theme='light'] .digital-twin-card * *,
+[data-theme='light'] .digital-twin-card div,
+[data-theme='light'] .digital-twin-card span,
+[data-theme='light'] .digital-twin-card p,
+[data-theme='light'] .digital-twin-card h1,
+[data-theme='light'] .digital-twin-card h2,
+[data-theme='light'] .digital-twin-card h3,
+[data-theme='light'] .digital-twin-card h4,
+[data-theme='light'] .digital-twin-card h5,
+[data-theme='light'] .digital-twin-card h6,
+[data-theme='light'] .digital-twin-card strong,
+[data-theme='light'] .digital-twin-card em,
+[data-theme='light'] .digital-twin-card i,
+[data-theme='light'] .digital-twin-card b,
+[data-theme='light'] .digital-twin-card label,
+[data-theme='light'] .digital-twin-card .title,
+[data-theme='light'] .digital-twin-card .name,
+[data-theme='light'] .digital-twin-card .text,
+[data-theme='light'] .digital-twin-card .content,
+[data-theme='light'] .digital-twin-card .description,
+[data-theme='light'] .digital-twin-card .subtitle,
+[data-theme='light'] .digital-twin-card .heading,
+[data-theme='light'] .digital-twin-card .label,
+[data-theme='light'] .digital-twin-card .tag,
+[data-theme='light'] .digital-twin-card .feature,
+[data-theme='light'] .digital-twin-card .tech,
+[data-theme='light'] .digital-twin-card .best-for,
+[data-theme='light'] .digital-twin-card .impact,
+[data-theme='light'] .digital-twin-card .simulation {
+  color: #334155 !important;
+}
+
+/* Override specific elements that should have different colors */
+[data-theme='light'] .digital-twin-card h3,
+[data-theme='light'] .digital-twin-card .card-title,
+[data-theme='light'] .digital-twin-card .simulation-heading {
+  color: #1e3a8a !important; /* Deep Navy Blue */
+}
+
+[data-theme='light'] .digital-twin-card .best-for-tag,
+[data-theme='light'] .digital-twin-card div[class*="tag"] {
+  color: #065f46 !important; /* Deep Forest Green */
+}
+
+[data-theme='light'] .digital-twin-card strong {
+  color: #0f172a !important; /* Near Black */
+}
+
+/* Kill any CSS that sets white color */
+[data-theme='light'] .digital-twin-card [class*="white"],
+[data-theme='light'] .digital-twin-card [style*="white"],
+[data-theme='light'] .digital-twin-card [style*="#ffffff"],
+[data-theme='light'] .digital-twin-card [style*="#fff"],
+[data-theme='light'] .digital-twin-card .text-white,
+[data-theme='light'] .digital-twin-card .white {
+  color: #334155 !important;
+}
+
+/* Force override any computed styles */
+[data-theme='light'] .digital-twin-card {
+  color: #334155 !important;
+}
+
+/* Maximum specificity override */
+html body [data-theme='light'] .digital-twin-card * {
+  color: #334155 !important;
+}
+
+/* Override any !important white styles */
+html body [data-theme='light'] .digital-twin-card *[style*="color: white"],
+html body [data-theme='light'] .digital-twin-card *[style*="color: #ffffff"],
+html body [data-theme='light'] .digital-twin-card *[style*="color:#ffffff"],
+html body [data-theme='light'] .digital-twin-card *[style*="color: #fff"],
+html body [data-theme='light'] .digital-twin-card *[style*="color:#fff"] {
+  color: #334155 !important;
+}
+
+/* --- TAGS & BADGES VISIBILITY (Solar Panels, Smart HVAC, etc.) --- */
+
+/* Fix for the blue/white tech tags */
+[data-theme='light'] .digital-twin-card span {
+    color: #1e3a8a !important; /* Deep Navy for labels */
+    font-weight: 600 !important;
+}
+
+/* Fix for the "Best for" green/mint tags at the bottom */
+[data-theme='light'] .digital-twin-card .best-for-tag, 
+[data-theme='light'] div[class*="tag"] {
+    background: rgba(16, 185, 129, 0.15) !important; /* Darker Mint */
+    color: #065f46 !important; /* Deep Forest Green for text */
+    font-weight: 700 !important;
+}
+
+/* Fix for "Best for:" header text */
+[data-theme='light'] .digital-twin-card strong {
+    color: #0f172a !important; /* Near black */
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* --- OVERLAP & GRADE FIX RE-STRENGTHENING --- */
+
+/* Force the Grade box label to be opaque white */
+[data-theme='light'] .grade-box .forced-white-label {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    font-weight: 800 !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+/* Force the Big Letter (A, B, C) to be opaque white */
+[data-theme='light'] .grade-box .forced-white-text {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+/* --- Fix for the "Best for" Green Color Leak --- */
+
+/* 1. Remove background from the container */
+[data-theme='light'] .digital-twin-card .best-for-container,
+[data-theme='light'] div:has(> .best-for-tag) {
+    background: transparent !important; /* Kill the long green bar */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* 2. Apply background ONLY to the actual text tags */
+[data-theme='light'] .best-for-tag,
+[data-theme='light'] span[class*="tag"],
+[data-theme='light'] .digital-twin-card div[class*="tag"] {
+    background: rgba(16, 185, 129, 0.2) !important; /* Soft Mint */
+    color: #065f46 !important; /* Deep Forest Green */
+    padding: 4px 12px !important;
+    border-radius: 12px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    display: inline-block !important; /* Ensure background follows text length */
+    width: auto !important;
+}
+/* --- Major Heading Visibility Fix --- */
+
+/* Target the main titles inside the Digital Twin cards */
+[data-theme='light'] .digital-twin-card h3,
+[data-theme='light'] .digital-twin-card .card-title,
+[data-theme='light'] .digital-twin-card div > b,
+[data-theme='light'] .digital-twin-card .simulation-heading {
+    color: #1e3a8a !important; /* Deep Navy Blue */
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    margin-bottom: 10px !important;
+    display: block !important;
+}
+
+/* Target the secondary descriptions (e.g., "Sustainable multi-family...") */
+[data-theme='light'] .digital-twin-card p,
+[data-theme='light'] .digital-twin-card .description-text {
+    color: #334155 !important; /* Dark Slate Gray */
+    font-weight: 500 !important;
+    opacity: 1 !important;
+}
+
+/* Fix "Best for:" label visibility */
+[data-theme='light'] .digital-twin-card strong {
+    color: #0f172a !important; /* Near Black */
+    font-size: 12px !important;
+    margin-bottom: 5px !important;
+}
+

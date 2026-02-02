@@ -534,3 +534,326 @@
 .snapshot-geo-card::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
+
+
+/* 1. UPDATE GLOBAL TEXT COLOR DEFAULTS */
+/* This ensures that if --text-color isn't defined or is white, 
+   the light theme forced state displays black */
+[data-theme='light'] .snapshot-geo-card {
+  --text-color: #1a1a1a;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 2. SPECIFIC SECTION COLORS */
+.main-identity h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  /* Use the variable but ensure it falls back to a visible color */
+  color: var(--text-color, #ffffff);
+}
+
+[data-theme='light'] .main-identity h3 {
+  color: #000000 !important;
+}
+
+/* 3. GRID VALUES (The core data spans) */
+.admin-item span,
+.global-item span,
+.border-item span,
+.urban-item span,
+.env-item span,
+.infra-item span,
+.population-item span,
+.air-quality-item span,
+.place-name {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-color, #ffffff);
+}
+
+/* Force black color for light theme */
+[data-theme='light'] .admin-item span,
+[data-theme='light'] .global-item span,
+[data-theme='light'] .border-item span,
+[data-theme='light'] .urban-item span,
+[data-theme='light'] .env-item span,
+[data-theme='light'] .infra-item span,
+[data-theme='light'] .population-item span,
+[data-theme='light'] .air-quality-item span,
+[data-theme='light'] .place-name {
+  color: #1a1a1a !important;
+}
+
+/* 4. LABELS AND SECONDARY TEXT */
+/* Darken labels slightly for light theme for better contrast */
+[data-theme='light'] .coord-label,
+[data-theme='light'] .admin-item label,
+[data-theme='light'] .global-item label,
+[data-theme='light'] .population-item label,
+[data-theme='light'] .place-detail {
+  color: #64748b !important; /* Darker slate gray */
+}
+
+/* 5. ADJUST BACKGROUNDS OF ITEMS */
+/* Light theme items shouldn't have white transparent backgrounds */
+[data-theme='light'] .nearby-item {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='light'] .iso-code {
+  background: rgba(0, 0, 0, 0.1) !important;
+  color: #000000;
+}
+
+/* 6. SECTION DIVIDERS */
+[data-theme='light'] .snap-header,
+[data-theme='light'] .section,
+[data-theme='light'] .snap-footer {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 7. LOADING TEXT */
+[data-theme='light'] .snapshot-loading p {
+  color: #000000;
+}
+
+[data-theme='light'] .shimmer-line {
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+}
+
+/* Comprehensive Light Theme Fixes for SnapshotGeo - Make All Text Black */
+[data-theme='light'] .snapshot-geo-card {
+  color: #1e293b !important;
+}
+
+[data-theme='light'] .snapshot-geo-card h3 {
+  color: #1e40af !important;  /* Attractive blue instead of black */
+}
+
+[data-theme='light'] .snapshot-geo-card .snap-header h3 {
+  color: #1e40af !important;  /* Attractive blue instead of black */
+}
+
+[data-theme='light'] .snapshot-geo-card .section-title {
+  color: #1e3a8a !important;  /* Dark blue instead of green */
+}
+
+[data-theme='light'] .snapshot-geo-card .place-name {
+  color: #7c3aed !important;  /* Attractive purple instead of black */
+}
+
+[data-theme='light'] .snapshot-geo-card .capital-badge {
+  color: white !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .coord-value {
+  color: #dc2626 !important;  /* Attractive red for coordinates */
+}
+
+[data-theme='light'] .snapshot-geo-card .coord-label {
+  color: #64748b !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .place-detail {
+  color: #64748b !important;
+}
+
+/* Grid items - make all spans black */
+[data-theme='light'] .admin-item span,
+[data-theme='light'] .global-item span,
+[data-theme='light'] .border-item span,
+[data-theme='light'] .urban-item span,
+[data-theme='light'] .env-item span,
+[data-theme='light'] .infra-item span,
+[data-theme='light'] .population-item span,
+[data-theme='light'] .air-quality-item span {
+  color: #000000 !important;
+}
+
+/* Grid labels */
+[data-theme='light'] .admin-item label,
+[data-theme='light'] .global-item label,
+[data-theme='light'] .border-item label,
+[data-theme='light'] .urban-item label,
+[data-theme='light'] .env-item label,
+[data-theme='light'] .infra-item label,
+[data-theme='light'] .population-item label,
+[data-theme='light'] .air-quality-item label {
+  color: #333333 !important;
+}
+
+/* Additional elements */
+[data-theme='light'] .snapshot-geo-card .region-tag {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .admin-level {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .sovereignty {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .terrain-tag {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .terrain-tag .dot {
+  background: #000000 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .political-info {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .health-text {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .snap-footer {
+  color: #000000 !important;
+}
+
+/* AQI-specific colors - Light Theme (keep color coding but ensure visibility) */
+[data-theme='light'] .aqi-good {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .aqi-moderate {
+  color: #16a34a !important;
+}
+
+[data-theme='light'] .aqi-unhealthy-for-sensitive-groups {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .aqi-unhealthy {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .aqi-very-unhealthy {
+  color: #991b1b !important;
+}
+
+[data-theme='light'] .aqi-hazardous {
+  color: #7f1d1d !important;
+}
+
+/* Population density colors - Light Theme (keep color coding but ensure visibility) */
+[data-theme='light'] .density-very-high {
+  color: #991b1b !important;
+}
+
+[data-theme='light'] .density-high {
+  color: #dc2626 !important;
+}
+
+[data-theme='light'] .density-medium {
+  color: #d97706 !important;
+}
+
+[data-theme='light'] .density-low {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .density-very-low {
+  color: #16a34a !important;
+}
+
+/* Border status colors - Light Theme (keep color coding but ensure visibility) */
+[data-theme='light'] .border-yes {
+  color: #059669 !important;
+}
+
+[data-theme='light'] .border-no {
+  color: #d97706 !important;
+}
+
+/* Override all var(--text-color, #ffffff) usage in light theme */
+[data-theme='light'] .snapshot-geo-card * {
+  color: inherit !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .air-quality-item span,
+[data-theme='light'] .snapshot-geo-card .infra-item span,
+[data-theme='light'] .snapshot-geo-card .place-name,
+[data-theme='light'] .snapshot-geo-card .section-title,
+[data-theme='light'] .snapshot-geo-card h3 {
+  color: #000000 !important;
+}
+
+/* Fix coordinate display colors - make them visible in both themes */
+[data-theme='light'] .coord-value {
+  color: #dc2626 !important;  /* Attractive red for coordinates */
+  font-weight: 600;
+}
+
+[data-theme='dark'] .coord-value {
+  color: #10b981 !important;  /* Light green for dark theme */
+  font-weight: 600;
+}
+
+[data-theme='light'] .coord-label {
+  color: #64748b !important;  /* Medium gray for labels */
+}
+
+[data-theme='dark'] .coord-label {
+  color: #94a3b8 !important;  /* Light gray for dark theme */
+}
+
+/* Fix side strip text visibility */
+[data-theme='light'] .snapshot-side-strip span {
+  color: #000000 !important;
+}
+
+[data-theme='dark'] .snapshot-side-strip span {
+  color: white !important;
+}
+
+/* Fix capital badge visibility */
+[data-theme='light'] .capital-badge {
+  color: white !important;
+  background: linear-gradient(135deg, #059669, #047857) !important;
+}
+
+[data-theme='dark'] .capital-badge {
+  color: white !important;
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+
+/* Additional fixes for any remaining white text */
+[data-theme='light'] .snapshot-geo-card .main-identity h3 {
+  color: #000000 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .identity-meta {
+  color: #333333 !important;
+}
+
+[data-theme='light'] .snapshot-geo-card .place-detail {
+  color: #333333 !important;
+}
+
+/* LIGHT THEME HEADING OVERRIDES */
+[data-theme='light'] .section h4 {
+  color: #1e3a8a !important; /* Deep Navy Blue (Tailwind Blue-900) */
+  border-bottom: 1.5px solid rgba(30, 58, 138, 0.15); /* Subtle matching underline */
+  padding-bottom: 4px;
+  text-shadow: none !important;
+}
+
+/* Specifically targeting the icons within headings if needed */
+[data-theme='light'] .section h4 span, 
+[data-theme='light'] .section-title {
+  color: #1e3a8a !important;
+}
+
+/* Optional: Enhance the visual separation in light mode */
+[data-theme='light'] .section {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  margin-bottom: 24px;
+}
