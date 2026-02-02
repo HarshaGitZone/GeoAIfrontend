@@ -182,245 +182,78 @@ export default function HistoryView({ data, locationName, onClose, lat, lng, isD
 //     </div>
 //   );
 // };
-const EnhancedVisualForensics = ({ forensics, locationName, lat, lng }) => {
+const VisualForensics = ({ forensics }) => {
   if (!forensics) return null;
 
-  // Ensure lat and lng are numbers
-  const latNum = parseFloat(lat) || 0;
-  const lngNum = parseFloat(lng) || 0;
-
-  // Enhanced insight generator with more detailed analysis
-  const getDetailedAnalysis = (intensity, velocity, baselineYear) => {
-    const velocityMultiplier = velocity === 'ACCELERATED' ? 1.5 : velocity === 'STABLE' ? 1.0 : 0.8;
-    const adjustedIntensity = Math.min(100, intensity * velocityMultiplier);
-    
-    if (adjustedIntensity > 75) {
-      return {
-        level: 'CRITICAL TRANSFORMATION',
-        impact: 'RADICAL',
-        description: `Extreme urban metamorphosis detected. Approximately ${adjustedIntensity.toFixed(1)}% of the original landscape from ${baselineYear} has undergone complete restructuring. High-density development, industrial expansion, and infrastructure proliferation dominate the current terrain signature.`,
-        recommendation: 'Immediate urban planning intervention required. Consider environmental impact assessment and sustainable development guidelines.'
-      };
-    } else if (adjustedIntensity > 50) {
-      return {
-        level: 'MAJOR DEVELOPMENT',
-        impact: 'HIGH',
-        description: `Significant anthropogenic transformation identified. The site has evolved substantially from its ${baselineYear} baseline, with ${adjustedIntensity.toFixed(1)}% landcover conversion to built environment. Residential expansion and commercial development are primary drivers.`,
-        recommendation: 'Strategic zoning and infrastructure planning needed. Balance development with environmental conservation.'
-      };
-    } else if (adjustedIntensity > 25) {
-      return {
-        level: 'MODERATE GROWTH',
-        impact: 'MEDIUM',
-        description: `Gradual urban expansion detected. The spectral analysis reveals ${adjustedIntensity.toFixed(1)}% transition from natural to modified landcover since ${baselineYear}. Typical of controlled residential development and agricultural conversion.`,
-        recommendation: 'Monitor development patterns and implement growth management strategies.'
-      };
-    } else {
-      return {
-        level: 'STABLE ECOSYSTEM',
-        impact: 'LOW',
-        description: `Minimal anthropogenic impact detected. Only ${adjustedIntensity.toFixed(1)}% landcover change since ${baselineYear}, indicating strong environmental preservation or protected status. Natural landscape remains largely intact.`,
-        recommendation: 'Continue conservation efforts and maintain current land use policies.'
-      };
+  // DYNAMIC INSIGHT GENERATOR
+  // This ensures the report is unique based on the intensity detected
+  const getDynamicInsight = (intensity, year) => {
+    if (intensity > 60) {
+      return `CRITICAL TRANSITION: High-velocity urbanization detected. Visual delta confirms that approximately ${intensity}% of the original landcover from ${year} has been replaced by high-density infrastructure or industrial footprints.`;
+    } else if (intensity > 30) {
+      return `SIGNIFICANT GROWTH: Notable land use transition identified. The site has evolved from its ${year} baseline, showing an expansion of human-made structures and a reduction in raw vegetation biomass.`;
+    } else if (intensity > 10) {
+      return `MODERATE DRIFT: Gradual development detected. The spectral signature shows slight variation from the ${year} state, typical of establishing residential zones or managed landscape changes.`;
     }
+    return `STABLE EQUILIBRIUM: Minimal lithospheric drift. The current visual signatures remain highly consistent with the ${year} baseline, suggesting a well-preserved or protected environmental state.`;
   };
 
-  const analysis = getDetailedAnalysis(forensics.intensity, forensics.velocity, forensics.baseline_year);
-  
-  // Calculate additional metrics
-  const yearsElapsed = 2026 - forensics.baseline_year;
-  const annualChangeRate = forensics.intensity / yearsElapsed;
-  const projected2030Change = Math.min(100, forensics.intensity + (annualChangeRate * 4));
-
   return (
-    <div className="enhanced-cnn-analysis">
-      {/* Header Section */}
-      <div className="cnn-header">
-        <div className="header-left">
-          <div className="title-section">
-            <span className="advanced-tag">🧬 SIAM-CNN DEEP ANALYSIS</span>
-            <h3>Temporal Land Transformation ({forensics.baseline_year} - 2026)</h3>
-            <p className="location-context">{locationName} • {latNum.toFixed(4)}°N, {lngNum.toFixed(4)}°E</p>
-          </div>
+    <div className="card forensics-card glass-morphic animate-in">
+      <div className="forensics-header">
+        <div className="title-group">
+          <span className="tag-pill">SIAM-CNN ANALYSIS</span>
+          <h4>Temporal Land Drift ({forensics.baseline_year} - 2026)</h4>
         </div>
-        <div className="header-right">
-          <div className="velocity-badge-large">
-            <span className={`velocity-indicator ${forensics.velocity.toLowerCase()}`}>
-              {forensics.velocity}
-            </span>
-            <span className="velocity-label">Change Dynamics</span>
-          </div>
+        <div className={`velocity-tag ${forensics.velocity.toLowerCase()}`}>
+          {forensics.velocity} Dynamics
         </div>
       </div>
 
-      {/* Visual Comparison Grid */}
-      <div className="visual-comparison-grid">
-        <div className="timeline-visualization">
-          <div className="year-marker baseline">
-            <div className="year-circle">{forensics.baseline_year}</div>
-            <div className="year-label">BASELINE</div>
+      <div className="forensics-visual-grid">
+        <div className="visual-pane">
+          <label>{forensics.baseline_year} Baseline</label>
+          <div className="forensic-img" style={{ backgroundImage: `url(${forensics.baseline_img})` }}>
+            <div className="timestamp-overlay">T1: BASELINE</div>
           </div>
-          <div className="timeline-connector">
-            <div className="progress-line" style={{ 
-              width: `${forensics.intensity}%`,
-              background: forensics.intensity > 50 
-                ? 'linear-gradient(90deg, #ef4444, #dc2626)' 
-                : 'linear-gradient(90deg, #10b981, #059669)'
+        </div>
+
+        <div className="visual-separator">
+          <div className="line"></div>
+          <div className="diff-icon">Δ</div>
+          <div className="line"></div>
+        </div>
+
+        <div className="visual-pane">
+          <label>2026 Prediction</label>
+          <div className="forensic-img" style={{ backgroundImage: `url(${forensics.current_img})` }}>
+            {/* Heatmap intensity driven by the actual data */}
+            <div className="heatmap-overlay" style={{ 
+              opacity: forensics.intensity / 100,
+              background: forensics.intensity > 40 
+                ? 'radial-gradient(circle, rgba(239, 68, 68, 0.4) 0%, transparent 80%)' 
+                : 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 80%)'
             }}></div>
-          </div>
-          <div className="year-marker current">
-            <div className="year-circle">2026</div>
-            <div className="year-label">CURRENT</div>
-          </div>
-        </div>
-
-        <div className="image-comparison">
-          <div className="image-panel baseline">
-            <div className="image-container">
-              <div className="forensic-img enhanced" style={{ backgroundImage: `url(${forensics.baseline_img})` }}>
-                <div className="image-overlay baseline">
-                  <span className="overlay-label">T₁: BASELINE STATE</span>
-                  <span className="overlay-year">{forensics.baseline_year}</span>
-                </div>
-              </div>
-            </div>
-            <div className="image-details">
-              <h4>Historical Reference</h4>
-              <p>Original landcover composition and natural terrain features from {forensics.baseline_year}</p>
-            </div>
-          </div>
-
-          <div className="transformation-arrow">
-            <div className="arrow-content">
-              <span className="change-percentage">{forensics.intensity}%</span>
-              <span className="change-label">TRANSFORMATION</span>
-            </div>
-          </div>
-
-          <div className="image-panel current">
-            <div className="image-container">
-              <div className="forensic-img enhanced" style={{ backgroundImage: `url(${forensics.current_img})` }}>
-                <div className="heatmap-overlay enhanced" style={{ 
-                  opacity: forensics.intensity / 100,
-                  background: forensics.intensity > 40 
-                    ? 'radial-gradient(circle at 30% 30%, rgba(239, 68, 68, 0.6) 0%, rgba(239, 68, 68, 0.3) 40%, transparent 80%)' 
-                    : 'radial-gradient(circle at 70% 70%, rgba(59, 130, 246, 0.6) 0%, rgba(59, 130, 246, 0.3) 40%, transparent 80%)'
-                }}></div>
-                <div className="image-overlay current">
-                  <span className="overlay-label">T₂: CURRENT STATE</span>
-                  <span className="overlay-year">2026</span>
-                </div>
-              </div>
-            </div>
-            <div className="image-details">
-              <h4>Present Condition</h4>
-              <p>Current landscape with detected changes and development patterns</p>
-            </div>
+            <div className="timestamp-overlay">T2: CURRENT</div>
           </div>
         </div>
       </div>
 
-      {/* Detailed Metrics Dashboard */}
-      <div className="metrics-dashboard">
-        <div className="metrics-grid">
-          <div className="metric-card primary">
-            <div className="metric-header">
-              <span className="metric-icon">📊</span>
-              <span className="metric-title">Transformation Intensity</span>
-            </div>
-            <div className="metric-value-large" style={{ 
-              color: forensics.intensity > 50 ? '#ef4444' : '#10b981' 
-            }}>
-              {forensics.intensity.toFixed(1)}%
-            </div>
-            <div className="metric-trend">
-              <span className={`trend-indicator ${forensics.intensity > 50 ? 'negative' : 'positive'}`}>
-                {forensics.intensity > 50 ? '↑ High Impact' : '→ Stable'}
-              </span>
-            </div>
-          </div>
-
-          <div className="metric-card">
-            <div className="metric-header">
-              <span className="metric-icon">⏱️</span>
-              <span className="metric-title">Annual Change Rate</span>
-            </div>
-            <div className="metric-value">
-              {annualChangeRate.toFixed(2)}%/year
-            </div>
-            <div className="metric-subtitle">
-              Over {yearsElapsed} years
-            </div>
-          </div>
-
-          <div className="metric-card">
-            <div className="metric-header">
-              <span className="metric-icon">🔮</span>
-              <span className="metric-title">2030 Projection</span>
-            </div>
-            <div className="metric-value">
-              {projected2030Change.toFixed(1)}%
-            </div>
-            <div className="metric-subtitle">
-              Expected transformation
-            </div>
-          </div>
-
-          <div className="metric-card">
-            <div className="metric-header">
-              <span className="metric-icon">🎯</span>
-              <span className="metric-title">Analysis Resolution</span>
-            </div>
-            <div className="metric-value">
-              {forensics.telemetry?.resolution_m_per_px || 'N/A'}m/px
-            </div>
-            <div className="metric-subtitle">
-              {forensics.telemetry?.interpretation || 'Standard'}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Analysis Summary */}
-      <div className="analysis-summary">
-        <div className="summary-header">
-          <h4>{analysis.level}</h4>
-          <span className={`impact-badge ${analysis.impact.toLowerCase()}`}>
-            {analysis.impact} IMPACT
+      <div className="forensics-stats">
+        <div className="stat">
+          <span className="label">Transition Intensity</span>
+          <span className="value" style={{ color: forensics.intensity > 40 ? '#ef4444' : '#10b981' }}>
+            {forensics.intensity}%
           </span>
         </div>
-        
-        <div className="summary-content">
-          <p className="analysis-description">
-            {analysis.description}
-          </p>
-          
-          <div className="recommendation-box">
-            <h5>🎯 Strategic Recommendation</h5>
-            <p>{analysis.recommendation}</p>
+        {forensics.telemetry?.interpretation && (
+          <div className="forensics-telemetry">
+            <span className="label">Resolution</span>
+            <span className="value">~{forensics.telemetry.resolution_m_per_px}m/px · {forensics.telemetry.interpretation}</span>
           </div>
-        </div>
-      </div>
-
-      {/* Technical Details */}
-      <div className="technical-details">
-        <div className="tech-grid">
-          <div className="tech-item">
-            <span className="tech-label">CNN Model</span>
-            <span className="tech-value">SIAM-ResNet50</span>
-          </div>
-          <div className="tech-item">
-            <span className="tech-label">Training Data</span>
-            <span className="tech-value">Landsat 8-9, Sentinel-2</span>
-          </div>
-          <div className="tech-item">
-            <span className="tech-label">Temporal Span</span>
-            <span className="tech-value">{yearsElapsed} years</span>
-          </div>
-          <div className="tech-item">
-            <span className="tech-label">Confidence Score</span>
-            <span className="tech-value">{(85 + Math.random() * 10).toFixed(1)}%</span>
-          </div>
+        )}
+        <div className="stat-desc">
+          {forensics.reasoning || getDynamicInsight(forensics.intensity, forensics.baseline_year)}
         </div>
       </div>
     </div>
@@ -512,6 +345,55 @@ const EnhancedVisualForensics = ({ forensics, locationName, lat, lng }) => {
                   })}
                 </div>
               </section>
+            )}
+          </div>
+
+          {/* Second Row: GeoGPT 2030 Planning Forecast & CNN Analysis - Side by Side */}
+          <div className="middle-cards-container">
+            {/* GeoGPT Planning Forecast */}
+            <section className="insight-card-new forecast-card glass-glow">
+              <div className="card-header-flex">
+                <h3><span className="sparkle-icon">✨</span> GeoGPT 2030 Planning Forecast</h3>
+                <span className="future-badge">PREDICTIVE</span>
+              </div>
+              <div className="forecast-content">
+                <p className="forecast-text">
+                  {stableForecast?.text || (typeof activeHistory?.forecast === 'string' ? activeHistory.forecast : activeHistory?.forecast?.text) || "Analyzing historical momentum to project 2030 viability..."}
+                </p>
+                {(stableForecast?.factors_to_improve?.length > 0) && (
+                  <div className="factors-to-improve">
+                    <h4>Strategic Recommendations for 2030</h4>
+                    <ul>
+                      {stableForecast.factors_to_improve.map((item, idx) => (
+                        <li key={idx} className="improve-item">
+                          <strong>{item.factor}</strong> (current: {item.current_score}/100) — {item.suggested_action}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div className="planning-metrics">
+                  <div className="metric-item">
+                    <span className="metric-label">Target Year</span>
+                    <span className="metric-value">2030</span>
+                  </div>
+                  <div className="metric-item">
+                    <span className="metric-label">Planning Horizon</span>
+                    <span className="metric-value">{timeRange}</span>
+                  </div>
+                  <div className="metric-item">
+                    <span className="metric-label">Confidence</span>
+                    <span className="metric-value confidence-high">High</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CNN Analysis Card */}
+            {activeHistory?.visual_forensics && (
+              <div className="cnn-analysis-card">
+                <VisualForensics forensics={activeHistory.visual_forensics} />
+              </div>
             )}
           </div>
 
@@ -650,52 +532,54 @@ const EnhancedVisualForensics = ({ forensics, locationName, lat, lng }) => {
             </div>
           </section>
 
-          {/* Final Row: Enhanced SIAM CNN Analysis - Full Width */}
-          {activeHistory?.visual_forensics && (
-            <div className="cnn-analysis-card full-width">
-              <EnhancedVisualForensics forensics={activeHistory.visual_forensics} locationName={locationName} lat={lat} lng={lng} />
-            </div>
-          )}
-
-          {/* 2030 Planning Forecast Card */}
-          <section className="insight-card-new forecast-card glass-glow">
-            <div className="card-header-flex">
-              <h3><span className="sparkle-icon">✨</span> GeoGPT 2030 Planning Forecast</h3>
-              <span className="future-badge">PREDICTIVE</span>
-            </div>
-            <div className="forecast-content">
-              <p className="forecast-text">
-                {stableForecast?.text || (typeof activeHistory?.forecast === 'string' ? activeHistory.forecast : activeHistory?.forecast?.text) || "Analyzing historical momentum to project 2030 viability..."}
-              </p>
-              {(stableForecast?.factors_to_improve?.length > 0) && (
-                <div className="factors-to-improve">
-                  <h4>Strategic Recommendations for 2030</h4>
-                  <ul>
-                    {stableForecast.factors_to_improve.map((item, idx) => (
-                      <li key={idx} className="improve-item">
-                        <strong>{item.factor}</strong> (current: {item.current_score}/100) — {item.suggested_action}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <div className="planning-metrics">
-                <div className="metric-item">
-                  <span className="metric-label">Target Year</span>
-                  <span className="metric-value">2030</span>
-                </div>
-                <div className="metric-item">
-                  <span className="metric-label">Planning Horizon</span>
-                  <span className="metric-value">{timeRange}</span>
-                </div>
-                <div className="metric-item">
-                  <span className="metric-label">Confidence</span>
-                  <span className="metric-value confidence-high">High</span>
+          {/* Bottom Row: Planning Forecast & CNN Analysis */}
+          <div className="bottom-cards-container">
+            {/* GeoGPT Planning Forecast */}
+            <section className="insight-card-new forecast-card glass-glow full-width">
+              <div className="card-header-flex">
+                <h3><span className="sparkle-icon">✨</span> GeoGPT 2030 Planning Forecast</h3>
+                <span className="future-badge">PREDICTIVE</span>
+              </div>
+              <div className="forecast-content">
+                <p className="forecast-text">
+                  {stableForecast?.text || (typeof activeHistory?.forecast === 'string' ? activeHistory.forecast : activeHistory?.forecast?.text) || "Analyzing historical momentum to project 2030 viability..."}
+                </p>
+                {(stableForecast?.factors_to_improve?.length > 0) && (
+                  <div className="factors-to-improve">
+                    <h4>Strategic Recommendations for 2030</h4>
+                    <ul>
+                      {stableForecast.factors_to_improve.map((item, idx) => (
+                        <li key={idx} className="improve-item">
+                          <strong>{item.factor}</strong> (current: {item.current_score}/100) — {item.suggested_action}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div className="planning-metrics">
+                  <div className="metric-item">
+                    <span className="metric-label">Target Year</span>
+                    <span className="metric-value">2030</span>
+                  </div>
+                  <div className="metric-item">
+                    <span className="metric-label">Planning Horizon</span>
+                    <span className="metric-value">{timeRange}</span>
+                  </div>
+                  <div className="metric-item">
+                    <span className="metric-label">Confidence</span>
+                    <span className="metric-value confidence-high">High</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
 
+            {/* CNN Analysis Card */}
+            {activeHistory?.visual_forensics && (
+              <div className="cnn-analysis-card">
+                <VisualForensics forensics={activeHistory.visual_forensics} />
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>

@@ -9,14 +9,14 @@ import ProMap from '../ProMap/ProMap';
 import "./LandSuitabilityChecker.css";
 import TopNav from "../TopNav/TopNav";
 import RadarChart from "../RadarChart/RadarChart"; 
-import TerrainSlope from "../TerrainSlope/TerrainSlope";
-import WeatherCard from "../Weather/WeatherCard";
-import SnapshotGeo from "../SnapshotGeo/SnapshotGeo";
-import { API_BASE } from "../../config/api";
+import WeatherCard from '../Weather/WeatherCard';
+import HazardsCard from '../HazardsCard/HazardsCard';
+import SnapshotGeo from '../SnapshotGeo/SnapshotGeo';
+import DigitalTwin from '../DigitalTwin/DigitalTwin';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import AudioLandscape from "../AudioLandscape/AudioLandscape";
-import DigitalTwin from "../DigitalTwin/DigitalTwin";
+import { API_BASE } from '../../config/api';
 // Fix Leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -388,7 +388,7 @@ const { factors, category_scores, suitability_score } = data;
       <div className="factors-header">
         <div className="title-stack">
           <h3>Terrain Intelligence</h3>
-          <p className="subtitle">15-Factor Geospatial Synthesis</p>
+          <p className="subtitle">14-Factor Geospatial Synthesis</p>
         </div>
         <button className="view-toggle" onClick={() => setViewMode(viewMode === "bars" ? "radar" : "bars")}>
             {viewMode === "bars" ? "🕸️ Radar View" : "📊 Bar View"}
@@ -412,7 +412,7 @@ const { factors, category_scores, suitability_score } = data;
                 </span>
               </div>
               
-              {/* INDIVIDUAL SUB-FACTORS (The 15 Files) */}
+              {/* INDIVIDUAL SUB-FACTORS (The 14 Factors) */}
               <div className="bars-container categorized">
                 {Object.entries(catFactors).map(([fKey, fData]) => {
                   const rawVal = typeof fData === 'object' ? (fData.scaled_score ?? fData.value) : fData;
@@ -791,10 +791,123 @@ const [editingIndex, setEditingIndex] = useState(null);
   const [showNearbyB, setShowNearbyB] = useState(false);
 
   const [isGptOpen, setIsGptOpen] = useState(false);
+  const [isAnalysisFullscreen, setIsAnalysisFullscreen] = useState(false);
+  const [ setGptPosition] = useState({ x: 30, y: 30 });
+  const [gptSize, setGptSize] = useState({ width: 350, height: 500 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isDigitalTwinDragging, setIsDigitalTwinDragging] = useState(false);
+  const [digitalTwinPosition, setDigitalTwinPosition] = useState({ x: 0, y: 0 });
+  const [digitalTwinStart, setDigitalTwinStart] = useState({ x: 0, y: 0 });
   const [chatHistory, setChatHistory] = useState([{ role: 'assistant', content: 'Hello! I am GeoGPT.' }]);
   const [userQuery, setUserQuery] = useState("");
   const [gptLoading, setGptLoading] = useState(false);
   const chatEndRef = useRef(null);
+
+  // Handle escape key for fullscreen
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape' && isAnalysisFullscreen) {
+        setIsAnalysisFullscreen(false);
+      }
+    };
+
+    if (isAnalysisFullscreen) {
+      document.addEventListener('keydown', handleEscapeKey);
+      return () => {
+        document.removeEventListener('keydown', handleEscapeKey);
+      };
+    }
+  }, [isAnalysisFullscreen]);
+
+  // Handle GeoGPT drag functionality - DISABLED - Fixed position only
+  const handleMouseDown = (e) => {
+    // Dragging is disabled - GeoGPT stays in fixed position
+    return;
+  };
+
+  const handleMouseMove = useCallback((e) => {
+    if (isDragging) {
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
+      
+      // Keep within viewport bounds
+      const maxX = window.innerWidth - gptSize.width;
+      const maxY = window.innerHeight - gptSize.height;
+      
+      setGptPosition({
+        x: Math.max(0, Math.min(newX, maxX)),
+        y: Math.max(0, Math.min(newY, maxY))
+      });
+    } else if (isResizing) {
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      
+      setGptSize(prev => ({
+        width: Math.max(300, prev.width + deltaX),
+        height: Math.max(400, prev.height + deltaY)
+      }));
+      
+      setDragStart({
+        x: e.clientX,
+        y: e.clientY
+      });
+    }
+  }, [isDragging, isResizing, dragStart, gptSize, setGptPosition]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+    setIsResizing(false);
+  }, []);
+
+  const handleDigitalTwinMouseDown = useCallback((e) => {
+    e.preventDefault();
+    setIsDigitalTwinDragging(true);
+    setDigitalTwinStart({
+      x: e.clientX - digitalTwinPosition.x,
+      y: e.clientY - digitalTwinPosition.y
+    });
+  }, [digitalTwinPosition]);
+
+  const handleDigitalTwinMouseMove = useCallback((e) => {
+    if (isDigitalTwinDragging) {
+      const newX = e.clientX - digitalTwinStart.x;
+      const newY = e.clientY - digitalTwinStart.y;
+      
+      setDigitalTwinPosition({
+        x: newX,
+        y: newY
+      });
+    }
+  }, [isDigitalTwinDragging, digitalTwinStart]);
+
+  const handleDigitalTwinMouseUp = useCallback(() => {
+    setIsDigitalTwinDragging(false);
+  }, []);
+
+  useEffect(() => {
+    if (isDragging || isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, isResizing, handleMouseMove, handleMouseUp]);
+
+  useEffect(() => {
+    if (isDigitalTwinDragging) {
+      document.addEventListener('mousemove', handleDigitalTwinMouseMove);
+      document.addEventListener('mouseup', handleDigitalTwinMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleDigitalTwinMouseMove);
+        document.removeEventListener('mouseup', handleDigitalTwinMouseUp);
+      };
+    }
+  }, [isDigitalTwinDragging, handleDigitalTwinMouseMove, handleDigitalTwinMouseUp]);
+
   // Snapshot States
 const [snapshotData, setSnapshotData] = useState(null);       // Site A
 // const [setSnapshotDataB] = useState(null); 
@@ -1288,38 +1401,38 @@ useEffect(() => {
  
 
 
-  const handleMouseMove = useCallback((e) => {
+  const handleMouseMoveForResize = useCallback((e) => {
     if (isResizingSide.current) {
       const newWidth = e.clientX;
       if (newWidth > 260 && newWidth < 600) setSidebarWidth(newWidth);
     }
     if (isResizingBottom.current) {
-      const newHeight = window.innerHeight - e.clientY;
-      if (newHeight > 100 && newHeight < window.innerHeight - 100) setBottomHeight(newHeight);
+      const newHeight = e.clientY;
+      if (newHeight > 300 && newHeight < 600) setBottomHeight(newHeight);
     }
   }, []);
 
   const stopResizing = useCallback(() => {
     isResizingSide.current = false;
     isResizingBottom.current = false;
-    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mousemove", handleMouseMoveForResize);
     document.removeEventListener("mouseup", stopResizing);
     document.body.style.cursor = "default";
-  }, [handleMouseMove]);
+  }, [handleMouseMoveForResize]);
 
   const startResizingSide = useCallback(() => {
     isResizingSide.current = true;
-    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mousemove", handleMouseMoveForResize);
     document.addEventListener("mouseup", stopResizing);
     document.body.style.cursor = "col-resize";
-  }, [handleMouseMove, stopResizing]);
+  }, [handleMouseMoveForResize, stopResizing]);
 
   const startResizingBottom = useCallback(() => {
     isResizingBottom.current = true;
-    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mousemove", handleMouseMoveForResize);
     document.addEventListener("mouseup", stopResizing);
     document.body.style.cursor = "row-resize";
-  }, [handleMouseMove, stopResizing]);
+  }, [handleMouseMoveForResize, stopResizing]);
 
   const handleNearbyPlaces = async () => {
     if (!lat || !lng) return;
@@ -1432,7 +1545,7 @@ const [activeSpectral, setActiveSpectral] = useState("standard");
       );
     }
 
-    // Factor display names (all 15 factors)
+    // Factor display names (all 14 factors)
     const factorLabels = {
       // Physical (2)
       slope: "SLOPE",
@@ -1698,160 +1811,151 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
     const cnnTheme = getCnnTheme(confidence);
 
     return (
-  <>
-    <div className={containerClass}>
-      {/* COLUMN 1 */}
-      <div className={isFullWidth ? "col-1" : ""}>
-        {/* UPDATED CNN TACTICAL CARD */}
-        <div
-          className={`card cnn-tactical-card glass-morphic animate-in ${cnnTheme.class}`}
-          style={{ "--status-color": cnnTheme.color, "--status-glow": cnnTheme.glow }}
-        >
-          <div className="cnn-tactical-header">
-            <div className="cnn-title-group">
-              <span className="live-tag">LIVE TELEMETRY</span>
-              <h3>Visual Intelligence Scan</h3>
-            </div>
-
-            <div className="tactical-header-right">
-              <div className="model-id-badge">
-                <span className="model-label">ENGINE</span>
-                <span className="model-name">CNN-V2 / MOBILE-NET</span>
+      <div className="environmental-container">
+        {/* Landscape Full-Width Cards Layout */}
+        <div className="environmental-cards-grid">
+          {/* CNN Intelligence Card */}
+          <div
+            className={`card cnn-tactical-card glass-morphic animate-in ${cnnTheme.class}`}
+            style={{ "--status-color": cnnTheme.color, "--status-glow": cnnTheme.glow }}
+          >
+            <div className="cnn-tactical-header">
+              <div className="cnn-title-group">
+                <span className="live-tag">LIVE TELEMETRY</span>
+                <h3>Visual Intelligence Scan</h3>
               </div>
 
-              <div
-                className="status-indicator-pill"
-                style={{ backgroundColor: cnnTheme.color }}
-              >
-                {confidence < 40 && <span className="mini-warn">⚠️</span>}
-                {cnnTheme.label}
-              </div>
-            </div>
-          </div>
-
-          <div className="cnn-tactical-layout">
-            <div className="cnn-visual-container">
-              <div
-                className="cnn-frame"
-                style={{ borderColor: cnnTheme.color }}
-              >
-                <div
-                  className="cnn-image-feed"
-                  style={{
-                    backgroundImage: cnn?.image_sample
-                      ? `url(${cnn.image_sample})`
-                      : "none",
-                    filter:
-                      confidence < 40
-                        ? "grayscale(0.4) contrast(1.1) brightness(0.9)"
-                        : "none",
-                  }}
-                >
-                  {cnn?.image_sample && (
-                    <div className="scan-telemetry-overlay" />
-                  )}
+              <div className="tactical-header-right">
+                <div className="model-id-badge">
+                  <span className="model-label">ENGINE</span>
+                  <span className="model-name">CNN-V2 / MOBILE-NET</span>
                 </div>
 
-                <div className="corner-bit tl" />
-                <div className="corner-bit tr" />
-                <div className="corner-bit bl" />
-                <div className="corner-bit br" />
+                <div
+                  className="status-indicator-pill"
+                  style={{ backgroundColor: cnnTheme.color }}
+                >
+                  {confidence < 40 && <span className="mini-warn">⚠️</span>}
+                  {cnnTheme.label}
+                </div>
               </div>
             </div>
 
-            <div className="cnn-data-grid">
-              <div className="cnn-stat-item">
-                <label>TERRAIN CLASSIFICATION:</label>
-                <strong
-                  className="cnn-class-text"
-                  style={{ color: cnnTheme.color }}
+            <div className="cnn-tactical-layout">
+              <div className="cnn-visual-container">
+                <div
+                  className="cnn-frame"
+                  style={{ borderColor: cnnTheme.color }}
                 >
-                  {cnn?.class || "ANALYZING..."}
-                </strong>
+                  <div
+                    className="cnn-image-feed"
+                    style={{
+                      backgroundImage: cnn?.image_sample
+                        ? `url(${cnn.image_sample})`
+                        : "none",
+                      filter:
+                        confidence < 40
+                          ? "grayscale(0.4) contrast(1.1) brightness(0.9)"
+                          : "none",
+                    }}
+                  >
+                    {cnn?.image_sample && (
+                      <div className="scan-telemetry-overlay" />
+                    )}
+                  </div>
+
+                  <div className="corner-bit tl" />
+                  <div className="corner-bit tr" />
+                  <div className="corner-bit bl" />
+                  <div className="corner-bit br" />
+                </div>
               </div>
 
-              <div className="cnn-stat-item">
-                <div className="label-row">
-                  <label>SPECTRAL CONFIDENCE:</label>
-                  <span
-                    className="confidence-value"
+              <div className="cnn-data-grid">
+                <div className="cnn-stat-item">
+                  <label>TERRAIN CLASSIFICATION:</label>
+                  <strong
+                    className="cnn-class-text"
                     style={{ color: cnnTheme.color }}
                   >
-                    {confidence}%
-                  </span>
+                    {cnn?.class || "ANALYZING..."}
+                  </strong>
                 </div>
 
-                <div className="tactical-progress-bg">
-                  <div
-                    className="tactical-progress-fill"
-                    style={{
-                      width: `${confidence}%`,
-                      backgroundColor: cnnTheme.color,
-                    }}
-                  />
+                <div className="cnn-stat-item">
+                  <div className="label-row">
+                    <label>SPECTRAL CONFIDENCE:</label>
+                    <span
+                      className="confidence-value"
+                      style={{ color: cnnTheme.color }}
+                    >
+                      {confidence}%
+                    </span>
+                  </div>
+
+                  <div className="tactical-progress-bg">
+                    <div
+                      className="tactical-progress-fill"
+                      style={{
+                        width: `${confidence}%`,
+                        backgroundColor: cnnTheme.color,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div
+                  className="cnn-alert-box"
+                  style={{
+                    borderLeftColor: cnnTheme.color,
+                    background: `${cnnTheme.color}15`,
+                  }}
+                >
+                  <strong style={{ color: cnnTheme.color }}>
+                    {cnnTheme.note}
+                  </strong>
+                  <p>
+                    {confidence < 40
+                      ? "Terrain complexity exceeding standard spectral resolution."
+                      : `Visual markers confirm high correlation with ${cnn?.class} signatures.`}
+                  </p>
                 </div>
               </div>
+            </div>
 
-              <div
-                className="cnn-alert-box"
-                style={{
-                  borderLeftColor: cnnTheme.color,
-                  background: `${cnnTheme.color}15`,
-                }}
-              >
-                <strong style={{ color: cnnTheme.color }}>
-                  {cnnTheme.note}
-                </strong>
-                <p>
-                  {confidence < 40
-                    ? "Terrain complexity exceeding standard spectral resolution."
-                    : `Visual markers confirm high correlation with ${cnn?.class} signatures.`}
-                </p>
-              </div>
+            <div className="cnn-footer-telemetry">
+              <span>
+                RES:{" "}
+                {cnn?.telemetry?.resolution_m_per_px != null
+                  ? `${cnn.telemetry.resolution_m_per_px}m/px`
+                  : "10m/px"}
+              </span>
+              <span>SENSOR: {cnn?.telemetry?.tile_url_source || "SENTINEL-2 L2A"}</span>
+              <span>MODEL: {cnn?.telemetry?.model || "CNN-V2 / MOBILE-NET"}</span>
+              <span>TS: {new Date().toLocaleTimeString()}</span>
+              {cnn?.telemetry?.verified_by && (
+                <span>✓ {cnn.telemetry.verified_by}</span>
+              )}
             </div>
           </div>
 
-          <div className="cnn-footer-telemetry">
-            <span>
-              RES:{" "}
-              {cnn?.telemetry?.resolution_m_per_px != null
-                ? `${cnn.telemetry.resolution_m_per_px}m/px`
-                : "10m/px"}
-            </span>
-            <span>SENSOR: {cnn?.telemetry?.tile_url_source || "SENTINEL-2 L2A"}</span>
-            <span>MODEL: {cnn?.telemetry?.model || "CNN-V2 / MOBILE-NET"}</span>
-            <span>TS: {new Date().toLocaleTimeString()}</span>
-            {cnn?.telemetry?.verified_by && (
-              <span>✓ {cnn.telemetry.verified_by}</span>
-            )}
-          </div>
+          {/* Weather Card */}
+          <WeatherCard weather={data?.weather} />
+
+          {/* Hazards Card */}
+          <HazardsCard data={currentSnapshot?.hazards_analysis} loading={snapshotLoading} />
+
+          {/* Snapshot Geo Card */}
+          <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
         </div>
-
-        {/* Terrain shown only in single view */}
-        {isFullWidth && data?.terrain_analysis && (
-          <TerrainSlope terrain={data.terrain_analysis} />
-        )}
       </div>
-
-      {/* COLUMN 2 */}
-      <div className={isFullWidth ? "col-2" : ""}>
-        <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
-        <WeatherCard weather={data?.weather} />
-      </div>
-    </div>
-
-    {/* Compare-mode terrain always goes at bottom */}
-    {!isFullWidth && data?.terrain_analysis && (
-      <TerrainSlope terrain={data.terrain_analysis} />
-    )}
-  </>
-);
+    );
   }
 
 
   if (activeTab === "infrastructure") {
     const intel = data.strategic_intelligence || {};
-    // Use flat_factors (all 15) when available; else derive from nested data.factors
+    // Use flat_factors (all 14) when available; else derive from nested data.factors
     const flatF = data.flat_factors || (() => {
       const f = data.factors || {};
       const get = (cat, key) => {
@@ -1880,28 +1984,56 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
   
 
     return (
-      
-      /* Use the dynamic containerClass instead of the hardcoded strategic-intel-grid */
-      <div className={containerClass}>
-        
-        {/* Column 1: Potential and Infrastructure Context */}
-        <div className={isFullWidth ? "col-1" : ""}>
-          <PotentialSection factors={data.factors} score={data.suitability_score} />
-          
-          <div className="card glass-morphic intel-card">
+      <div className="infrastructure-container">
+        <div className="infrastructure-cards-grid">
+          {/* Site Potential Analysis Card */}
+          <div className="card glass-morphic intel-card potential-card">
             <div className="intel-header">
-              <div className="title-group">
-                <h3>🌳 Sustainability Intelligence</h3>
-                <p className="subtitle">Lithospheric & Biomass Sequestration</p>
+              <div className="potential-score-badge">
+                <span className="score-value">{data.suitability_score?.toFixed(0) || '---'}%</span>
+                <span className="score-label">SCORE</span>
               </div>
-              
-              {/* DYNAMIC COLOR CLASS ADDED HERE */}
+            </div>
+            
+            <PotentialSection factors={data.factors} score={data.suitability_score} />
+            
+            <div className="potential-insights">
+              <h4>Development Recommendations</h4>
+              <div className="insights-grid">
+                <div className="insight-item">
+                  <span className="insight-icon">🏗️</span>
+                  <div className="insight-content">
+                    <strong>Construction Viability</strong>
+                    <span>{data.suitability_score > 70 ? 'Excellent' : data.suitability_score > 50 ? 'Good' : 'Limited'}</span>
+                  </div>
+                </div>
+                <div className="insight-item">
+                  <span className="insight-icon">🌱</span>
+                  <div className="insight-content">
+                    <strong>Agricultural Potential</strong>
+                    <span>{data.factors?.environmental?.soil?.value > 60 ? 'High' : 'Moderate'}</span>
+                  </div>
+                </div>
+                <div className="insight-item">
+                  <span className="insight-icon">🏘️</span>
+                  <div className="insight-content">
+                    <strong>Residential Suitability</strong>
+                    <span>{data.factors?.socio_econ?.infrastructure?.value > 60 ? 'Favorable' : 'Challenging'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sustainability Intelligence Card */}
+          <div className="card glass-morphic intel-card sustainability-card">
+            <div className="intel-header">
+              <h3>🌳 Sustainability Intelligence</h3>
               <div className={`esg-score-circle ${esgColorClass}`}>
                 <span className="esg-val">{esgScore}</span>
                 <span className="esg-lab">ESG</span>
               </div>
             </div>
-
             <div className="carbon-analysis-zone">
               <div className="analysis-row">
                 <div className="analysis-item">
@@ -1919,15 +2051,13 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
                   </div>
                 </div>
               </div>
-
               <div className="net-impact-summary">
                 <div className="impact-label">Net Ecosystem Impact</div>
                 <div className="impact-value">
-                  { (carbonIntelligence - liveFootprint) > 0 ? "CARBON NEGATIVE (CLIMATE POSITIVE)" : "CARBON POSITIVE (CLIMATE RISK)" }
+                  { (carbonIntelligence - liveFootprint) > 0 ? "CARBON NEGATIVE" : "CARBON POSITIVE" }
                 </div>
               </div>
             </div>
-
             <div className="eligibility-drawer">
               <div className="drawer-item">
                 <span>🌿 Conservation Credit Match:</span>
@@ -1940,76 +2070,329 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
                 <strong>{landuseVal > 60 ? "PREMIUM" : "STANDARD"}</strong>
               </div>
             </div>
-            
             <p className="legal-disclaimer">Estimates based on biomass density and emission intensity.</p>
           </div>
-        </div>
-        
-        {/* Column 2: Roadmap, Interventions, and Projections */}
-        <div className={isFullWidth ? "col-2" : "intel-col"}>
-          {/* Roadmap Card */}
+
+          {/* Dynamic Improvement Roadmap Card */}
           <div className="card glass-morphic intel-card roadmap-card">
-            <div className="intel-header"><h3>🚧 Improvement Roadmap</h3></div>
+            <div className="intel-header">
+              <h3>🚧 Dynamic Improvement Roadmap</h3>
+              {intel.development_readiness && (
+                <div className="readiness-badge">
+                  <span className={`status-${intel.development_readiness.status}`}>
+                    {intel.development_readiness.status.toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+            
+            {intel.development_readiness && (
+              <div className="readiness-summary">
+                <div className="readiness-metrics">
+                  <div className="metric">
+                    <span className="label">Total Investment:</span>
+                    <span className="value">{intel.development_readiness.estimated_total_investment || 'Calculating...'}</span>
+                  </div>
+                  <div className="metric">
+                    <span className="label">Time to Ready:</span>
+                    <span className="value">{intel.development_readiness.time_to_readiness || 'Calculating...'}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="roadmap-list">
               {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
-                <div key={i} className="roadmap-item">
+                <div key={i} className={`roadmap-item priority-${item.priority || 'medium'}`}>
                   <div className="roadmap-task-info">
-                    <span className="task-name">{item.task}</span>
+                    <div className="task-header">
+                      <span className="task-name">{item.task}</span>
+                      <span className="impact-tag">{item.impact}</span>
+                    </div>
                     <p className="tiny-note">{item.note}</p>
+                    {item.estimated_cost && (
+                      <div className="task-details">
+                        <span className="cost">💰 {item.estimated_cost}</span>
+                        <span className="timeline">⏱️ {item.timeline}</span>
+                      </div>
+                    )}
                   </div>
-                  <span className="impact-tag">{item.impact} Boost</span>
                 </div>
-              )) : <div className="nearby-empty">Site maintains Grade A stability.</div>}
+              )) : <div className="nearby-empty">Analyzing location for improvement opportunities...</div>}
             </div>
           </div>
 
-          {/* Interventions Card */}
+          {/* AI-Driven Strategic Interventions Card */}
           <div className="card glass-morphic intel-card prevention-card">
-            <div className="intel-header"><h3>💡 Suggestible Interventions</h3></div>
-            <p className="subtitle">AI-driven preventative strategy</p>
-            <ul className="prevention-list">
-              {intel.interventions?.map((msg, i) => (
-                <li key={i}>{msg}</li>
-              ))}
-            </ul>
+            <div className="intel-header">
+              <h3>💡 AI-Driven Strategic Interventions</h3>
+              <p className="subtitle">Location-specific actionable intelligence</p>
+            </div>
+            
+            <div className="interventions-list">
+              {intel.interventions?.length > 0 ? intel.interventions.map((intervention, i) => (
+                <div key={i} className={`intervention-item urgency-${intervention.urgency || 'medium'}`}>
+                  <div className="intervention-header">
+                    <span className="intervention-action">{intervention.action || intervention}</span>
+                    {intervention.urgency && (
+                      <span className={`urgency-badge urgency-${intervention.urgency}`}>
+                        {intervention.urgency}
+                      </span>
+                    )}
+                  </div>
+                  {intervention.rationale && (
+                    <p className="intervention-rationale">{intervention.rationale}</p>
+                  )}
+                  {intervention.expected_impact && (
+                    <div className="intervention-impact">
+                      <span className="impact-label">Expected Impact:</span>
+                      <span className="impact-value">{intervention.expected_impact}</span>
+                    </div>
+                  )}
+                </div>
+              )) : <div className="nearby-empty">Generating AI-powered interventions...</div>}
+            </div>
           </div>
 
-          {/* Future Projection Card */}
+          {/* Advanced AI Projection Card */}
           <div className="card glass-morphic intel-card prediction-card">
             <div className="intel-header">
-              <h3>🚀 AI Future Projection (2036)</h3>
+              <h3>🚀 Advanced AI Projection (2036)</h3>
               <div className="future-score-wrap">
                 <span className="current-mini">{data.suitability_score?.toFixed(1)}</span>
                 <span className="drift-arrow">→</span>
-                <span className="future-score">{intel.expected_score}%</span>
+                <span className="future-score">{intel.expected_score || 'Calculating...'}%</span>
+                {intel.projection_analysis && (
+                  <span className={`trend-${intel.projection_analysis.trend_direction}`}>
+                    {intel.projection_analysis.trend_direction}
+                  </span>
+                )}
               </div>
             </div>
+            
+            {intel.projection_analysis && (
+              <div className="projection-insights">
+                <div className="confidence-meter">
+                  <span className="label">AI Confidence:</span>
+                  <div className="confidence-bar">
+                    <div 
+                      className={`confidence-fill confidence-${intel.projection_analysis.confidence_level}`}
+                      style={{ width: intel.projection_analysis.confidence_level === 'high' ? '85%' : '60%' }}
+                    ></div>
+                  </div>
+                  <span className="confidence-value">{intel.projection_analysis.confidence_level}</span>
+                </div>
+                
+                {intel.projection_analysis.key_drivers?.length > 0 && (
+                  <div className="key-drivers">
+                    <span className="label">Key Change Drivers:</span>
+                    <div className="drivers-list">
+                      {intel.projection_analysis.key_drivers.map((driver, i) => (
+                        <span key={i} className="driver-tag">{driver}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {intel.projection_analysis.mitigation_potential && (
+                  <div className="mitigation-potential">
+                    <span className="label">Mitigation Potential:</span>
+                    <span className="potential-value">+{intel.projection_analysis.mitigation_potential}%</span>
+                  </div>
+                )}
+              </div>
+            )}
+            
             <div className="drift-metrics">
               <div className="drift-row">
                 <span>Urbanization Risk:</span> 
-                <span className="val-red">{intel.metrics?.urban_sprawl}</span>
+                <span className="val-red">{intel.metrics?.urban_sprawl || 'Calculating...'}</span>
               </div>
               <div className="drift-row">
                 <span>Vegetation Loss:</span> 
-                <span className="val-red">{intel.metrics?.veg_loss}</span>
+                <span className="val-red">{intel.metrics?.veg_loss || 'Calculating...'}</span>
+              </div>
+              {intel.metrics?.water_security_risk && (
+                <div className="drift-row">
+                  <span>Water Security Risk:</span> 
+                  <span className="val-orange">{intel.metrics.water_security_risk}</span>
+                </div>
+              )}
+              {intel.metrics?.climate_resilience && (
+                <div className="drift-row">
+                  <span>Climate Resilience:</span> 
+                  <span className="val-orange">{intel.metrics.climate_resilience}</span>
+                </div>
+              )}
+              {intel.metrics?.overall_risk_index && (
+                <div className="drift-row overall-risk">
+                  <span>Overall Risk Index:</span> 
+                  <span className={`val-${intel.metrics.overall_risk_index > 20 ? 'red' : intel.metrics.overall_risk_index > 10 ? 'orange' : 'green'}`}>
+                    {intel.metrics.overall_risk_index}%
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Terrain & Slope Analysis Card - Compact Professional Design */}
+          <div className="card glass-morphic intel-card terrain-card">
+            <div className="intel-header">
+              <div className="intel-title-section">
+                <h3>⛰️ Terrain & Slope Analysis</h3>
+                <p className="subtitle">Professional Assessment</p>
+              </div>
+              <div className="terrain-score-badge">
+                <span className="score-value">{data.factors?.physical?.slope?.value?.toFixed(1) || '---'}°</span>
+                <span className="score-label">SLOPE</span>
+              </div>
+            </div>
+            
+            <div className="terrain-compact-grid">
+              <div className="terrain-metric-row">
+                <div className="terrain-metric-item">
+                  <div className="metric-icon">📐</div>
+                  <div className="metric-info">
+                    <strong>Slope</strong>
+                    <span>{data.factors?.physical?.slope?.value?.toFixed(1) || '---'}°</span>
+                  </div>
+                  <div className="metric-status">
+                    <span className={`status-badge ${(data.factors?.physical?.slope?.value || 0) < 8 ? 'good' : (data.factors?.physical?.slope?.value || 0) < 15 ? 'moderate' : (data.factors?.physical?.slope?.value || 0) < 30 ? 'poor' : 'critical'}`}>
+                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'FLAT' : 
+                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'MODERATE' : 
+                       (data.factors?.physical?.slope?.value || 0) < 30 ? 'STEEP' : 'VERY STEEP'}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="terrain-metric-item">
+                  <div className="metric-icon">🏔️</div>
+                  <div className="metric-info">
+                    <strong>Elevation</strong>
+                    <span>{data.factors?.physical?.elevation?.value?.toFixed(0) || '---'}m</span>
+                  </div>
+                  <div className="metric-status">
+                    <span className={`status-badge ${(data.factors?.physical?.elevation?.value || 0) < 100 ? 'low' : (data.factors?.physical?.elevation?.value || 0) < 500 ? 'medium' : (data.factors?.physical?.elevation?.value || 0) < 1500 ? 'high' : 'extreme'}`}>
+                      {(data.factors?.physical?.elevation?.value || 0) < 100 ? 'LOWLAND' : 
+                       (data.factors?.physical?.elevation?.value || 0) < 500 ? 'PLAINS' : 
+                       (data.factors?.physical?.elevation?.value || 0) < 1500 ? 'HILLS' : 'MOUNTAINS'}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="terrain-metric-item">
+                  <div className="metric-icon">🚧</div>
+                  <div className="metric-info">
+                    <strong>Viability</strong>
+                    <span>
+                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Excellent' : 
+                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'Good' : 
+                       (data.factors?.physical?.slope?.value || 0) < 30 ? 'Challenging' : 'Limited'}
+                    </span>
+                  </div>
+                  <div className="metric-status">
+                    <span className={`status-badge ${(data.factors?.physical?.slope?.value || 0) < 8 ? 'excellent' : (data.factors?.physical?.slope?.value || 0) < 15 ? 'good' : (data.factors?.physical?.slope?.value || 0) < 30 ? 'challenging' : 'not-recommended'}`}>
+                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'IDEAL' : 
+                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'SUITABLE' : 
+                       (data.factors?.physical?.slope?.value || 0) < 30 ? 'DIFFICULT' : 'NOT RECOMMENDED'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="terrain-quick-insights">
+              <div className="insight-row">
+                <div className="insight-item">
+                  <span className="insight-icon">⚡</span>
+                  <div className="insight-content">
+                    <strong>Earthwork</strong>
+                    <span>
+                      {(data.factors?.physical?.slope?.value || 0) < 5 ? 'Minimal' :
+                       (data.factors?.physical?.slope?.value || 0) < 10 ? 'Low' :
+                       (data.factors?.physical?.slope?.value || 0) < 20 ? 'Moderate' : 'High'}
+                    </span>
+                  </div>
+                </div>
+                <div className="insight-item">
+                  <span className="insight-icon">🛡️</span>
+                  <div className="insight-content">
+                    <strong>Walls</strong>
+                    <span>
+                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Not Required' :
+                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'Partial' :
+                       (data.factors?.physical?.slope?.value || 0) < 25 ? 'Extensive' : 'Major'}
+                    </span>
+                  </div>
+                </div>
+                <div className="insight-item">
+                  <span className="insight-icon">💰</span>
+                  <div className="insight-content">
+                    <strong>Cost Impact</strong>
+                    <span>
+                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Standard' :
+                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'Moderate' :
+                       (data.factors?.physical?.slope?.value || 0) < 30 ? 'High' : 'Very High'}
+                    </span>
+                  </div>
+                </div>
+                <div className="insight-item">
+                  <span className="insight-icon">⏱️</span>
+                  <div className="insight-content">
+                    <strong>Build Time</strong>
+                    <span>
+                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Normal' :
+                       (data.factors?.physical?.slope?.value || 0) < 15 ? '+2-4 weeks' :
+                       (data.factors?.physical?.slope?.value || 0) < 30 ? '+1-3 months' : '+3+ months'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="terrain-recommendation">
+              <div className="recommendation-header">
+                <span className="rec-icon">
+                  {(data.factors?.physical?.slope?.value || 0) < 8 ? '✅' :
+                   (data.factors?.physical?.slope?.value || 0) < 15 ? '👍' :
+                   (data.factors?.physical?.slope?.value || 0) < 30 ? '⚠️' : '🚫'}
+                </span>
+                <span className="rec-title">
+                  {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Excellent for all development types' :
+                   (data.factors?.physical?.slope?.value || 0) < 15 ? 'Suitable with minor planning' :
+                   (data.factors?.physical?.slope?.value || 0) < 30 ? 'Requires extensive engineering' :
+                   'Not recommended for standard construction'}
+                </span>
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Digital Twin Infrastructure Simulation - Separate Card */}
-        <div className="card glass-morphic intel-card digital-twin-card">
-          <div className="intel-header">
-            <h3>🏗️ Digital Twin Infrastructure Simulation</h3>
-            <p className="subtitle">Active Development Impact Analysis</p>
-          </div>
-          <DigitalTwin 
-            location={{ lat: lat, lng: lng, factors: data.factors }}
-            onImpactUpdate={(impactData) => {
-              console.log('Development impact:', impactData);
-              // You can update state here to show impact in real-time
+
+          {/* Digital Twin Infrastructure Simulation Card - Moved to Analysis */}
+          <div 
+            className={`card glass-morphic intel-card digital-twin-card draggable-digital-twin ${isDigitalTwinDragging ? 'dragging' : ''}`}
+            style={{
+              position: 'relative',
+              transform: `translate(${digitalTwinPosition.x}px, ${digitalTwinPosition.y}px)`
             }}
-          />
+          >
+            <div className="intel-header">
+              <h3>🏗️ Digital Twin Infrastructure Simulation</h3>
+              <p className="subtitle">Interactive Development Impact Analysis & Planning</p>
+              <div className="drag-handle" onMouseDown={handleDigitalTwinMouseDown}>⋮⋮</div>
+            </div>
+            <div className="impact-info">
+              <p className="impact-description">
+                💡 <strong>Impact Simulation:</strong> This advanced digital twin allows you to simulate various development scenarios and their environmental impacts in real-time. 
+                Try placing buildings, roads, or infrastructure to see immediate effects on the ecosystem.
+              </p>
+            </div>
+            <DigitalTwin 
+              location={{ lat: lat, lng: lng, factors: data.factors }}
+              onImpactUpdate={(impactData) => {
+                console.log('Development impact:', impactData);
+              }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -2235,11 +2618,32 @@ center={viewCenter}
             {/* {result ? ( */}
             {result || loading || compareLoading ? (
               <>
-                {/* 1. Tab Bar Navigation (Visible only when result exists) */}
-                <div className="results-tab-bar glass-morphic">
-                  <button className={activeTab === "suitability" ? "active" : ""} onClick={() => setActiveTab("suitability")}>🎯 Suitability</button>
-                  <button className={activeTab === "environmental" ? "active" : ""} onClick={() => setActiveTab("environmental")}>🌐 Locational Intelligence</button>
-                  <button className={activeTab === "infrastructure" ? "active" : ""} onClick={() => setActiveTab("infrastructure")}>🏗️ Strategic Utility</button>
+                {/* 1. Tab Bar Navigation (Visible only when result exists) - Moved outside viewport */}
+                <div className={`results-tab-bar glass-morphic ${isAnalysisFullscreen ? 'fullscreen' : ''}`}>
+                  <div className="tab-buttons-container">
+                    <button className={activeTab === "suitability" ? "active" : ""} onClick={() => setActiveTab("suitability")}>🎯 Suitability</button>
+                    <button className={activeTab === "environmental" ? "active" : ""} onClick={() => setActiveTab("environmental")}>🌐 Locational Intelligence</button>
+                    <button className={activeTab === "infrastructure" ? "active" : ""} onClick={() => setActiveTab("infrastructure")}>🏗️ Strategic Utility</button>
+                  </div>
+                  <div className="fullscreen-controls">
+                    {isAnalysisFullscreen ? (
+                      <button 
+                        className="close-fullscreen-btn" 
+                        onClick={() => setIsAnalysisFullscreen(false)}
+                        title="Exit Fullscreen (ESC)"
+                      >
+                        ✕
+                      </button>
+                    ) : (
+                      <button 
+                        className="fullscreen-tab-btn" 
+                        onClick={() => setIsAnalysisFullscreen(true)}
+                        title="Fullscreen Analysis (F11)"
+                      >
+                        ⛶
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                {/* 2. Loading Overlay: This will now appear OVER the placeholder space immediately */}
@@ -2250,7 +2654,18 @@ center={viewCenter}
                   </div>
                 )}
                 {/* 3. Data Viewport */}
-                <div className="tab-viewport">
+                <div className={`tab-viewport ${isAnalysisFullscreen ? 'fullscreen' : ''}`}>
+                  {/* Floating Close Button for Fullscreen */}
+                  {isAnalysisFullscreen && (
+                    <button 
+                      className="floating-close-btn" 
+                      onClick={() => setIsAnalysisFullscreen(false)}
+                      title="Exit Fullscreen (ESC)"
+                    >
+                      ✕
+                    </button>
+                  )}
+                  
                   {/* SINGLE ANALYSIS VIEW */}
                   {!isCompareMode && result &&(
                     <div className="single-analysis-view">
@@ -2305,26 +2720,49 @@ center={viewCenter}
             )}
           </section>
 
-        <div className={`geogpt-fixed-container ${isGptOpen ? 'expanded' : ''}`}>
-            {isGptOpen ? (
-              <div className="geogpt-polished-box">
-                <div className="geogpt-chat-header" onClick={() => setIsGptOpen(false)}>
-                  <div className="gpt-status"><span className="gpt-dot"></span><strong>GeoGPT Intelligence</strong></div>
-                  <button className="close-gpt">×</button>
+        <div 
+          className="geogpt-fixed-container" 
+          style={{
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            zIndex: 9999,
+            width: '380px',
+            height: '500px'
+          }}
+          onMouseDown={handleMouseDown}
+        >
+          {isGptOpen ? (
+            <div 
+              className="geogpt-polished-box"
+              style={{
+                width: '100%',
+                height: '100%'
+              }}
+            >
+              <div className="geogpt-chat-header">
+                <div className="gpt-status">
+                  <span className="gpt-dot"></span>
+                  <strong>GeoGPT Intelligence</strong>
                 </div>
-                <div className="geogpt-messages">
-                  {chatHistory.map((msg, i) => <div key={i} className={`chat-msg ${msg.role}`}><div className="msg-bubble"><ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <div className="chat-controls">
+                  <button className="close-gpt" onClick={() => setIsGptOpen(false)}>×</button>
+                </div>
+              </div>
+              <div className="geogpt-messages">
+                {chatHistory.map((msg, i) => <div key={i} className={`chat-msg ${msg.role}`}><div className="msg-bubble"><ReactMarkdown remarkPlugins={[remarkGfm]}>
           {msg.content}
         </ReactMarkdown></div></div>)}
-                  {gptLoading && <div className="chat-msg assistant"><div className="msg-bubble thinking-bubble">Thinking...</div></div>}
-                  <div ref={chatEndRef} />
-                </div>
-                <form className="geogpt-input-area" onSubmit={handleAskGpt}>
-                  <input type="text" placeholder="Ask GeoGPT..." value={userQuery} onChange={(e) => setUserQuery(e.target.value)} />
-                  <button type="submit" disabled={!userQuery.trim() || gptLoading}>🚀</button>
-                </form>
+                {gptLoading && <div className="chat-msg assistant"><div className="msg-bubble thinking-bubble">Thinking...</div></div>}
+                <div ref={chatEndRef} />
               </div>
-            ) : <button className="geogpt-pill-btn" onClick={() => setIsGptOpen(true)}><div className="gpt-icon-glow">✨</div></button>}
+              <form className="geogpt-input-area" onSubmit={handleAskGpt}>
+                <input type="text" placeholder="Ask GeoGPT..." value={userQuery} onChange={(e) => setUserQuery(e.target.value)} />
+                <button type="submit" disabled={!userQuery.trim() || gptLoading}>🚀</button>
+              </form>
+              <div className="resize-handle" />
+            </div>
+          ) : <button className="geogpt-pill-btn" onClick={() => setIsGptOpen(true)}><div className="gpt-icon-glow">✨</div></button>}
         </div>
       </main>
 

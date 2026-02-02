@@ -1,8 +1,14 @@
 .snapshot-geo-card {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   border-left: none !important;
   padding: 0 !important;
+  max-height: none;
+  overflow-y: visible;
+}
+
+.snapshot-geo-card.enhanced-geospatial {
+  min-height: 500px;
 }
 
 .snapshot-inner {
@@ -12,7 +18,7 @@
 
 .snapshot-side-strip {
   background: var(--primary-color, #3b82f6);
-  width: 30px;
+  width: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -32,12 +38,31 @@
   flex: 1;
 }
 
+.snapshot-content.enhanced {
+  padding: 1.2rem;
+}
+
 .snap-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 8px;
-  margin-bottom: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 15px;
+}
+
+.main-identity h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-color, #ffffff);
+}
+
+.identity-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .iso-code {
@@ -45,25 +70,266 @@
   background: rgba(255, 255, 255, 0.1);
   padding: 2px 8px;
   border-radius: 4px;
+  font-size: 11px;
 }
 
-.snap-grid {
+.capital-badge {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.coordinates-display {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+
+.coord-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.coord-label {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.coord-value {
+  font-family: monospace;
+  font-weight: 600;
+  color: #10b981;
+}
+
+.section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.section h4 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b82f6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Population and Air Quality Grids */
+.population-grid,
+.air-quality-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
 }
 
-.snap-item label {
-  display: block;
+.population-item,
+.air-quality-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.population-item label,
+.air-quality-item label {
   font-size: 9px;
   text-transform: uppercase;
   color: #94a3b8;
   letter-spacing: 0.5px;
+  font-weight: 500;
 }
 
-.snap-item span {
+.population-item span,
+.air-quality-item span {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
+  color: var(--text-color, #ffffff);
+}
+
+/* AQI-specific colors */
+.aqi-good {
+  color: #10b981 !important;
+  font-weight: 700;
+}
+
+.aqi-moderate {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
+.aqi-unhealthy-for-sensitive-groups {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+
+.aqi-unhealthy {
+  color: #ef4444 !important;
+  font-weight: 700;
+}
+
+.aqi-very-unhealthy {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+.aqi-hazardous {
+  color: #991b1b !important;
+  font-weight: 700;
+}
+
+/* Population density colors */
+.density-very-high {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+.density-high {
+  color: #ef4444 !important;
+  font-weight: 600;
+}
+
+.density-medium {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+
+.density-low {
+  color: #10b981 !important;
+  font-weight: 600;
+}
+
+.density-very-low {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
+.health-text {
+  font-size: 11px !important;
+  line-height: 1.3;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.admin-grid,
+.global-grid,
+.border-grid,
+.urban-grid,
+.env-grid,
+.infra-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.admin-item,
+.global-item,
+.border-item,
+.urban-item,
+.env-item,
+.infra-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-item label,
+.global-item label,
+.border-item label,
+.urban-item label,
+.env-item label,
+.infra-item label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.admin-item span,
+.global-item span,
+.border-item span,
+.urban-item span,
+.env-item span,
+.infra-item span {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-color, #ffffff);
+}
+
+.border-yes {
+  color: #10b981 !important;
+  font-weight: 700;
+}
+
+.border-no {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+
+.nearby-subsection {
+  margin-bottom: 12px;
+}
+
+.nearby-subsection:last-child {
+  margin-bottom: 0;
+}
+
+.nearby-subsection label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.nearby-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nearby-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.place-name {
+  font-weight: 600;
+  color: var(--text-color, #ffffff);
+}
+
+.place-detail {
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.snap-footer {
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .terrain-tag {
@@ -75,13 +341,196 @@
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 11px;
-  margin-top: 15px;
 }
 
-.pro-summary {
+.terrain-tag .dot {
+  width: 6px;
+  height: 6px;
+  background: #10b981;
+  border-radius: 50%;
+}
+
+.political-info {
+  display: flex;
+  gap: 8px;
+  font-size: 10px;
+}
+
+.admin-level {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.sovereignty {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.snapshot-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  gap: 10px;
+}
+
+.shimmer-line {
+  width: 60%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  border-radius: 2px;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@media (max-width: 768px) {
+  /* Population and Air Quality Grids */
+.population-grid,
+.air-quality-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.population-item,
+.air-quality-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.population-item label,
+.air-quality-item label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.population-item span,
+.air-quality-item span {
+  font-weight: 600;
   font-size: 12px;
-  margin-top: 10px;
+  color: var(--text-color, #ffffff);
+}
+
+/* AQI-specific colors */
+.aqi-good {
+  color: #10b981 !important;
+  font-weight: 700;
+}
+
+.aqi-moderate {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
+.aqi-unhealthy-for-sensitive-groups {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+
+.aqi-unhealthy {
+  color: #ef4444 !important;
+  font-weight: 700;
+}
+
+.aqi-very-unhealthy {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+.aqi-hazardous {
+  color: #991b1b !important;
+  font-weight: 700;
+}
+
+/* Population density colors */
+.density-very-high {
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+.density-high {
+  color: #ef4444 !important;
+  font-weight: 600;
+}
+
+.density-medium {
+  color: #f59e0b !important;
+  font-weight: 600;
+}
+
+.density-low {
+  color: #10b981 !important;
+  font-weight: 600;
+}
+
+.density-very-low {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
+.health-text {
+  font-size: 11px !important;
+  line-height: 1.3;
   font-style: italic;
-  opacity: 0.8;
-  line-height: 1.4;
+  opacity: 0.9;
+}
+
+.admin-grid,
+  .global-grid,
+  .border-grid,
+  .urban-grid,
+  .env-grid,
+  .infra-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .snap-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .coordinates-display {
+    text-align: left;
+  }
+  
+  .snap-footer {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+}
+
+.snapshot-geo-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.snapshot-geo-card::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.snapshot-geo-card::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.snapshot-geo-card::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
