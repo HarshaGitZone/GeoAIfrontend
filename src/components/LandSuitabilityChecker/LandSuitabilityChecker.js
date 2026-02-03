@@ -1562,7 +1562,10 @@ const [locationBName, setLocationBName] = useState(() => localStorage.getItem("g
 
   const [sidebarWidth, setSidebarWidth] = useState(() => Number(localStorage.getItem("sidebar_width")) || 320);
 
-  const [bottomHeight, setBottomHeight] = useState(() => Number(localStorage.getItem("bottom_height")) || 380);
+  const [bottomHeight, setBottomHeight] = useState(() => {
+    const saved = Number(localStorage.getItem("bottom_height"));
+    return saved > 0 ? saved : window.innerHeight * 0.5; // Default to 50% of viewport height
+  });
 
   // LandSuitabilityChecker.js - At the top of the component
 
@@ -2646,9 +2649,14 @@ useEffect(() => {
 
     if (isResizingBottom.current) {
 
-      const newHeight = e.clientY;
-
-      if (newHeight > 300 && newHeight < 600) setBottomHeight(newHeight);
+      // Calculate height from bottom of viewport for proper stretching
+      const viewportHeight = window.innerHeight;
+      const distanceFromBottom = viewportHeight - e.clientY;
+      
+      // Convert to actual height (distance from bottom)
+      const newHeight = Math.max(200, Math.min(viewportHeight * 0.8, distanceFromBottom));
+      
+      setBottomHeight(newHeight);
 
     }
 
