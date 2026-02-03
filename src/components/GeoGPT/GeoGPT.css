@@ -1560,8 +1560,749 @@
     color: #94a3b8 !important;
 }
 
-[data-theme='dark'] .sidebar-action-btn {
-    background: #1e293b !important;
-    color: #f1f5f9 !important;
-    border-color: rgba(255, 255, 255, 0.05) !important;
+/* Enhanced Quick Questions Styles */
+.quick-questions-expanded {
+  margin: 12px 16px;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.15) 0%, 
+    rgba(16, 185, 129, 0.15) 50%,
+    rgba(139, 92, 246, 0.15) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 8px 32px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  animation: slideDownGlow 0.4s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-questions-expanded::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    #3b82f6 0%, 
+    #10b981 50%, 
+    #8b5cf6 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes slideDownGlow {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.quick-questions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-radius: 16px 16px 0 0;
+}
+
+.quick-questions-header h5 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.close-quick-questions-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: #ffffff;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.close-quick-questions-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.quick-questions-grid {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.quick-question-btn-expanded {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-question-btn-expanded::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.quick-question-btn-expanded:hover::before {
+  left: 100%;
+}
+
+.quick-question-btn-expanded:hover {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.3) 0%, 
+    rgba(16, 185, 129, 0.3) 100%
+  );
+  border-color: rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Toggle Button Styles */
+.quick-questions-toggle {
+  margin: 8px 16px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.show-quick-questions-btn {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.2) 0%, 
+    rgba(16, 185, 129, 0.2) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  color: #ffffff;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 
+    0 4px 12px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.show-quick-questions-btn:hover {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.3) 0%, 
+    rgba(16, 185, 129, 0.3) 100%
+  );
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Light theme styles */
+[data-theme='light'] .quick-questions-expanded {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.1) 0%, 
+    rgba(16, 185, 129, 0.1) 50%,
+    rgba(139, 92, 246, 0.1) 100%
+  );
+  border-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(59, 130, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+[data-theme='light'] .quick-questions-header h5 {
+  color: #1e293b;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+[data-theme='light'] .close-quick-questions-btn {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #1e293b;
+}
+
+[data-theme='light'] .quick-question-btn-expanded {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.05) 0%, 
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #1e293b;
+}
+
+[data-theme='light'] .quick-question-btn-expanded:hover {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.15) 0%, 
+    rgba(255, 255, 255, 0.9) 100%
+  );
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme='light'] .show-quick-questions-btn {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.15) 0%, 
+    rgba(16, 185, 129, 0.15) 100%
+  );
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #1e293b;
+}
+
+/* Bottom Quick Questions Button - Always Visible */
+.quick-questions-bottom-toggle {
+  margin-top: 12px;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-questions-bottom-btn {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.25) 0%, 
+    rgba(16, 185, 129, 0.25) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  color: #ffffff;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 
+    0 4px 12px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  min-width: 200px;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.quick-questions-bottom-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.35) 0%, 
+    rgba(16, 185, 129, 0.35) 100%
+  );
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.quick-questions-bottom-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Light theme for bottom button */
+[data-theme='light'] .quick-questions-bottom-toggle {
+  border-top-color: rgba(59, 130, 246, 0.1);
+}
+
+[data-theme='light'] .quick-questions-bottom-btn {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.2) 0%, 
+    rgba(16, 185, 129, 0.2) 100%
+  );
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #1e293b;
+}
+
+[data-theme='light'] .quick-questions-bottom-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.3) 0%, 
+    rgba(16, 185, 129, 0.3) 100%
+  );
+} 
+
+
+/* --- GeoGPT Input Area Layout Fix --- */
+
+/* Force the form to stack elements vertically */
+.geogpt-input-area {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 12px 16px !important;
+}
+
+/* Ensure the input and send button stay on one line */
+.input-wrapper-inline {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    gap: 8px !important;
+}
+
+/* Move the Quick Questions toggle to its own line below the input */
+.quick-questions-bottom-toggle {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+}
+
+/* Professional styling for the bottom toggle button */
+.quick-questions-bottom-btn {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    color: #3b82f6 !important;
+    padding: 6px 16px !important;
+    border-radius: 20px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.quick-questions-bottom-btn:hover {
+    background: rgba(59, 130, 246, 0.2) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Dark Theme specific visibility check */
+[data-theme='dark'] .quick-questions-bottom-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #93c5fd !important;
+}
+
+/* Unified Compact Quick Questions System */
+.quick-questions-compact-unified {
+  margin: 6px 12px;
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.12) 0%, 
+    rgba(16, 185, 129, 0.12) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  animation: slideDownCompact 0.3s ease-out;
+  max-height: 160px;
+}
+
+@keyframes slideDownCompact {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quick-questions-header-unified {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-questions-title-unified {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.quick-questions-close-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.quick-questions-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.quick-questions-list-unified {
+  padding: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.quick-question-item-unified {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 4px 8px;
+  margin: 1px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.quick-question-item-unified:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateX(2px);
+}
+
+/* Unified Toggle Button */
+.quick-questions-toggle-unified {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.quick-questions-toggle-btn-unified {
+  background: rgba(59, 130, 246, 0.08) !important;
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  border-radius: 15px !important;
+  color: #93c5fd !important;
+  padding: 4px 12px !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.quick-questions-toggle-btn-unified:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.15) !important;
+  transform: translateY(-1px) !important;
+}
+
+.quick-questions-toggle-btn-unified:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+/* Light theme for unified system */
+[data-theme='light'] .quick-questions-compact-unified {
+  background: linear-gradient(135deg, 
+    rgba(59, 130, 246, 0.08) 0%, 
+    rgba(16, 185, 129, 0.08) 100%
+  );
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+[data-theme='light'] .quick-questions-title-unified {
+  color: #475569;
+}
+
+[data-theme='light'] .quick-questions-close-btn {
+  color: #64748b;
+}
+
+[data-theme='light'] .quick-questions-close-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: #334155;
+}
+
+[data-theme='light'] .quick-question-item-unified {
+  background: rgba(59, 130, 246, 0.04);
+  border-color: rgba(59, 130, 246, 0.1);
+  color: #334155;
+}
+
+[data-theme='light'] .quick-question-item-unified:hover {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+[data-theme='light'] .quick-questions-toggle-btn-unified {
+  background: rgba(59, 130, 246, 0.06) !important;
+  border-color: rgba(59, 130, 246, 0.12) !important;
+  color: #3b82f6 !important;
+}
+
+[data-theme='light'] .quick-questions-toggle-btn-unified:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.12) !important;
+}
+
+/* --- GeoGPT Layout & Button Fix --- */
+
+/* 1. Ensure the form stacks and reduces gaps */
+.geogpt-input-area {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 4px 12px 8px !important; /* Extremely tight padding */
+    gap: 2px !important; /* Minimal gap between input row and button */
+}
+
+/* 2. Reset the wrapper to standard flow */
+.input-wrapper-inline {
+    display: flex !important;
+    width: 100% !important;
+    margin: 0 0 2px 0 !important;
+}
+
+/* 3. FIX: Prevent the button from becoming a squashed circle */
+.quick-questions-bottom-toggle {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: auto !important; /* Allow natural height */
+    margin: 0 !important;
+}
+
+.quick-questions-bottom-btn {
+    /* Reset dimensions causing the circular squash */
+    width: auto !important; 
+    height: auto !important;
+    min-width: 120px !important; 
+    min-height: unset !important;
+    
+    /* Compact Styling */
+    padding: 3px 12px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    white-space: nowrap !important; /* Prevent text wrapping */
+    
+    /* Aesthetics */
+    background: rgba(59, 130, 246, 0.1) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    color: #3b82f6 !important;
+    cursor: pointer !important;
+}
+
+/* 4. Pull the entire section closer to the chat messages */
+.geogpt-messages {
+    margin-bottom: 0 !important;
+    padding-bottom: 4px !important;
+}
+
+/* --- GeoGPT Layout Compression & Button Fix --- */
+
+/* 1. Pull the input area closer to the messages */
+.geogpt-messages {
+    margin-bottom: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+/* 2. Compact Input Area */
+.geogpt-input-area {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 2px 12px 6px !important; /* Extremely minimal vertical padding */
+    gap: 0 !important; /* Remove gap between input and button */
+}
+
+/* 3. The Input Row */
+.input-wrapper-inline {
+    margin-bottom: 4px !important; /* Smallest possible gap */
+}
+
+/* 4. FIX: Restore the "Show Quick Questions" Button Shape */
+.quick-questions-bottom-toggle {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 8px 0 !important;
+}
+
+.quick-questions-bottom-btn {
+    /* Ensure proper dimensions */
+    width: auto !important;
+    height: auto !important;
+    min-width: 180px !important;
+    min-height: 32px !important;
+    max-width: none !important;
+    
+    /* Proper flexbox layout */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    
+    /* Text and spacing */
+    padding: 8px 20px !important;
+    border-radius: 16px !important;
+    white-space: nowrap !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    
+    /* Professional styling */
+    background: linear-gradient(135deg, 
+        rgba(59, 130, 246, 0.2) 0%, 
+        rgba(16, 185, 129, 0.2) 100%
+    ) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    color: #ffffff !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 
+        0 3px 10px rgba(59, 130, 246, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.quick-questions-bottom-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(59, 130, 246, 0.3) 0%, 
+        rgba(16, 185, 129, 0.3) 100%
+    ) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 
+        0 5px 15px rgba(59, 130, 246, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Dark theme specific */
+[data-theme='dark'] .quick-questions-bottom-btn {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.15) 0%, 
+        rgba(255, 255, 255, 0.08) 100%
+    ) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+    box-shadow: 
+        0 3px 10px rgba(255, 255, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+[data-theme='dark'] .quick-questions-bottom-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.2) 0%, 
+        rgba(255, 255, 255, 0.12) 100%
+    ) !important;
+    box-shadow: 
+        0 5px 15px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+
+/* ============================================================
+   FINAL RESOLUTION: COMPACT INPUT AREA & PILL BUTTON
+   ============================================================ */
+
+/* 1. Force the container to stack vertically and kill gaps */
+.geogpt-input-area {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 2px 12px 6px !important; 
+    gap: 0 !important; 
+}
+
+/* 2. Ensure the chat input doesn't push the button away */
+.input-wrapper-inline {
+    display: flex !important;
+    margin-bottom: 4px !important;
+}
+
+/* 3. Pull the toggle container immediately under the input */
+.quick-questions-toggle-unified {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: auto !important; /* Prevents squashing to container height */
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 4. FIX: Restore Pill Shape and Single-Row Orientation */
+.quick-questions-toggle-btn-unified {
+    /* Reset geometry causing the circle */
+    width: auto !important; 
+    height: auto !important;
+    min-width: 160px !important; 
+    min-height: unset !important;
+    aspect-ratio: auto !important;
+    border-radius: 20px !important; /* Proper Pill Shape */
+    
+    /* Internal Content Layout */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 4px 16px !important;
+    white-space: nowrap !important; /* Forces full text on one line */
+    
+    /* Professional HUD Aesthetic */
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    background: rgba(59, 130, 246, 0.1) !important;
+    border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    color: #3b82f6 !important;
+    transition: all 0.2s ease !important;
+}
+
+.quick-questions-toggle-btn-unified:hover {
+    background: rgba(59, 130, 246, 0.2) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* 5. Reduce message area margin to prevent overlap bombardment */
+.geogpt-messages {
+    margin-bottom: 0 !important;
+    padding-bottom: 2px !important;
 }

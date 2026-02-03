@@ -1,29 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./TopNav.css";
 import QRCode from "react-qr-code"; // Import this at the top
-export default function TopNav({ isDarkMode, setIsDarkMode,isAudioEnabled,setIsAudioEnabled, analysisHistory = [] }) {
+export default function TopNav({ isDarkMode, setIsDarkMode,isAudioEnabled,setIsAudioEnabled, analysisHistory = [], compareResult, isCompareMode, siteAPlaying, setSiteAPlaying, siteBPlaying, setSiteBPlaying }) {
   const [isVisible, setIsVisible] = useState(false);
   const [showTeam, setShowTeam] = useState(false);
   const [showHistoryTable, setShowHistoryTable] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
   const [currentTime, setCurrentTime] = useState(new Date());
-const navHideTimeoutRef = useRef(null);
-const [expandedQR, setExpandedQR] = useState(null);
+  const navHideTimeoutRef = useRef(null);
+  const [expandedQR, setExpandedQR] = useState(null);
 
-const handleNavMouseEnter = () => {
-  if (navHideTimeoutRef.current) {
-    clearTimeout(navHideTimeoutRef.current);
-  }
-  setIsVisible(true);
-};
+  const handleNavMouseEnter = () => {
+    if (navHideTimeoutRef.current) {
+      clearTimeout(navHideTimeoutRef.current);
+    }
+    setIsVisible(true);
+  };
 
-const handleNavMouseLeave = () => {
-  navHideTimeoutRef.current = setTimeout(() => {
-    setIsVisible(false);
-    setShowTeam(false);
-  }, 2000); // ⏱️ 2 seconds delay
-};
+  const handleNavMouseLeave = () => {
+    navHideTimeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+      setShowTeam(false);
+    }, 2000); // ⏱️ 2 seconds delay
+  };
 
   // Ref to handle the 3-second disappear timer
   const hideTimeoutRef = useRef(null);
@@ -150,15 +150,28 @@ const handleNavMouseLeave = () => {
                 ))}
               </div>
             </div>
-            {/* --- NEW: AUDIO TOGGLE BUTTON --- */}
+            {/* --- AUDIO CONTROLS --- */}
             <button 
-              className={`icon-btn audio-toggle ${isAudioEnabled ? "active" : ""}`} 
-              onClick={() => setIsAudioEnabled(!isAudioEnabled)}
-              title={isAudioEnabled ? "Deactivate Atmosphere" : "Activate Immersive Audio"}
+              className={`icon-btn audio-toggle ${siteAPlaying ? "active" : ""}`} 
+              onClick={() => setSiteAPlaying(!siteAPlaying)}
+              title={siteAPlaying ? "Mute Site A Audio" : "Play Site A Audio"}
               style={{ fontSize: '1.2rem' }}
             >
-              {isAudioEnabled ? "🔊" : "🔇"}
+              {siteAPlaying ? "🔊" : "🔇"}
             </button>
+            {isCompareMode && compareResult && (
+              <button 
+                className={`icon-btn audio-toggle-b ${siteBPlaying ? "active" : ""}`} 
+                onClick={() => {
+                  console.log('🔇 Site B button clicked, current state:', siteBPlaying);
+                  setSiteBPlaying(!siteBPlaying);
+                }}
+                title={siteBPlaying ? "Mute Site B Audio" : "Play Site B Audio"}
+                style={{ fontSize: '1.2rem' }}
+              >
+                {siteBPlaying ? "🔊" : "🔇"}
+              </button>
+            )}
             <button className={`icon-btn ${showHistoryTable ? "active" : ""}`} onClick={() => setShowHistoryTable(true)}>🕒</button>
           </div>
             

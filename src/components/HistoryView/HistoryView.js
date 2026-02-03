@@ -227,10 +227,26 @@ const EnhancedVisualForensics = ({ forensics, locationName, lat, lng }) => {
 
   const analysis = getDetailedAnalysis(forensics.intensity, forensics.velocity, forensics.baseline_year);
   
-  // Calculate additional metrics
-  const yearsElapsed = 2026 - forensics.baseline_year;
-  const annualChangeRate = forensics.intensity / yearsElapsed;
-  const projected2030Change = Math.min(100, forensics.intensity + (annualChangeRate * 4));
+  // Calculate additional metrics with safety checks
+  const yearsElapsed = forensics.baseline_year ? 2026 - forensics.baseline_year : 9;
+  const annualChangeRate = forensics.intensity && yearsElapsed > 0 ? forensics.intensity / yearsElapsed : 0;
+  const projected2030Change = Math.min(100, (forensics.intensity || 0) + (annualChangeRate * 4));
+  
+  // Safety checks for telemetry data
+  const telemetry = forensics.telemetry || {};
+  const resolution = telemetry.resolution_m_per_px || 'N/A';
+  const interpretation = telemetry.interpretation || 'Standard analysis';
+  
+  // Update analysis with enhanced data
+  const enhancedAnalysis = {
+    ...analysis,
+    description: forensics.reasoning || `Analysis indicates ${forensics.intensity?.toFixed(1) || 0}% pixel change between ${forensics.baseline_year || 2017} and 2026.`,
+    recommendation: forensics.intensity > 50 
+      ? 'Monitor rapid development patterns and implement strategic planning controls.'
+      : forensics.intensity > 20 
+      ? 'Continue monitoring gradual changes with periodic assessment.'
+      : 'Area shows stable characteristics suitable for long-term planning.'
+  };
 
   return (
     <div className="enhanced-cnn-analysis">
@@ -372,10 +388,34 @@ const EnhancedVisualForensics = ({ forensics, locationName, lat, lng }) => {
               <span className="metric-title">Analysis Resolution</span>
             </div>
             <div className="metric-value">
-              {forensics.telemetry?.resolution_m_per_px || 'N/A'}m/px
+              {resolution}m/px
             </div>
             <div className="metric-subtitle">
-              {forensics.telemetry?.interpretation || 'Standard'}
+              {interpretation}
+            </div>
+          </div>
+          <div className="metric-card">
+            <div className="metric-header">
+              <span className="metric-icon">📊</span>
+              <span className="metric-title">Pixel Change</span>
+            </div>
+            <div className="metric-value">
+              {forensics.telemetry?.pixel_change_pct || forensics.intensity?.toFixed(1) || '0'}%
+            </div>
+            <div className="metric-subtitle">
+              Above threshold
+            </div>
+          </div>
+          <div className="metric-card">
+            <div className="metric-header">
+              <span className="metric-icon">🎯</span>
+              <span className="metric-title">Mean Difference</span>
+            </div>
+            <div className="metric-value">
+              {forensics.telemetry?.mean_diff ? (forensics.telemetry.mean_diff * 100).toFixed(2) : 'N/A'}
+            </div>
+            <div className="metric-subtitle">
+              Spectral variance
             </div>
           </div>
         </div>
@@ -384,20 +424,20 @@ const EnhancedVisualForensics = ({ forensics, locationName, lat, lng }) => {
       {/* Analysis Summary */}
       <div className="analysis-summary">
         <div className="summary-header">
-          <h4>{analysis.level}</h4>
-          <span className={`impact-badge ${analysis.impact.toLowerCase()}`}>
-            {analysis.impact} IMPACT
+          <h4>{enhancedAnalysis.level}</h4>
+          <span className={`impact-badge ${enhancedAnalysis.impact.toLowerCase()}`}>
+            {enhancedAnalysis.impact} IMPACT
           </span>
         </div>
         
         <div className="summary-content">
           <p className="analysis-description">
-            {analysis.description}
+            {enhancedAnalysis.description}
           </p>
           
           <div className="recommendation-box">
             <h5>🎯 Strategic Recommendation</h5>
-            <p>{analysis.recommendation}</p>
+            <p>{enhancedAnalysis.recommendation}</p>
           </div>
         </div>
       </div>
@@ -587,17 +627,56 @@ const EnhancedVisualForensics = ({ forensics, locationName, lat, lng }) => {
             <div className="ai-analysis-content">
               <div className="analysis-grid">
                 <div className="analysis-left">
-                  <div className="velocity-gauge-container">
-                    <h4>Urbanization Velocity</h4>
-                    <div className="gauge-wrapper">
-                      <div className="gauge-body">
-                        <div className="gauge-needle" style={{ transform: `rotate(${(activeHistory?.velocity?.score * 18) - 90}deg)` }}></div>
+                  {/* Enhanced Urbanization Velocity Gauge */}
+                  <div className="velocity-gauge-container-enhanced">
+                    <div className="gauge-header">
+                      <h4>🚀 Urbanization Velocity</h4>
+                      <div className="gauge-subtitle">Real-time Development Pace Analysis</div>
+                    </div>
+                    <div className="gauge-wrapper-enhanced">
+                      <div className="gauge-body-enhanced">
+                        <div className="gauge-needle-enhanced" style={{ 
+                          transform: `rotate(${(activeHistory?.velocity?.score * 1.8) - 90}deg)`,
+                          transition: 'transform 1.5s cubic-bezier(0.4, 0.0, 0.2, 1)'
+                        }}></div>
+                        <div className="gauge-center-enhanced"></div>
                       </div>
-                      <div className="gauge-labels">
-                        <span>Stable</span><span>Expanding</span><span>Hyper-Growth</span>
+                      {/* Enhanced Labels with animations */}
+                      <div className="gauge-labels-enhanced">
+                        <span className="label-stable-enhanced">
+                          <span className="label-icon">🟢</span>
+                          <span className="label-text">STABLE</span>
+                        </span>
+                        <span className="label-expanding-enhanced">
+                          <span className="label-icon">🟡</span>
+                          <span className="label-text">EXPANDING</span>
+                        </span>
+                        <span className="label-hyper-enhanced">
+                          <span className="label-icon">🔴</span>
+                          <span className="label-text">HYPER-GROWTH</span>
+                        </span>
                       </div>
                     </div>
-                    <p className="velocity-status">Current Pace: <span className="highlight-text">{activeHistory?.velocity?.label || "Calculating..."}</span></p>
+                    <div className="velocity-status-wrapper-enhanced">
+                      <div className="pace-info">
+                        <span className="pace-label">Current Pace:</span>
+                        <span className={`highlight-text-animate ${activeHistory?.velocity?.label?.toLowerCase().replace(/\s+/g, '-') || 'calculating'}`}>
+                          {activeHistory?.velocity?.label || "CALCULATING..."}
+                        </span>
+                      </div>
+                      <div className="velocity-metrics">
+                        <div className="metric-item">
+                          <span className="metric-label">Score</span>
+                          <span className="metric-value">{(activeHistory?.velocity?.score || 0).toFixed(1)}</span>
+                        </div>
+                        <div className="metric-item">
+                          <span className="metric-label">Trend</span>
+                          <span className={`metric-trend ${activeHistory?.velocity?.score > 50 ? 'increasing' : 'stable'}`}>
+                            {activeHistory?.velocity?.score > 50 ? '↑ Rising' : '→ Steady'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div className="analysis-stats">
                     <p className="summary-text">Temporal analysis indicates a <span className="highlight">{totalShift.toFixed(1)}%</span> net shift.</p>
@@ -613,6 +692,28 @@ const EnhancedVisualForensics = ({ forensics, locationName, lat, lng }) => {
                   </div>
                 </div>
                 <div className="analysis-right">
+                  {/* Category Drift Summary - Moved to Right Side */}
+                  {activeHistory?.category_drifts && (
+                    <div className="category-drift-summary-embedded">
+                      <h3>Category Drift Summary ({timeRange})</h3>
+                      <p className="category-drift-desc">Change since baseline: positive = improved, negative = declined.</p>
+                      <div className="category-drift-grid">
+                        {CATEGORY_KEYS.map(catKey => {
+                          const drift = activeHistory.category_drifts[catKey] ?? 0;
+                          const past = activeHistory.category_scores?.[catKey];
+                          const current = currentCategoryScores?.[catKey];
+                          return (
+                            <div key={catKey} className={`category-drift-item ${drift >= 0 ? 'improved' : 'declined'}`}>
+                              <span className="cat-label">{CATEGORY_LABELS[catKey] || catKey}</span>
+                              <span className="cat-change">{drift >= 0 ? '+' : ''}{drift.toFixed(1)} pts</span>
+                              {past != null && <span className="cat-past">Past: {Number(past).toFixed(0)}</span>}
+                              {current != null && <span className="cat-curr">Current: {Number(current).toFixed(0)}</span>}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                   <div className="forecast-content">
                     <h4>Strategic Insights</h4>
                     <p className="forecast-text">

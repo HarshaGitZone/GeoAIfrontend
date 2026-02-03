@@ -1,0 +1,284 @@
+/* 🎵 Global Audio Manager - Professional Audio Controls */
+
+.audio-manager {
+  position: relative;
+}
+
+/* Fixed Audio Controls */
+.audio-controls-fixed {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+/* Main Audio Control Button */
+.audio-control-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(139, 92, 246, 0.9));
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.audio-control-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(59, 130, 246, 0.5);
+}
+
+.audio-control-btn:active {
+  transform: scale(0.95);
+}
+
+.audio-control-btn.muted {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9));
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+}
+
+.audio-control-btn.muted:hover {
+  box-shadow: 0 6px 30px rgba(239, 68, 68, 0.5);
+}
+
+/* A/B Analysis Controls */
+.ab-audio-controls {
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 6px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  animation: slideInRight 0.5s ease-out;
+}
+
+.ab-audio-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(16, 185, 129, 0.9));
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ab-audio-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+}
+
+.ab-audio-btn:active {
+  transform: scale(0.95);
+}
+
+.ab-audio-btn.site-b {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.9), rgba(139, 92, 246, 0.9));
+}
+
+.ab-audio-btn.site-b:hover {
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+}
+
+/* Playing State Indicators */
+.ab-audio-btn.playing::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+  animation: shimmer 2s infinite;
+}
+
+.ab-audio-btn.paused {
+  opacity: 0.6;
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.9), rgba(75, 85, 99, 0.9));
+}
+
+.ab-audio-btn.paused:hover {
+  opacity: 1;
+  box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
+}
+
+/* Tooltips */
+.audio-control-btn::after,
+.ab-audio-btn::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+  pointer-events: none;
+  z-index: 10001;
+}
+
+.audio-control-btn:hover::after,
+.ab-audio-btn:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(50%) translateY(-3px);
+}
+
+/* Animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Light Theme Support */
+[data-theme="light"] .audio-control-btn {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="light"] .audio-control-btn:hover {
+  box-shadow: 0 6px 30px rgba(59, 130, 246, 0.4);
+}
+
+[data-theme="light"] .audio-control-btn.muted {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.2);
+}
+
+[data-theme="light"] .audio-control-btn.muted:hover {
+  box-shadow: 0 6px 30px rgba(239, 68, 68, 0.4);
+}
+
+[data-theme="light"] .ab-audio-controls {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .ab-audio-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+[data-theme="light"] .ab-audio-btn:hover {
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+[data-theme="light"] .ab-audio-btn.site-b {
+  background: linear-gradient(135deg, #a855f7, #8b5cf6);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+[data-theme="light"] .ab-audio-btn.site-b:hover {
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+[data-theme="light"] .ab-audio-btn.paused {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  opacity: 0.7;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .audio-controls-fixed {
+    top: 15px;
+    right: 15px;
+  }
+  
+  .audio-control-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .ab-audio-controls {
+    gap: 6px;
+    padding: 4px;
+  }
+  
+  .ab-audio-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .audio-controls-fixed {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .audio-control-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  
+  .ab-audio-controls {
+    gap: 4px;
+    padding: 3px;
+  }
+  
+  .ab-audio-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 10px;
+  }
+}
+
+/* Focus States for Accessibility */
+.audio-control-btn:focus,
+.ab-audio-btn:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+[data-theme="light"] .audio-control-btn:focus,
+[data-theme="light"] .ab-audio-btn:focus {
+  outline-color: rgba(59, 130, 246, 0.5);
+}

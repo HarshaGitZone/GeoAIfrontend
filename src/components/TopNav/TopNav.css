@@ -2190,7 +2190,26 @@
     animation: audio-pulse 2s infinite ease-in-out;
 }
 
+.icon-btn.audio-toggle-b {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: #a855f7;
+}
+
+.icon-btn.audio-toggle-b.active {
+    background: rgba(168, 85, 247, 0.2);
+    color: #a855f7;
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+    animation: audio-pulse-b 2s infinite ease-in-out;
+}
+
 @keyframes audio-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes audio-pulse-b {
     0% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.1); opacity: 0.8; }
     100% { transform: scale(1); opacity: 1; }

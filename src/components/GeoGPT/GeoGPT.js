@@ -12,7 +12,6 @@ const GeoGPT = ({ isOpen, onClose, currentData, locationName, compareData }) => 
   const [gptLoading, setGptLoading] = useState(false);
   const [currentProvider, setCurrentProvider] = useState('');
   const [showQuickQuestions, setShowQuickQuestions] = useState(true);
-  const [hasFirstPrompt, setHasFirstPrompt] = useState(false);
   const [sidebarExtended, setSidebarExtended] = useState(false);
   const chatEndRef = useRef(null);
 
@@ -37,7 +36,6 @@ const GeoGPT = ({ isOpen, onClose, currentData, locationName, compareData }) => 
     // Hide quick questions after first prompt
     if (showQuickQuestions) {
       setShowQuickQuestions(false);
-      setHasFirstPrompt(true);
     }
 
     try {
@@ -169,6 +167,7 @@ const GeoGPT = ({ isOpen, onClose, currentData, locationName, compareData }) => 
             <div className="gpt-circle">
               <span className="gpt-g">Geo</span>
             </div>
+            
             <span className="gpt-pt">GPT</span>
           </div>
         </div>
@@ -341,43 +340,59 @@ const GeoGPT = ({ isOpen, onClose, currentData, locationName, compareData }) => 
             <div ref={chatEndRef} />
           </div>
 
-          {/* Quick Questions - Show initially, hide after first prompt */}
-          {showQuickQuestions && (
-            <div className="quick-questions-expanded">
-              <div className="quick-questions-header">
-                <h5>💡 Quick Questions</h5>
+          {/* Unified Quick Questions - Compact and Always Accessible */}
+          {/* {showQuickQuestions && (
+            <div className="quick-questions-compact-unified">
+              <div className="quick-questions-header-unified">
+                <span className="quick-questions-title-unified">💡 Quick Questions</span>
                 <button 
-                  className="close-quick-questions-btn"
+                  className="quick-questions-close-btn"
                   onClick={() => setShowQuickQuestions(false)}
+                  title="Hide Quick Questions"
                 >
                   ×
                 </button>
               </div>
-              <div className="quick-questions-grid">
+              <div className="quick-questions-list-unified">
                 {quickQuestions.map((question, index) => (
                   <button
                     key={index}
-                    className="quick-question-btn-expanded"
+                    className="quick-question-item-unified"
                     onClick={() => handleQuickQuestion(question)}
+                    title={question}
                   >
-                    {question}
+                    {question.length > 60 ? question.substring(0, 60) + '...' : question}
                   </button>
                 ))}
               </div>
             </div>
-          )}
-
-          {/* Quick Questions Toggle Button - Show after first prompt */}
-          {hasFirstPrompt && !showQuickQuestions && (
-            <div className="quick-questions-toggle">
-              <button 
-                className="show-quick-questions-btn"
-                onClick={() => setShowQuickQuestions(true)}
-              >
-                💡 Quick Questions
-              </button>
-            </div>
-          )}
+          )} */}
+          {showQuickQuestions && (
+  <div className="quick-questions-compact-unified">
+    <div className="quick-questions-header-unified">
+      <span className="quick-questions-title-unified">💡 Quick Questions</span>
+      <button 
+        className="quick-questions-close-btn"
+        onClick={() => setShowQuickQuestions(false)}
+        title="Hide Quick Questions"
+      >
+        ×
+      </button>
+    </div>
+    <div className="quick-questions-list-unified">
+      {quickQuestions.map((question, index) => (
+        <button
+          key={index}
+          className="quick-question-item-unified"
+          onClick={() => handleQuickQuestion(question)}
+          title={question}
+        >
+          {question.length > 65 ? question.substring(0, 65) + '...' : question}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
 
           <form className="geogpt-input-area" onSubmit={handleAskGpt}>
             <div className="input-wrapper-inline">
@@ -386,18 +401,30 @@ const GeoGPT = ({ isOpen, onClose, currentData, locationName, compareData }) => 
                 placeholder="Ask GeoGPT about geospatial intelligence..." 
                 value={userQuery} 
                 onChange={(e) => setUserQuery(e.target.value)}
+                className="geogpt-input"
                 disabled={gptLoading}
               />
               <button 
                 type="submit" 
-                disabled={!userQuery.trim() || gptLoading}
-                className="send-button"
+                className="send-btn"
+                disabled={gptLoading || !userQuery.trim()}
               >
                 {gptLoading ? (
                   <div className="loading-spinner"></div>
                 ) : (
-                  '🚀'
+                  <span>→</span>
                 )}
+              </button>
+            </div>
+            
+            {/* Quick Questions Toggle Button - Always visible at bottom */}
+            <div className="quick-questions-toggle-unified">
+              <button 
+                className="quick-questions-toggle-btn-unified"
+                onClick={() => setShowQuickQuestions(!showQuickQuestions)}
+                disabled={gptLoading}
+              >
+                💡 {showQuickQuestions ? 'Hide' : 'Show'} Quick Questions
               </button>
             </div>
           </form>

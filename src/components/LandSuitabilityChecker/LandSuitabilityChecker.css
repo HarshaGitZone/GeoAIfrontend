@@ -4886,10 +4886,10 @@ html, body, #root, .app-shell {
   width: 100vw !important;
   height: 100vh !important;
   z-index: 99999 !important;
-  background: var(--bg, #0f172a);
+  background: var(--bg) !important; /* Use theme variable */
   overflow-y: auto;
   animation: fadeIn 0.3s ease-in-out;
-  padding-top: 80px !important;
+  padding: 80px 20px 20px 20px !important; /* More top padding for location visibility */
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
@@ -5089,14 +5089,13 @@ body:has(.tab-viewport.fullscreen) * .geogpt-fixed-container {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  z-index: 9997 !important;
-  background: var(--bg, #0f172a);
-  padding: 20px;
-  overflow-y: auto;
+  z-index: 9999 !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  overflow-y: auto !important;
+  padding: 80px 20px 20px 20px !important; /* More top padding for location visibility */
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -5255,28 +5254,93 @@ body:has(.tab-viewport.fullscreen) * .geogpt-fixed-container {
   }
 }
 
-@media (max-width: 480px) {
-  .results-tab-bar {
-    padding: 8px 12px;
-  }
-  
-  .results-tab-bar button {
-    font-size: 11px;
-    padding: 5px 10px;
-    min-width: 80px;
-  }
-  
-  .fullscreen-tab-btn {
-    padding: 3px 6px;
-    font-size: 11px;
-  }
-  
+/* Enhanced Responsive Design for Fullscreen Analysis */
+@media (max-width: 768px) {
   .tab-viewport.fullscreen {
-    padding: 10px;
+    padding: 100px 15px 15px 15px !important; /* Even more top padding on mobile */
   }
   
   .tab-viewport.fullscreen .pane-header {
-    font-size: 18px;
+    font-size: 20px !important;
+    margin-bottom: 15px !important;
+    padding-bottom: 10px !important;
+  }
+  
+  .tab-viewport.fullscreen .results-grid,
+  .tab-viewport.fullscreen .column-stack {
+    height: calc(100% - 80px) !important; /* Adjust for mobile */
+  }
+  
+  .tab-viewport.fullscreen .compare-layout-ditto {
+    grid-template-columns: 1fr !important; /* Stack on mobile */
+    gap: 15px !important;
+    height: calc(100% - 80px) !important;
+  }
+  
+  /* Ensure location info is visible on mobile */
+  .tab-viewport.fullscreen .location-info {
+    margin-bottom: 20px !important;
+    padding: 15px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-viewport.fullscreen {
+    padding: 120px 10px 10px 10px !important; /* Maximum top padding for small screens */
+  }
+  
+  .tab-viewport.fullscreen .pane-header {
+    font-size: 18px !important;
+    margin-bottom: 12px !important;
+    padding-bottom: 8px !important;
+  }
+  
+  .tab-viewport.fullscreen .results-grid,
+  .tab-viewport.fullscreen .column-stack {
+    height: calc(100% - 70px) !important;
+  }
+  
+  .tab-viewport.fullscreen .compare-layout-ditto {
+    height: calc(100% - 70px) !important;
+  }
+  
+  /* Location info on very small screens */
+  .tab-viewport.fullscreen .location-info {
+    margin-bottom: 15px !important;
+    padding: 12px !important;
+  }
+  
+  .tab-viewport.fullscreen .location-info h3 {
+    font-size: 16px !important;
+  }
+  
+  .tab-viewport.fullscreen .location-info .coords {
+    font-size: 12px !important;
+  }
+}
+
+/* Light theme responsive fixes */
+@media (max-width: 768px) {
+  [data-theme="light"] .tab-viewport.fullscreen {
+    background: #ffffff !important;
+  }
+  
+  [data-theme="light"] .tab-viewport.fullscreen .location-info {
+    background: rgba(59, 130, 246, 0.05) !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+  }
+  
+  [data-theme="light"] .tab-viewport.fullscreen .pane-header {
+    color: #1e293b !important;
+  }
+}
+
+@media (max-width: 480px) {
+  [data-theme="light"] .tab-viewport.fullscreen {
+    background: #ffffff !important;
   }
 }
 
@@ -9503,7 +9567,283 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
 .readiness-badge {
   margin-left: auto;
   animation: fadeIn 0.5s ease-in;
-  flex-shrink: 0;
+}
+
+/* Responsive Arrow Buttons for Cards */
+.card-arrow-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.card-arrow-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.card-arrow-btn.prev {
+  margin-right: 8px;
+}
+
+.card-arrow-btn.next {
+  margin-left: 8px;
+}
+
+/* Mobile-optimized arrow buttons */
+@media (max-width: 768px) {
+  .card-arrow-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .card-arrow-btn.prev {
+    margin-right: 6px;
+  }
+  
+  .card-arrow-btn.next {
+    margin-left: 6px;
+  }
+}
+
+/* Ultra-small screens */
+@media (max-width: 480px) {
+  .card-arrow-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+  
+  .card-arrow-btn.prev {
+    margin-right: 4px;
+  }
+  
+  .card-arrow-btn.next {
+    margin-left: 4px;
+  }
+}
+
+/* Enhanced Digital Twin Card Responsive Design */
+@media (max-width: 1024px) {
+  .digital-twin-card {
+    min-height: 350px;
+    padding: 16px;
+  }
+  
+  .digital-twin-card .intel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .digital-twin-card .intel-header h3 {
+    font-size: 0.9rem;
+  }
+  
+  .digital-twin-card .subtitle {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .digital-twin-card {
+    min-height: 300px;
+    padding: 12px;
+    margin: 8px 0;
+  }
+  
+  .digital-twin-card .intel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .digital-twin-card .intel-header h3 {
+    font-size: 0.85rem;
+  }
+  
+  .digital-twin-card .subtitle {
+    font-size: 0.65rem;
+  }
+  
+  .digital-twin-card .digital-twin-enhanced {
+    min-height: 250px;
+    padding: 12px;
+  }
+  
+  /* Arrow buttons below content on mobile */
+  .digital-twin-card .card-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+  }
+}
+
+@media (max-width: 480px) {
+  .digital-twin-card {
+    min-height: 280px;
+    padding: 8px;
+    margin: 4px 0;
+  }
+  
+  .digital-twin-card .intel-header h3 {
+    font-size: 0.8rem;
+  }
+  
+  .digital-twin-card .subtitle {
+    font-size: 0.6rem;
+  }
+  
+  .digital-twin-card .digital-twin-enhanced {
+    min-height: 220px;
+    padding: 8px;
+  }
+}
+
+/* Strategic Utility Cards Responsive Design */
+@media (max-width: 1024px) {
+  .strategic-utility-card {
+    padding: 16px;
+    min-height: 200px;
+  }
+  
+  .strategic-utility-card .card-title {
+    font-size: 0.9rem;
+  }
+  
+  .strategic-utility-card .card-content {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .strategic-utility-card {
+    padding: 12px;
+    min-height: 180px;
+    margin: 8px 0;
+  }
+  
+  .strategic-utility-card .card-title {
+    font-size: 0.85rem;
+  }
+  
+  .strategic-utility-card .card-content {
+    font-size: 0.75rem;
+  }
+  
+  /* Arrow buttons below content on mobile */
+  .strategic-utility-card .card-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+  }
+}
+
+@media (max-width: 480px) {
+  .strategic-utility-card {
+    padding: 8px;
+    min-height: 160px;
+    margin: 4px 0;
+  }
+  
+  .strategic-utility-card .card-title {
+    font-size: 0.8rem;
+  }
+  
+  .strategic-utility-card .card-content {
+    font-size: 0.7rem;
+  }
+}
+
+/* All Intelligence Cards Responsive */
+.intel-card {
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .intel-card {
+    margin: 12px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .intel-card {
+    margin: 8px 0;
+    padding: 12px;
+  }
+  
+  .intel-card .card-title {
+    font-size: 0.85rem;
+  }
+  
+  .intel-card .card-content {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .intel-card {
+    margin: 4px 0;
+    padding: 8px;
+  }
+  
+  .intel-card .card-title {
+    font-size: 0.8rem;
+  }
+  
+  .intel-card .card-content {
+    font-size: 0.7rem;
+  }
+  
+  /* Hide text labels on very small screens, show only icons */
+  .intel-card .btn-text {
+    display: none;
+  }
+  
+  .intel-card .btn-icon {
+    margin: 0;
+  }
+}
+
+/* Ensure cards don't overflow on small screens */
+@media (max-width: 768px) {
+  .intelligence-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .intelligence-grid .intel-card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Landscape orientation for tablets */
+@media (max-width: 1024px) and (orientation: landscape) {
+  .digital-twin-card {
+    min-height: 280px;
+  }
+  
+  .strategic-utility-card {
+    min-height: 160px;
+  }
 }
 
 .status-ready {
@@ -9513,6 +9853,7 @@ input:checked + .slider-attractive:before { transform: translateX(14px); }
   border-radius: 12px;
   font-size: 10px;
   font-weight: 700;
+  flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -10166,7 +10507,7 @@ body:has(.tab-viewport.fullscreen) .map-variety-picker {
 /* Redundancy Cleanup: Ensure everything else is hidden behind the analysis */
 .tab-viewport.fullscreen {
     z-index: 9999 !important;
-    background-color: #0a0a0a !important; /* Prevents map bleed-through */
+    background: var(--bg) !important; /* Use theme variable instead of hardcoded dark */
     padding-top: 60px !important; /* Space for the floating button */
 }
 

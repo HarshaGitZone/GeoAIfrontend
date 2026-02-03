@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, memo } from "react";
+import React, { useState, useEffect, useCallback, useRef, memo,  } from "react";
 // import { Marker, useMap, useMapEvents } from "react-leaflet";
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents, Popup } from "react-leaflet";
 import FactorBar from "../FactorBar/FactorBar";
@@ -18,6 +18,9 @@ import DigitalTwin from '../DigitalTwin/DigitalTwin';
 import GeoGPT from '../GeoGPT/GeoGPT';
 import AudioLandscape from "../AudioLandscape/AudioLandscape";
 import { API_BASE } from '../../config/api';
+
+// 🎵 Audio Context for Global Audio Management
+
 
 // Fix Leaflet marker icons
 
@@ -1513,7 +1516,9 @@ const [active3DStyle, setActive3DStyle] = useState("satellite");
 
   );
 
-  const [isAudioEnabled, setIsAudioEnabled] = useState(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true); // Default ON
+  const [siteAPlaying, setSiteAPlaying] = useState(true); // Default ON
+  const [siteBPlaying, setSiteBPlaying] = useState(true); // Default ON when available
 
   
 
@@ -4630,45 +4635,43 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 };
 
   return (
-
     <div className="app-shell">
-
-
-
-      <AudioLandscape 
-
-  // Select factors based on which site is active in compare mode
-
-  activeFactors={isCompareMode 
-
-    ? (mobileCompareSite === "A" ? result?.factors : compareResult?.factors) 
-
-    : result?.factors
-
-  } 
-
-  // NEW: Pass the label (e.g. "Not Suitable (Waterbody)")
-
-  resultLabel={isCompareMode
-
-    ? (mobileCompareSite === "A" ? result?.label : compareResult?.label)
-
-    : result?.label
-
-  }
-
-  isEnabled={isAudioEnabled}
-
-  isLoading={loading || compareLoading}
-
-/>
-
-      <TopNav isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} isAudioEnabled={isAudioEnabled} setIsAudioEnabled={setIsAudioEnabled} analysisHistory={analysisHistory} onSearchResult={handleSearchResult} />
-
+        <AudioLandscape 
+          // Select factors based on which site is active in compare mode
+          activeFactors={isCompareMode 
+            ? (mobileCompareSite === "A" ? result?.factors : compareResult?.factors) 
+            : result?.factors
+          } 
+          // NEW: Pass the label (e.g. "Not Suitable (Waterbody)")
+          resultLabel={isCompareMode
+            ? (mobileCompareSite === "A" ? result?.label : compareResult?.label)
+            : result?.label
+          }
+          // NEW: Pass compare factors and label for Site B audio
+          compareFactors={compareResult?.factors}
+          compareResultLabel={compareResult?.label}
+          isEnabled={isAudioEnabled}
+          isLoading={loading || compareLoading}
+          siteAPlaying={siteAPlaying}
+          siteBPlaying={siteBPlaying}
+        />
+        <TopNav 
+          isDarkMode={isDarkMode} 
+          setIsDarkMode={setIsDarkMode} 
+          isAudioEnabled={isAudioEnabled} 
+          setIsAudioEnabled={setIsAudioEnabled} 
+          siteAPlaying={siteAPlaying}
+          setSiteAPlaying={setSiteAPlaying}
+          siteBPlaying={siteBPlaying}
+          setSiteBPlaying={setSiteBPlaying}
+          analysisHistory={analysisHistory} 
+          onSearchResult={handleSearchResult} 
+          compareResult={compareResult} 
+          isCompareMode={isCompareMode} 
+        />
       
-
+      
       <SideBar
-
         onSearchResult={handleSearchResult}
 
         lat={lat} setLat={setLat} lng={lng} setLng={setLng}

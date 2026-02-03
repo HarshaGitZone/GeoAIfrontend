@@ -1,263 +1,308 @@
-
-// import { useEffect, useRef } from 'react';
-// import { Howl } from 'howler';
-
-// /** * CINEMATIC SOUND MAPPING 
-//  * Priority: Local Folder (/sounds/) -> Cloud Fallback (Mixkit/SoundJay)
-//  */
-// const soundsPath = process.env.PUBLIC_URL + '/sounds';
-
-// const SOUND_SOURCES = {
-//   ocean: [`${soundsPath}/ocean.mp3`, 'https://assets.mixkit.co/sfx/preview/mixkit-sea-waves-loop-1196.mp3'],
-//   river: [`${soundsPath}/river.mp3`, 'https://assets.mixkit.co/sfx/preview/mixkit-river-flowing-loop-1193.mp3'],
-//   urban: [`${soundsPath}/urban.mp3`, 'https://assets.mixkit.co/sfx/preview/mixkit-city-traffic-hum-2720.mp3'],
-//   forest: [`${soundsPath}/forest.mp3`, 'https://assets.mixkit.co/sfx/preview/mixkit-forest-birds-ambience-1210.mp3'],
-//   industrial: [`${soundsPath}/traffic.mp3`, 'https://assets.mixkit.co/sfx/preview/mixkit-factory-hum-2334.mp3'],
-//   storm: [`${soundsPath}/flood.mp3`, 'https://assets.mixkit.co/sfx/preview/mixkit-rain-and-thunder-loop-2390.mp3'],
-//   rural: [`${soundsPath}/rural.mp3`, 'https://assets.mixkit.co/sfx/preview/mixkit-crickets-and-insects-in-the-wild-2141.mp3'],
-//   ambient: [`${soundsPath}/ambient.mp3`, 'https://assets.mixkit.co/sfx/preview/mixkit-light-wind-loop-1185.mp3'],
-//   success: [`${soundsPath}/success.mp3`, 'https://www.soundjay.com/buttons/sounds/button-37a.mp3']
-// };
-
-// const AudioLandscape = ({ activeFactors, isEnabled, isLoading, resultLabel }) => {
-//   const soundRef = useRef(null);
-//   const currentBiome = useRef(null);
-//   const loadingPingRef = useRef(false);
-
-//   const getBiome = (f, label) => {
-//     // SILENT START: If no factors and no label, return null for complete silence
-//     if (!f && !label) return null; 
-
-//     const textLabel = label?.toLowerCase() || "";
-
-//     // 1. CRITICAL TERRAIN OVERRIDES
-//     if (textLabel.includes("waterbody") || textLabel.includes("ocean")) {
-//       const isRiver = textLabel.includes("river") || textLabel.includes("stream");
-//       return isRiver ? 'river' : 'ocean';
-//     }
-    
-//     if (textLabel.includes("forest") || textLabel.includes("protected") || textLabel.includes("nature")) {
-//       return 'forest';
-//     }
-
-//     // 2. HAZARD & EXCEPTION LOGIC (Based on low scores)
-//     if (f) {
-//       if (f.pollution < 35) return 'industrial';
-//       if (f.flood < 35 || f.rainfall < 25) return 'storm';
-
-//       // Standard Numeric Triggers
-//       if (f.water > 80) return 'ocean';
-//       if (f.proximity > 70 && f.landuse < 40) return 'urban';
-//       if (f.landuse > 60) return 'forest';
-//       if (f.soil > 60) return 'rural';
-//     }
-    
-//     return 'ambient';
-//   };
-
-//   useEffect(() => {
-//     // A. HANDLE SYSTEM OFF / MUTE
-//     if (!isEnabled) {
-//       if (currentBiome.current !== "MUTED_STATE") {
-//         console.log("🔈 Audio System: Muted.");
-//         currentBiome.current = "MUTED_STATE";
-//       }
-//       if (soundRef.current) {
-//         soundRef.current.fade(soundRef.current.volume(), 0, 1000);
-//         setTimeout(() => {
-//           soundRef.current?.stop();
-//           soundRef.current = null;
-//         }, 1000);
-//       }
-//       return;
-//     }
-
-//     // B. CINEMATIC DUCKING (Lower volume while analysis is running)
-//     if (isLoading && soundRef.current) {
-//       soundRef.current.fade(soundRef.current.volume(), 0.05, 800);
-//       loadingPingRef.current = true; 
-//       return;
-//     }
-
-//     // C. SUCCESS NOTIFICATION
-//     if (!isLoading && loadingPingRef.current && activeFactors) {
-//       const ping = new Howl({ 
-//         src: SOUND_SOURCES.success, 
-//         volume: 0.15 
-//       });
-//       ping.play();
-//       loadingPingRef.current = false;
-//       if (soundRef.current) soundRef.current.fade(0.05, 0.25, 1200);
-//     }
-
-//     const nextBiome = getBiome(activeFactors, resultLabel);
-
-//     // D. CINEMATIC CROSS-FADE LOGIC
-//     if (nextBiome !== currentBiome.current) {
-//       // FIX: Added optional chaining and null check to prevent .toUpperCase() errors
-//       if (nextBiome) {
-//         console.log(`🌍 Biome Detected: ${nextBiome?.toUpperCase()} (${resultLabel || 'Standard Analysis'})`);
-//       } else {
-//         console.log("🔈 Audio System: Waiting for analysis...");
-//       }
-      
-//       if (soundRef.current) {
-//         const oldSound = soundRef.current;
-//         oldSound.fade(oldSound.volume(), 0, 2000);
-//         setTimeout(() => oldSound.stop(), 2000);
-//       }
-
-//       // Only attempt to play if we have a valid biome
-//       if (nextBiome) {
-//         const newSound = new Howl({
-//           src: SOUND_SOURCES[nextBiome],
-//           loop: true,
-//           volume: 0,
-//           html5: true,
-//           onloaderror: (id, err) => {
-//               console.warn(`⚠️ Local '${nextBiome}.mp3' failed. Shifting to cloud backup...`, err);
-//           }
-//         });
-
-//         newSound.play();
-//         newSound.fade(0, 0.25, 2500); 
-//         soundRef.current = newSound;
-//       } else {
-//         soundRef.current = null;
-//       }
-      
-//       currentBiome.current = nextBiome;
-//     }
-//   }, [activeFactors, isEnabled, isLoading, resultLabel]);
-
-//   return null;
-// };
-
-// export default AudioLandscape;
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Howl } from 'howler';
 
-/** * CINEMATIC SOUND MAPPING 
- * Pathing: Using Root-Relative paths for Vercel stability.
- * Structure: public/sounds/filename.mp3
- */
-const SOUND_SOURCES = {
-  ocean: ['/sounds/ocean.mp3', 'https://assets.mixkit.co/sfx/preview/mixkit-sea-waves-loop-1196.mp3'],
-  river: ['/sounds/river.mp3', 'https://assets.mixkit.co/sfx/preview/mixkit-river-flowing-loop-1193.mp3'],
-  urban: ['/sounds/urban.mp3', 'https://assets.mixkit.co/sfx/preview/mixkit-city-traffic-hum-2720.mp3'],
-  forest: ['/sounds/forest.mp3', 'https://assets.mixkit.co/sfx/preview/mixkit-forest-birds-ambience-1210.mp3'],
-  industrial: ['/sounds/traffic.mp3', 'https://assets.mixkit.co/sfx/preview/mixkit-factory-hum-2334.mp3'],
-  storm: ['/sounds/flood.mp3', 'https://assets.mixkit.co/sfx/preview/mixkit-rain-and-thunder-loop-2390.mp3'],
-  rural: ['/sounds/rural.mp3', 'https://assets.mixkit.co/sfx/preview/mixkit-crickets-and-insects-in-the-wild-2141.mp3'],
-  ambient: ['/sounds/ambient.mp3', 'https://assets.mixkit.co/sfx/preview/mixkit-light-wind-loop-1185.mp3'],
-  success: ['/sounds/success.mp3', 'https://www.soundjay.com/buttons/sounds/button-37a.mp3']
+// 🎵 LOCAL AUDIO SOURCES ONLY
+const getAudioSources = (biome) => {
+  const sounds = {
+    ocean: ['/sounds/ocean.mp3'],
+    forest: ['/sounds/forest.mp3'],
+    mountain: ['/sounds/mountain.webm'],
+    urban: ['/sounds/urban.mp3'],
+    traffic: ['/sounds/traffic.mp3'],
+    flood: ['/sounds/flood.mp3'],
+    ambient: ['/sounds/ambient.mp3'],
+    success: ['/sounds/success.mp3'],
+    river: ['/sounds/river.mp3'],
+    rural: ['/sounds/rural.mp3']
+  };
+  return sounds[biome] || sounds.ambient;
 };
 
-const AudioLandscape = ({ activeFactors, isEnabled, isLoading, resultLabel }) => {
-  const soundRef = useRef(null);
-  const currentBiome = useRef(null);
-  const loadingPingRef = useRef(false);
+const AudioLandscape = ({ 
+  activeFactors, 
+  isEnabled, 
+  isLoading, 
+  resultLabel, 
+  compareFactors, 
+  compareResultLabel, 
+  analysisComplete,
+  siteAPlaying = true,
+  siteBPlaying = true 
+}) => {
+  // 🎵 AUDIO REFERENCES
+  const siteASoundRef = useRef(null);
+  const siteBSoundRef = useRef(null);
+  const hasUserInteracted = useRef(false);
+  const lastAnalysisComplete = useRef(false);
 
-  const getBiome = (f, label) => {
-    // SILENT START: Stay quiet until we have a location
-    if (!f && !label) return null; 
+  // 🔍 DEBUG: Log prop changes
+  useEffect(() => {
+    console.log("🔍 AudioLandscape Props Changed:");
+    console.log(`  - siteAPlaying: ${siteAPlaying}`);
+    console.log(`  - siteBPlaying: ${siteBPlaying}`);
+    console.log(`  - compareFactors: ${!!compareFactors}`);
+    console.log(`  - compareResultLabel: "${compareResultLabel}"`);
+  }, [siteAPlaying, siteBPlaying, compareFactors, compareResultLabel]);
 
-    const textLabel = label?.toLowerCase() || "";
-
-    // 1. CRITICAL TERRAIN OVERRIDES
-    if (textLabel.includes("waterbody") || textLabel.includes("ocean") || textLabel.includes("sea")) {
-      const isRiver = textLabel.includes("river") || textLabel.includes("stream");
-      return isRiver ? 'river' : 'ocean';
-    }
+  // 🎯 DETECT BIOME FROM FACTORS
+  const detectBiomeFromFactors = useCallback((factors, label) => {
+    if (!factors && !label) return 'ambient';
     
-    if (textLabel.includes("forest") || textLabel.includes("protected") || textLabel.includes("nature")) {
-      return 'forest';
-    }
-
-    // 2. HAZARD & EXCEPTION LOGIC
-    if (f) {
-      if (f.pollution < 35) return 'industrial';
-      if (f.flood < 35 || f.rainfall < 25) return 'storm';
-
-      if (f.water > 80) return 'ocean';
-      if (f.proximity > 70 && f.landuse < 40) return 'urban';
-      if (f.landuse > 60) return 'forest';
-      if (f.soil > 60) return 'rural';
+    const textLabel = label?.toLowerCase() || '';
+    
+    // Text-based detection
+    if (textLabel.includes('ocean') || textLabel.includes('sea') || textLabel.includes('water body')) return 'ocean';
+    if (textLabel.includes('forest')) return 'forest';
+    if (textLabel.includes('mountain')) return 'mountain';
+    if (textLabel.includes('urban') || textLabel.includes('city')) return 'urban';
+    if (textLabel.includes('flood')) return 'flood';
+    if (textLabel.includes('river')) return 'river';
+    if (textLabel.includes('rural')) return 'rural';
+    
+    // Factor-based detection
+    if (factors) {
+      const { elevation, climate, vegetation, water_proximity, land_use } = factors;
+      
+      if (water_proximity > 0.7) return 'ocean';
+      if (vegetation > 0.8 && climate > 0.6) return 'forest';
+      if (elevation > 0.7) return 'mountain';
+      if (land_use > 0.8) return 'urban';
+      if (water_proximity > 0.5 && water_proximity <= 0.7) return 'river';
     }
     
     return 'ambient';
-  };
+  }, []);
 
+  // 🎯 PLAY SUCCESS SOUND
+  const playSuccessSound = useCallback(() => {
+    console.log("🎉 Playing success sound...");
+    const successSound = new Howl({
+      src: getAudioSources('success'),
+      volume: 0.3,
+      onplay: () => console.log("🎉 Success sound playing"),
+      onplayerror: (id, err) => console.warn("⚠️ Success sound blocked:", err)
+    });
+    
+    if (hasUserInteracted.current) {
+      successSound.play();
+    } else {
+      // Wait for user interaction
+      const waitForInteraction = () => {
+        if (hasUserInteracted.current) {
+          successSound.play();
+          document.removeEventListener('click', waitForInteraction);
+        }
+      };
+      document.addEventListener('click', waitForInteraction, { once: true });
+    }
+  }, []);
+
+  // 🎵 STOP SITE A AUDIO
+  const stopSiteAAudio = useCallback(() => {
+    if (siteASoundRef.current) {
+      console.log("🔇 Stopping Site A audio");
+      try {
+        siteASoundRef.current.stop();
+        siteASoundRef.current.unload();
+      } catch (e) {
+        console.warn("Error stopping Site A audio:", e);
+      }
+      siteASoundRef.current = null;
+    }
+  }, []);
+
+  // 🎵 STOP SITE B AUDIO
+  const stopSiteBAudio = useCallback(() => {
+    if (siteBSoundRef.current) {
+      console.log("🔇 Stopping Site B audio");
+      try {
+        siteBSoundRef.current.stop();
+        siteBSoundRef.current.unload();
+      } catch (e) {
+        console.warn("Error stopping Site B audio:", e);
+      }
+      siteBSoundRef.current = null;
+    }
+  }, []);
+
+  // 🎵 START SITE A AUDIO
+  const startSiteAAudio = useCallback((biome) => {
+    // Don't stop Site B when starting Site A - they should play together
+    if (siteASoundRef.current) {
+      stopSiteAAudio();
+    }
+    
+    if (!isEnabled || !siteAPlaying) {
+      console.log("🔇 Site A audio disabled or muted");
+      return;
+    }
+
+    console.log(`🎵 Starting Site A audio: ${biome}`);
+    const sound = new Howl({
+      src: getAudioSources(biome),
+      loop: true,
+      volume: 0.25, // Slightly lower volume for Site A
+      html5: true,
+      onplay: () => console.log(`🎵 Site A playing: ${biome}`),
+      onplayerror: (id, err) => console.warn(`⚠️ Site A audio blocked: ${biome}`, err),
+      onloaderror: (id, err) => console.error(`❌ Site A load failed: ${biome}`, err)
+    });
+
+    if (hasUserInteracted.current) {
+      sound.play();
+    } else {
+      console.log("👆 Site A audio waiting for user interaction...");
+      const waitForInteraction = () => {
+        if (hasUserInteracted.current) {
+          sound.play();
+          document.removeEventListener('click', waitForInteraction);
+        }
+      };
+      document.addEventListener('click', waitForInteraction, { once: true });
+    }
+
+    siteASoundRef.current = sound;
+  }, [isEnabled, siteAPlaying, stopSiteAAudio]);
+
+  // 🎵 START SITE B AUDIO
+  const startSiteBAudio = useCallback((biome) => {
+    // Don't stop Site A when starting Site B - they should play together
+    if (siteBSoundRef.current) {
+      stopSiteBAudio();
+    }
+    
+    if (!isEnabled || !siteBPlaying) {
+      console.log("🔇 Site B audio disabled or muted");
+      return;
+    }
+
+    console.log(`🎵 Starting Site B audio: ${biome}`);
+    const sound = new Howl({
+      src: getAudioSources(biome),
+      loop: true,
+      volume: 0.25, // Slightly lower volume for Site B
+      html5: true,
+      onplay: () => console.log(`🎵 Site B playing: ${biome}`),
+      onplayerror: (id, err) => console.warn(`⚠️ Site B audio blocked: ${biome}`, err),
+      onloaderror: (id, err) => console.error(`❌ Site B load failed: ${biome}`, err)
+    });
+
+    if (hasUserInteracted.current) {
+      sound.play();
+    } else {
+      console.log("👆 Site B audio waiting for user interaction...");
+      const waitForInteraction = () => {
+        if (hasUserInteracted.current) {
+          sound.play();
+          document.removeEventListener('click', waitForInteraction);
+        }
+      };
+      document.addEventListener('click', waitForInteraction, { once: true });
+    }
+
+    siteBSoundRef.current = sound;
+  }, [isEnabled, siteBPlaying, stopSiteBAudio]);
+
+  // 👆 USER INTERACTION DETECTION
   useEffect(() => {
-    // A. HANDLE MUTE
-    if (!isEnabled) {
-      if (currentBiome.current !== "MUTED_STATE") {
-        console.log("🔈 Audio System: Muted.");
-        currentBiome.current = "MUTED_STATE";
+    const handleUserInteraction = () => {
+      if (!hasUserInteracted.current) {
+        hasUserInteracted.current = true;
+        console.log("👆 User interaction detected - audio enabled");
       }
-      if (soundRef.current) {
-        soundRef.current.fade(soundRef.current.volume(), 0, 1000);
-        setTimeout(() => {
-          soundRef.current?.stop();
-          soundRef.current = null;
-        }, 1000);
-      }
-      return;
-    }
+    };
 
-    // B. CINEMATIC DUCKING
-    if (isLoading && soundRef.current) {
-      soundRef.current.fade(soundRef.current.volume(), 0.05, 800);
-      loadingPingRef.current = true; 
-      return;
-    }
+    const events = ['click', 'keydown', 'touchstart'];
+    events.forEach(event => {
+      document.addEventListener(event, handleUserInteraction, { once: true });
+    });
 
-    // C. SUCCESS PING
-    if (!isLoading && loadingPingRef.current && activeFactors) {
-      const ping = new Howl({ 
-        src: SOUND_SOURCES.success, 
-        volume: 0.15 
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleUserInteraction);
       });
-      ping.play();
-      loadingPingRef.current = false;
-      if (soundRef.current) soundRef.current.fade(0.05, 0.25, 1200);
+    };
+  }, []);
+
+  // 🎯 MAIN AUDIO CONTROLLER
+  useEffect(() => {
+    console.log("🎵 Audio Controller Activated");
+    console.log(`🔊 Enabled: ${isEnabled}`);
+    console.log(`📍 Site A Playing: ${siteAPlaying}`);
+    console.log(`📍 Site B Playing: ${siteBPlaying}`);
+    console.log(`⏳ Loading: ${isLoading}`);
+    console.log(`✅ Analysis Complete: ${analysisComplete}`);
+
+    // 🎉 PLAY SUCCESS SOUND ON ANALYSIS COMPLETION
+    if (analysisComplete && !lastAnalysisComplete.current) {
+      playSuccessSound();
+      lastAnalysisComplete.current = true;
+    } else if (!analysisComplete) {
+      lastAnalysisComplete.current = false;
     }
 
-    const nextBiome = getBiome(activeFactors, resultLabel);
-
-    // D. CINEMATIC CROSS-FADE
-    if (nextBiome !== currentBiome.current) {
-      if (nextBiome) {
-        console.log(`🌍 Biome Detected: ${nextBiome.toUpperCase()} (${resultLabel || 'Analysis Active'})`);
-      }
+    // 🎵 SITE A AUDIO CONTROL
+    if (activeFactors || resultLabel) {
+      const siteABiome = detectBiomeFromFactors(activeFactors, resultLabel);
       
-      if (soundRef.current) {
-        const oldSound = soundRef.current;
-        oldSound.fade(oldSound.volume(), 0, 2000);
-        setTimeout(() => oldSound.stop(), 2000);
-      }
-
-      if (nextBiome) {
-        const newSound = new Howl({
-          src: SOUND_SOURCES[nextBiome],
-          loop: true,
-          volume: 0,
-          html5: true, // Crucial for long files on Vercel
-          onloaderror: (id, err) => {
-              console.warn(`⚠️ Local '${nextBiome}' failed. Using cloud backup...`);
-          }
-        });
-
-        newSound.play();
-        newSound.fade(0, 0.25, 2500); 
-        soundRef.current = newSound;
+      if (siteAPlaying && isEnabled) {
+        startSiteAAudio(siteABiome);
       } else {
-        soundRef.current = null;
+        stopSiteAAudio();
       }
-      
-      currentBiome.current = nextBiome;
+    } else {
+      // No analysis data - stop Site A audio
+      stopSiteAAudio();
     }
-  }, [activeFactors, isEnabled, isLoading, resultLabel]);
+
+    // 🎵 SITE B AUDIO CONTROL (A/B Analysis)
+    console.log("🔍 Site B Audio Check:");
+    console.log(`  - compareFactors: ${!!compareFactors}`);
+    console.log(`  - compareResultLabel: "${compareResultLabel}"`);
+    console.log(`  - siteBPlaying: ${siteBPlaying}`);
+    console.log(`  - isEnabled: ${isEnabled}`);
+    
+    if (compareFactors || compareResultLabel) {
+      const siteBBiome = detectBiomeFromFactors(compareFactors, compareResultLabel);
+      console.log(`  - Site B Biome: ${siteBBiome}`);
+      
+      if (siteBPlaying && isEnabled) {
+        console.log("🎵 Starting Site B audio...");
+        startSiteBAudio(siteBBiome);
+      } else {
+        console.log("🔇 Site B audio disabled or muted - stopping");
+        stopSiteBAudio();
+      }
+    } else {
+      console.log("🔇 No compare data - stopping Site B audio");
+      stopSiteBAudio();
+    }
+
+  }, [
+    activeFactors, 
+    compareFactors, 
+    isEnabled, 
+    isLoading, 
+    resultLabel, 
+    compareResultLabel, 
+    analysisComplete,
+    siteAPlaying,
+    siteBPlaying,
+    detectBiomeFromFactors,
+    playSuccessSound,
+    startSiteAAudio,
+    startSiteBAudio,
+    stopSiteAAudio,
+    stopSiteBAudio
+  ]);
+
+  // 🧹 CLEANUP ON UNMOUNT
+  useEffect(() => {
+    return () => {
+      stopSiteAAudio();
+      stopSiteBAudio();
+    };
+  }, [stopSiteAAudio, stopSiteBAudio]);
 
   return null;
 };
