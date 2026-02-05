@@ -124,6 +124,22 @@ const WeatherCard = ({ weather }) => {
           <span className="w-subtitle">{aqiInfo.level}</span>
         </div>
         <div className="weather-item">
+          <span className="w-label">PM2.5</span>
+          <span className="w-value" style={{ color: aqiInfo.color }}>
+            {weather.air_quality?.pm25 || "N/A"}
+          </span>
+          <span className="w-subtitle">µg/m³</span>
+        </div>
+        <div className="weather-item">
+          <span className="w-label">TOP POLLUTANT</span>
+          <span className="w-value">
+            {weather.air_quality?.dominant_pollutant || "N/A"}
+          </span>
+          <span className="w-subtitle">
+            {weather.air_quality?.pollutant_level || "Moderate"}
+          </span>
+        </div>
+        <div className="weather-item">
           <span className="w-label">VISIBILITY</span>
           <span className="w-value">{weather.visibility_km} km</span>
         </div>

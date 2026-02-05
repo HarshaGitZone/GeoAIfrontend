@@ -6,21 +6,23 @@ import { API_BASE } from "../../config/api";
 
 const RANGES = ['1W', '1M', '1Y', '10Y'];
 
-// 5 categories aligned with backend aggregator (same formula)
+// 6 categories aligned with backend aggregator (same formula)
 const CATEGORY_FACTORS = {
-  'Physical Terrain': ['slope', 'elevation'],
-  'Hydrology': ['flood', 'water', 'drainage'],
-  'Environmental': ['vegetation', 'soil', 'pollution'],
+  'Physical Terrain': ['slope', 'elevation', 'ruggedness', 'stability'],
+  'Hydrology': ['flood', 'water', 'drainage', 'groundwater'],
+  'Environmental': ['vegetation', 'soil', 'pollution', 'biodiversity', 'heatIsland'],
   'Climatic': ['rainfall', 'thermal', 'intensity'],
   'Socio-Economic': ['landuse', 'infrastructure', 'population'],
+  'Risk & Resilience': ['multiHazard', 'climateChange', 'recovery', 'habitability'],
 };
-const CATEGORY_KEYS = ['physical', 'environmental', 'hydrology', 'climatic', 'socio_econ'];
+const CATEGORY_KEYS = ['physical', 'environmental', 'hydrology', 'climatic', 'socio_econ', 'risk_resilience'];
 const CATEGORY_LABELS = {
   physical: 'Physical Terrain',
   environmental: 'Environmental',
   hydrology: 'Hydrology',
   climatic: 'Climatic',
   socio_econ: 'Socio-Economic',
+  risk_resilience: 'Risk & Resilience',
 };
 
 // Helper function to flatten nested factors structure

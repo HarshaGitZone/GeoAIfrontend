@@ -278,7 +278,7 @@ const getSitePotential = (factors, activeSpectral) => {
 
   const f = {
 
-    // Hydrology (3)
+    // Hydrology (4)
 
     flood: factors?.hydrology?.flood?.value ?? 50,
 
@@ -286,13 +286,19 @@ const getSitePotential = (factors, activeSpectral) => {
 
     drainage: factors?.hydrology?.drainage?.value ?? 50,
 
-    // Environmental (3)
+    groundwater: factors?.hydrology?.groundwater?.value ?? 50,
+
+    // Environmental (5)
 
     pollution: factors?.environmental?.pollution?.value ?? 50,
 
     soil: factors?.environmental?.soil?.value ?? 50,
 
     vegetation: factors?.environmental?.vegetation?.value ?? 50,
+
+    biodiversity: factors?.environmental?.biodiversity?.value ?? 50,
+
+    heatIsland: factors?.environmental?.heat_island?.value ?? 50,
 
     // Climatic (3)
 
@@ -310,11 +316,25 @@ const getSitePotential = (factors, activeSpectral) => {
 
     population: factors?.socio_econ?.population?.value ?? 50,
 
-    // Physical (2)
+    // Physical (4)
 
     slope: factors?.physical?.slope?.value ?? 50,
 
     elevation: factors?.physical?.elevation?.value ?? 50,
+
+    ruggedness: factors?.physical?.ruggedness?.value ?? 50,
+
+    stability: factors?.physical?.stability?.value ?? 50,
+
+    // Risk & Resilience (4)
+
+    multiHazard: factors?.risk_resilience?.multi_hazard?.value ?? 50,
+
+    climateChange: factors?.risk_resilience?.climate_change?.value ?? 50,
+
+    recovery: factors?.risk_resilience?.recovery?.value ?? 50,
+
+    habitability: factors?.risk_resilience?.habitability?.value ?? 50,
 
   };
 
@@ -780,7 +800,9 @@ const { factors, category_scores, suitability_score } = data;
 
     climatic: { icon: "🌤️", label: "Climatic" },
 
-    socio_econ: { icon: "🏗️", label: "Socio-Economic" }
+    socio_econ: { icon: "🏗️", label: "Socio-Economic" },
+
+    risk_resilience: { icon: "🛡️", label: "Risk & Resilience" }
 
   };
 
@@ -842,7 +864,7 @@ const { factors, category_scores, suitability_score } = data;
 
           <h3>Terrain Intelligence</h3>
 
-          <p className="subtitle">14-Factor Geospatial Synthesis</p>
+          <p className="subtitle">23-Factor Geospatial Synthesis</p>
 
         </div>
 
@@ -860,7 +882,7 @@ const { factors, category_scores, suitability_score } = data;
 
         <div className="categories-wrapper">
 
-          {/* Loop through each of the 5 Major Folders */}
+          {/* Loop through each of the 6 Major Categories */}
 
           {Object.entries(factors).map(([catKey, catFactors]) => (
 
@@ -890,7 +912,7 @@ const { factors, category_scores, suitability_score } = data;
 
               
 
-              {/* INDIVIDUAL SUB-FACTORS (The 14 Factors) */}
+              {/* INDIVIDUAL SUB-FACTORS (The 23 Factors) */}
 
               <div className="bars-container categorized">
 
@@ -1964,20 +1986,15 @@ const handleSubmit = useCallback(async (e) => {
 
 
   // Reset results and start loading states
+  // But keep snapshot data persistent until analysis is closed
 
   setResult(null);
 
   setCompareResult(null);
 
-  setSnapshotData(null);
-
-  
-
-  // Ensure snapshotDataB state is cleared correctly
-
-  if (setSnapshotDataB) setSnapshotDataB(null);
-
-  
+  // Don't clear snapshot data - keep cards persistent
+  // setSnapshotData(null);
+  // if (setSnapshotDataB) setSnapshotDataB(null);
 
   setLoading(true);
 
@@ -2906,434 +2923,946 @@ const [activeSpectral, setActiveSpectral] = useState("standard");
 
   // );
 
-  const EvidenceSection = ({ data }) => {
+//   const EvidenceSection = ({ data }) => {
 
-    const meta = data.explanation?.factors_meta;
-
-
-
-    if (!meta) {
-
-      return (
-
-        <div className="card evidence-card">
-
-          <h3 className="evidence-title">EVIDENCE DETAILS</h3>
-
-          <p>No evidence metadata available.</p>
-
-        </div>
-
-      );
-
-    }
+//     const meta = data.explanation?.factors_meta;
 
 
 
-    // Factor display names (all 14 factors)
+//     if (!meta) {
 
-    const factorLabels = {
+//       return (
 
-      // Physical (2)
+//         <div className="card evidence-card">
 
-      slope: "SLOPE",
+//           <h3 className="evidence-title">EVIDENCE DETAILS</h3>
 
-      elevation: "ELEVATION", 
+//           <p>No evidence metadata available.</p>
 
-      // Hydrology (3)
+//         </div>
 
-      flood: "FLOOD",
+//       );
 
-      water: "WATER",
-
-      drainage: "DRAINAGE",
-
-      // Environmental (3)
-
-      vegetation: "VEGETATION",
-
-      pollution: "POLLUTION",
-
-      soil: "SOIL",
-
-      // Climatic (3)
-
-      rainfall: "RAINFALL",
-
-      thermal: "THERMAL COMFORT",
-
-      intensity: "HEAT INTENSITY",
-
-      // Socio-Economic (3)
-
-      landuse: "LANDUSE",
-
-      infrastructure: "PROXIMITY",
-
-      population: "POPULATION"
-
-    };
+//     }
 
 
 
-    // Generate evidence text if not provided
+//     // Factor display names (all 14 factors)
 
-    const generateEvidence = (factorKey, factor) => {
+//     const factorLabels = {
 
-      if (factor.evidence) return factor.evidence;
+//       // Physical (2)
+
+//       slope: "SLOPE",
+
+//       elevation: "ELEVATION", 
+
+//       ruggedness: "RUGGEDNESS",
+
+//       stability: "STABILITY",
+
+//       // Hydrology
+
+//       flood: "FLOOD RISK",
+
+//       water: "WATER PROXIMITY",
+
+//       drainage: "DRAINAGE",
+
+//       groundwater: "GROUNDWATER",
+
+//       // Environmental
+
+//       vegetation: "VEGETATION",
+
+//       soil: "SOIL QUALITY",
+
+//       pollution: "AIR POLLUTION",
+
+//       biodiversity: "BIODIVERSITY",
+
+//       heatIsland: "HEAT ISLAND",
+
+//       heat_island: "HEAT ISLAND",  // Backend key mapping
+
+//       // Climatic
+
+//       rainfall: "RAINFALL",
+
+//       thermal: "THERMAL COMFORT",
+
+//       intensity: "HEAT STRESS",
+
+//       // Socio-Economic
+
+//       landuse: "LANDUSE",
+
+//       infrastructure: "PROXIMITY",
+
+//       population: "POPULATION",
+
+//       // Risk & Resilience
+
+//       multiHazard: "MULTI-HAZARD",
+
+//       climateChange: "CLIMATE CHANGE",
+
+//       recovery: "RECOVERY CAPACITY",
+
+//       habitability: "HABITABILITY",
+
+//       // Backend key mappings for Risk & Resilience
+
+//       multi_hazard: "MULTI-HAZARD",
+
+//       climate_change: "CLIMATE CHANGE"
+
+//     };
+
+
+
+//     // Role-based factor weights according to engineering priorities
+//     const getFactorWeight = (category, factorKey) => {
+//       const weights = {
+//         physical: {
+//           slope: 30,      // Primary construction constraint
+//           stability: 25,  // Landslide/erosion safety
+//           elevation: 25,  // Flood & climate baseline
+//           ruggedness: 20  // Construction difficulty
+//         },
+//         hydrology: {
+//           flood: 35,           // Catastrophic failure driver
+//           groundwater: 25,      // Foundation durability
+//           drainage: 20,         // Surface runoff handling
+//           water: 20             // Resource + flood modifier
+//         },
+//         environmental: {
+//           biodiversity: 25,     // Legal/ecological constraint
+//           pollution: 25,        // Human health impact
+//           soil: 20,             // Semi-permanent land constraint
+//           heatIsland: 15,       // Urban stress indicator
+//           vegetation: 15       // Surface cover indicator
+//         },
+//         climatic: {
+//           thermal: 40,         // Human livability
+//           intensity: 35,        // Peak stress risk
+//           rainfall: 25          // Flood & water balance
+//         },
+//         socio_econ: {
+//           infrastructure: 40,   // Development enabler
+//           landuse: 30,          // Legal feasibility
+//           population: 30        // Demand & pressure
+//         },
+//         risk_resilience: {
+//           multiHazard: 35,      // Compound disaster risk
+//           climateChange: 25,    // Long-term exposure
+//           habitability: 20,      // Sustained livability
+//           recovery: 20           // Post-event resilience
+//         }
+//       };
+      
+//       return weights[category]?.[factorKey] || 0;
+//     };
+
+//     // Calculate role-based weighted score for a category
+//     const calculateRoleBasedWeightedScore = (category, factors) => {
+//       let weightedSum = 0;
+//       let totalWeight = 0;
+      
+//       Object.entries(factors).forEach(([factorKey, factor]) => {
+//         const weight = getFactorWeight(category, factorKey);
+//         const value = typeof factor.value === 'number' ? factor.value : 50;
+        
+//         weightedSum += value * weight;
+//         totalWeight += weight;
+//       });
+      
+//       return totalWeight > 0 ? weightedSum / totalWeight : 0;
+//     };
+
+//     // Get role description for each factor
+//     const getFactorRole = (category, factorKey) => {
+//       const roles = {
+//         physical: {
+//           slope: "Primary construction constraint",
+//           stability: "Landslide/erosion safety", 
+//           elevation: "Flood & climate baseline",
+//           ruggedness: "Construction difficulty"
+//         },
+//         hydrology: {
+//           flood: "Catastrophic failure driver",
+//           water: "Resource + flood modifier",
+//           drainage: "Surface runoff handling",
+//           groundwater: "Foundation durability"
+//         },
+//         environmental: {
+//           vegetation: "Surface cover indicator",
+//           soil: "Semi-permanent land constraint",
+//           pollution: "Human health impact",
+//           biodiversity: "Legal/ecological constraint",
+//           heatIsland: "Urban stress indicator"
+//         },
+//         climatic: {
+//           rainfall: "Flood & water balance",
+//           thermal: "Human livability",
+//           intensity: "Peak stress risk"
+//         },
+//         socio_econ: {
+//           landuse: "Legal feasibility",
+//           infrastructure: "Development enabler",
+//           population: "Demand & pressure"
+//         },
+//         risk_resilience: {
+//           multiHazard: "Compound disaster risk",
+//           climateChange: "Long-term exposure",
+//           recovery: "Post-event resilience",
+//           habitability: "Sustained livability"
+//         }
+//       };
+      
+//       return roles[category]?.[factorKey] || "Supporting factor";
+//     };
+
+//     // Get detailed description for each category
+
+//     const getCategoryDescription = (category) => {
+//       const descriptions = {
+//         physical: "Physical terrain characteristics including slope, elevation, ruggedness, and ground stability. Critical for foundation design, construction costs, and site accessibility.",
+//         environmental: "Environmental conditions covering vegetation, soil quality, air pollution, biodiversity, and urban heat island effects. Essential for environmental compliance and sustainability.",
+//         hydrology: "Water-related factors including flood risk, water proximity, drainage capacity, and groundwater availability. Vital for water management and flood prevention.",
+//         climatic: "Climate conditions such as rainfall patterns, thermal comfort, and heat stress intensity. Important for HVAC design, energy efficiency, and climate resilience.",
+//         socio_econ: "Socio-economic factors including land use classification, infrastructure access, and population density. Key for market analysis and development feasibility.",
+//         risk_resilience: "Risk assessment and resilience factors covering multi-hazard risks, climate change impacts, recovery capacity, and long-term habitability. Critical for disaster preparedness and sustainable development."
+//       };
+//       return descriptions[category] || "Category analysis and assessment.";
+//     };
+
+//     // Generate evidence text if not provided
+
+//     const generateEvidence = (factorKey, factor) => {
+
+//       if (factor.evidence) return factor.evidence;
 
       
 
-      const val = factor.value;
+//       const val = factor.value;
 
-      const raw = factor.raw;
+//       const raw = factor.raw;
 
-      const label = factor.label || "";
+//       const label = factor.label || "";
 
       
 
-      // Generate detailed evidence based on factor type
+//       // Generate detailed evidence based on factor type
 
-      switch(factorKey) {
+//       switch(factorKey) {
 
-        case "slope":
+//         case "slope":
 
-          if (val < 3) return `Slope: ${val}% gradient. VERY FLAT terrain. IDEAL for construction with minimal grading required. No slope stability concerns.`;
+//           if (val < 3) return `Slope: ${val}% gradient. VERY FLAT terrain. IDEAL for construction with minimal grading required. No slope stability concerns.`;
 
-          if (val < 8) return `Slope: ${val}% gradient. GENTLE slope. Suitable for most construction types with minor earthwork. Good natural drainage.`;
+//           if (val < 8) return `Slope: ${val}% gradient. GENTLE slope. Suitable for most construction types with minor earthwork. Good natural drainage.`;
 
-          if (val < 15) return `Slope: ${val}% gradient. MODERATE slope. Requires careful site planning and grading. May need retaining structures.`;
+//           if (val < 15) return `Slope: ${val}% gradient. MODERATE slope. Requires careful site planning and grading. May need retaining structures.`;
 
-          if (val < 30) return `Slope: ${val}% gradient. STEEP terrain. HIGH construction costs due to extensive earthwork and stabilization requirements.`;
+//           if (val < 30) return `Slope: ${val}% gradient. STEEP terrain. HIGH construction costs due to extensive earthwork and stabilization requirements.`;
 
-          return `Slope: ${val}% gradient. VERY STEEP terrain. NOT SUITABLE for standard construction. Landslide and erosion risk elevated.`;
-
-        
-
-        case "elevation":
-
-          if (val < 50) return `Elevation: ${val}m above sea level. LOW elevation coastal/floodplain zone. Monitor for sea-level and flood risks.`;
-
-          if (val < 200) return `Elevation: ${val}m above sea level. LOW to MODERATE elevation. Good accessibility with manageable flood exposure.`;
-
-          if (val < 600) return `Elevation: ${val}m above sea level. MODERATE elevation. Optimal range for most construction activities.`;
-
-          if (val < 1500) return `Elevation: ${val}m above sea level. HIGH elevation. Consider temperature extremes and access logistics.`;
-
-          return `Elevation: ${val}m above sea level. VERY HIGH elevation. Challenging conditions - reduced oxygen, extreme weather.`;
+//           return `Slope: ${val}% gradient. VERY STEEP terrain. NOT SUITABLE for standard construction. Landslide and erosion risk elevated.`;
 
         
 
-        case "flood":
+//         case "elevation":
 
-          const waterDist = data?.factors?.hydrology?.water?.distance_km;
+//           if (val < 50) return `Elevation: ${val}m above sea level. LOW elevation coastal/floodplain zone. Monitor for sea-level and flood risks.`;
 
-          if (waterDist !== undefined) {
+//           if (val < 200) return `Elevation: ${val}m above sea level. LOW to MODERATE elevation. Good accessibility with manageable flood exposure.`;
 
-            if (waterDist < 0.5) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water body. HIGH FLOOD RISK during monsoon/heavy rainfall.`;
+//           if (val < 600) return `Elevation: ${val}m above sea level. MODERATE elevation. Optimal range for most construction activities.`;
 
-            if (waterDist < 1.5) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water. MODERATE risk - floods only with exceptional rainfall.`;
+//           if (val < 1500) return `Elevation: ${val}m above sea level. HIGH elevation. Consider temperature extremes and access logistics.`;
 
-            if (waterDist < 3.0) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water. LOW flood risk. Natural terrain provides protection.`;
-
-            return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Remote location ${waterDist.toFixed(2)}km from water sources. VERY LOW flood risk.`;
-
-          }
-
-          return `Flood safety score: ${val}/100. ${label}. Analysis based on regional hydrology patterns.`;
+//           return `Elevation: ${val}m above sea level. VERY HIGH elevation. Challenging conditions - reduced oxygen, extreme weather.`;
 
         
 
-        case "water":
+//         case "flood":
 
-          const dist = factor.distance_km;
+//           const waterDist = data?.factors?.hydrology?.water?.distance_km;
 
-          if (dist !== undefined && dist !== null) {
+//           if (waterDist !== undefined) {
 
-            if (dist < 0.02) return `Location is ON a water body. Score: 0/100. NOT SUITABLE for terrestrial construction.`;
+//             if (waterDist < 0.5) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water body. HIGH FLOOD RISK during monsoon/heavy rainfall.`;
 
-            if (dist < 0.5) return `Located approximately ${dist.toFixed(2)}km from nearest water body. CLOSE proximity - irrigation advantage but flood monitoring needed.`;
+//             if (waterDist < 1.5) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water. MODERATE risk - floods only with exceptional rainfall.`;
 
-            if (dist < 2.0) return `Located approximately ${dist.toFixed(2)}km from nearest water body. MODERATE water access for utility and agriculture needs.`;
+//             if (waterDist < 3.0) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water. LOW flood risk. Natural terrain provides protection.`;
 
-            return `Located approximately ${dist.toFixed(2)}km from nearest water body. DISTANT from surface water - may require well/borewell for water supply.`;
+//             return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Remote location ${waterDist.toFixed(2)}km from water sources. VERY LOW flood risk.`;
 
-          }
+//           }
 
-          return `Water proximity score: ${val}/100. ${label}`;
-
-        
-
-        case "vegetation":
-
-          const ndvi = raw || (val / 100);
-
-          if (val < 20) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). BARE/BUILT-UP land detected. Urban or barren classification.`;
-
-          if (val < 40) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). SPARSE vegetation. Suitable for development with minimal clearing.`;
-
-          if (val < 60) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). MODERATE vegetation. Agricultural or mixed land cover.`;
-
-          return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). DENSE vegetation. May indicate forest/protected area - verify zoning.`;
+//           return `Flood safety score: ${val}/100. ${label}. Analysis based on regional hydrology patterns.`;
 
         
 
-        case "pollution":
+//         case "water":
 
-          const pm25 = raw;
+//           const dist = factor.distance_km;
 
-          if (pm25 !== null && pm25 !== undefined) {
+//           if (dist !== undefined && dist !== null) {
 
-            if (pm25 < 10) return `PM2.5: ${pm25} µg/m³. EXCELLENT air quality. Below WHO Annual Guideline (10 µg/m³). OPTIMAL for residential development.`;
+//             if (dist < 0.02) return `Location is ON a water body. Score: 0/100. NOT SUITABLE for terrestrial construction.`;
 
-            if (pm25 < 25) return `PM2.5: ${pm25} µg/m³. GOOD air quality. Acceptable for residential and commercial development.`;
+//             if (dist < 0.5) return `Located approximately ${dist.toFixed(2)}km from nearest water body. CLOSE proximity - irrigation advantage but flood monitoring needed.`;
 
-            if (pm25 < 50) return `PM2.5: ${pm25} µg/m³. MODERATE air quality. Exceeds WHO guidelines. Industrial/traffic sources may be nearby.`;
+//             if (dist < 2.0) return `Located approximately ${dist.toFixed(2)}km from nearest water body. MODERATE water access for utility and agriculture needs.`;
 
-            return `PM2.5: ${pm25} µg/m³. POOR air quality. Significantly exceeds safety standards. Air filtration recommended for habitation.`;
+//             return `Located approximately ${dist.toFixed(2)}km from nearest water body. DISTANT from surface water - may require well/borewell for water supply.`;
 
-          }
+//           }
 
-          return `Air quality score: ${val}/100. Estimated using satellite aerosol data and regional baseline models.`;
-
-        
-
-        case "soil":
-
-          if (val >= 80) return `Soil quality score: ${val}/100. EXCELLENT bearing capacity and drainage. Ideal loam conditions for construction.`;
-
-          if (val >= 60) return `Soil quality score: ${val}/100. GOOD soil conditions. Standard foundation design adequate.`;
-
-          if (val >= 40) return `Soil quality score: ${val}/100. MODERATE soil quality. May require soil testing and foundation enhancement.`;
-
-          return `Soil quality score: ${val}/100. POOR soil conditions. Clayey/waterlogged terrain. Special foundations required.`;
+//           return `Water proximity score: ${val}/100. ${label}`;
 
         
 
-        case "rainfall":
+//         case "vegetation":
 
-          const rainMm = raw;
+//           const ndvi = raw || (val / 100);
 
-          if (rainMm !== null && rainMm !== undefined) {
+//           if (val < 20) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). BARE/BUILT-UP land detected. Urban or barren classification.`;
 
-            if (rainMm < 300) return `Rainfall: ${rainMm}mm/year. LOW rainfall - ARID conditions. IDEAL for construction, minimal flood risk. Irrigation required for agriculture.`;
+//           if (val < 40) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). SPARSE vegetation. Suitable for development with minimal clearing.`;
 
-            if (rainMm < 800) return `Rainfall: ${rainMm}mm/year. MODERATE rainfall. Good balance for construction and agriculture with proper drainage.`;
+//           if (val < 60) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). MODERATE vegetation. Agricultural or mixed land cover.`;
 
-            if (rainMm < 1500) return `Rainfall: ${rainMm}mm/year. HIGH rainfall. Requires robust drainage systems. Moderate flood susceptibility.`;
-
-            return `Rainfall: ${rainMm}mm/year. EXCESSIVE rainfall. High flood and foundation damage risk. Monsoon region challenges.`;
-
-          }
-
-          return `Rainfall suitability score: ${val}/100. ${label}.`;
+//           return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). DENSE vegetation. May indicate forest/protected area - verify zoning.`;
 
         
 
-        case "thermal":
+//         case "pollution":
 
-          const tempData = raw;
+//           const pm25 = raw;
 
-          if (tempData && typeof tempData === 'object' && tempData.temperature_c !== undefined) {
+//           if (pm25 !== null && pm25 !== undefined) {
 
-            if (val >= 80) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. HIGHLY COMFORTABLE climate conditions.`;
+//             if (pm25 < 10) return `PM2.5: ${pm25} µg/m³. EXCELLENT air quality. Below WHO Annual Guideline (10 µg/m³). OPTIMAL for residential development.`;
 
-            if (val >= 60) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. COMFORTABLE conditions with minor seasonal extremes.`;
+//             if (pm25 < 25) return `PM2.5: ${pm25} µg/m³. GOOD air quality. Acceptable for residential and commercial development.`;
 
-            if (val >= 40) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. MARGINAL comfort - consider HVAC requirements.`;
+//             if (pm25 < 50) return `PM2.5: ${pm25} µg/m³. MODERATE air quality. Exceeds WHO guidelines. Industrial/traffic sources may be nearby.`;
 
-            return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. UNCOMFORTABLE - extreme heat/cold stress.`;
+//             return `PM2.5: ${pm25} µg/m³. POOR air quality. Significantly exceeds safety standards. Air filtration recommended for habitation.`;
 
-          }
+//           }
 
-          return `Thermal Comfort Index: ${val}/100. ${label}.`;
-
-        
-
-        case "intensity":
-
-          if (val < 25) return `Heat Stress Index: ${val}/100. LOW heat stress. Comfortable thermal conditions year-round.`;
-
-          if (val < 45) return `Heat Stress Index: ${val}/100. MODERATE heat stress. Some cooling measures recommended during peak hours.`;
-
-          if (val < 65) return `Heat Stress Index: ${val}/100. HIGH heat stress. Active cooling and ventilation essential.`;
-
-          return `Heat Stress Index: ${val}/100. EXTREME heat stress. Significant thermal management infrastructure required.`;
+//           return `Air quality score: ${val}/100. Estimated using satellite aerosol data and regional baseline models.`;
 
         
 
-        case "landuse":
+//         case "soil":
 
-          const classification = factor.classification || "Unknown";
+//           if (val >= 80) return `Soil quality score: ${val}/100. EXCELLENT bearing capacity and drainage. Ideal loam conditions for construction.`;
 
-          if (val <= 15) return `Land-use Classification: ${classification}. Score: ${val}/100. PROTECTED/FOREST area. Legally non-buildable. Conservation zone detected.`;
+//           if (val >= 60) return `Soil quality score: ${val}/100. GOOD soil conditions. Standard foundation design adequate.`;
 
-          if (val <= 40) return `Land-use Classification: ${classification}. Score: ${val}/100. RESTRICTED development potential. Environmental sensitivity detected.`;
+//           if (val >= 40) return `Soil quality score: ${val}/100. MODERATE soil quality. May require soil testing and foundation enhancement.`;
 
-          if (val <= 70) return `Land-use Classification: ${classification}. Score: ${val}/100. MODERATE development potential. Agricultural or mixed-use zoning.`;
-
-          return `Land-use Classification: ${classification}. Score: ${val}/100. HIGH development potential. Urban/commercial zoning compatible.`;
+//           return `Soil quality score: ${val}/100. POOR soil conditions. Clayey/waterlogged terrain. Special foundations required.`;
 
         
 
-        case "infrastructure":
+//         case "rainfall":
 
-          if (val < 30) return `Infrastructure Score: ${val}/100. REMOTE location. Significant infrastructure investment needed for development.`;
+//           const rainMm = raw;
 
-          if (val < 50) return `Infrastructure Score: ${val}/100. MODERATE access. May require access road development.`;
+//           if (rainMm !== null && rainMm !== undefined) {
 
-          if (val < 70) return `Infrastructure Score: ${val}/100. GOOD road access. Optimal balance of connectivity and tranquility.`;
+//             if (rainMm < 300) return `Rainfall: ${rainMm}mm/year. LOW rainfall - ARID conditions. IDEAL for construction, minimal flood risk. Irrigation required for agriculture.`;
 
-          return `Infrastructure Score: ${val}/100. EXCELLENT accessibility with nearby road network.`;
+//             if (rainMm < 800) return `Rainfall: ${rainMm}mm/year. MODERATE rainfall. Good balance for construction and agriculture with proper drainage.`;
 
-        
+//             if (rainMm < 1500) return `Rainfall: ${rainMm}mm/year. HIGH rainfall. Requires robust drainage systems. Moderate flood susceptibility.`;
 
-        case "population":
+//             return `Rainfall: ${rainMm}mm/year. EXCESSIVE rainfall. High flood and foundation damage risk. Monsoon region challenges.`;
 
-          const density = factor.density || raw;
+//           }
 
-          if (density !== null && density !== undefined) {
-
-            if (density < 200) return `Population Density: ${density} people/km². SPARSE population. Rural/remote area. Limited services and labor availability.`;
-
-            if (density < 600) return `Population Density: ${density} people/km². MODERATE population. Balanced environment with available workforce and services.`;
-
-            if (density < 1200) return `Population Density: ${density} people/km². WELL POPULATED. Good access to services, labor, and markets.`;
-
-            return `Population Density: ${density} people/km². HIGHLY DENSE urban area. Congestion considerations but excellent market access.`;
-
-          }
-
-          return `Population Score: ${val}/100. ${label}.`;
+//           return `Rainfall suitability score: ${val}/100. ${label}.`;
 
         
 
-        case "drainage":
+//         case "thermal":
 
-          if (val >= 80) return `Drainage Capacity: ${val}/100. EXCELLENT drainage. Well-drained terrain with high stream density. Low waterlogging risk.`;
+//           const tempData = raw;
 
-          if (val >= 60) return `Drainage Capacity: ${val}/100. GOOD drainage. Adequate surface water flow. Minor ponding during heavy rainfall.`;
+//           if (tempData && typeof tempData === 'object' && tempData.temperature_c !== undefined) {
 
-          if (val >= 40) return `Drainage Capacity: ${val}/100. MODERATE drainage. May require drainage improvements for construction.`;
+//             if (val >= 80) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. HIGHLY COMFORTABLE climate conditions.`;
 
-          return `Drainage Capacity: ${val}/100. POOR drainage. Flat/low-lying terrain prone to waterlogging.`;
+//             if (val >= 60) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. COMFORTABLE conditions with minor seasonal extremes.`;
+
+//             if (val >= 40) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. MARGINAL comfort - consider HVAC requirements.`;
+
+//             return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. UNCOMFORTABLE - extreme heat/cold stress.`;
+
+//           }
+
+//           return `Thermal Comfort Index: ${val}/100. ${label}.`;
 
         
 
-        default:
+//         case "intensity":
 
-          return `Score: ${val}/100. ${label}`;
+//           if (val < 25) return `Heat Stress Index: ${val}/100. LOW heat stress. Comfortable thermal conditions year-round.`;
 
-      }
+//           if (val < 45) return `Heat Stress Index: ${val}/100. MODERATE heat stress. Some cooling measures recommended during peak hours.`;
 
-    };
+//           if (val < 65) return `Heat Stress Index: ${val}/100. HIGH heat stress. Active cooling and ventilation essential.`;
+
+//           return `Heat Stress Index: ${val}/100. EXTREME heat stress. Significant thermal management infrastructure required.`;
+
+        
+
+//         case "landuse":
+
+//           const classification = factor.classification || "Unknown";
+
+//           if (val <= 15) return `Land-use Classification: ${classification}. Score: ${val}/100. PROTECTED/FOREST area. Legally non-buildable. Conservation zone detected.`;
+
+//           if (val <= 40) return `Land-use Classification: ${classification}. Score: ${val}/100. RESTRICTED development potential. Environmental sensitivity detected.`;
+
+//           if (val <= 70) return `Land-use Classification: ${classification}. Score: ${val}/100. MODERATE development potential. Agricultural or mixed-use zoning.`;
+
+//           return `Land-use Classification: ${classification}. Score: ${val}/100. HIGH development potential. Urban/commercial zoning compatible.`;
+
+        
+
+//         case "infrastructure":
+//           const nearestRoad = raw?.nearest_road_m || raw?.road_distance_km || 'N/A';
+//           const nearestCity = raw?.nearest_city_km || 'N/A';
+//           const roadDensity = raw?.road_density || 'N/A';
+          
+//           if (val < 30) {
+//             return `Infrastructure Score: ${val}/100. REMOTE location. Nearest road: ${nearestRoad}km, nearest city: ${nearestCity}km. Significant infrastructure investment needed for development.`;
+//           }
+//           if (val < 50) {
+//             return `Infrastructure Score: ${val}/100. MODERATE access. Nearest road: ${nearestRoad}km, nearest city: ${nearestCity}km. May require access road development for optimal connectivity.`;
+//           }
+//           if (val < 70) {
+//             return `Infrastructure Score: ${val}/100. GOOD road access. Nearest road: ${nearestRoad}km, nearest city: ${nearestCity}km. Road density: ${roadDensity}km/km². Optimal balance of connectivity and tranquility.`;
+//           }
+//           return `Infrastructure Score: ${val}/100. EXCELLENT accessibility. Nearest road: ${nearestRoad}km, nearest city: ${nearestCity}km. Well-connected to major transportation networks.`;
+
+        
+
+//         case "population":
+
+//           const density = factor.density || raw;
+
+//           if (density !== null && density !== undefined) {
+
+//             if (density < 200) return `Population Density: ${density} people/km². SPARSE population. Rural/remote area. Limited services and labor availability.`;
+
+//             if (density < 600) return `Population Density: ${density} people/km². MODERATE population. Balanced environment with available workforce and services.`;
+
+//             if (density < 1200) return `Population Density: ${density} people/km². WELL POPULATED. Good access to services, labor, and markets.`;
+
+//             return `Population Density: ${density} people/km². HIGHLY DENSE urban area. Congestion considerations but excellent market access.`;
+
+//           }
+
+//           return `Population Score: ${val}/100. ${label}.`;
+
+//         case "drainage":
+//           if (val >= 80) return `Drainage Capacity: ${val}/100. EXCELLENT drainage. Well-drained terrain with high stream density. Low waterlogging risk.`;
+//           if (val >= 60) return `Drainage Capacity: ${val}/100. GOOD drainage. Adequate surface water flow. Minor ponding during heavy rainfall.`;
+//           if (val >= 40) return `Drainage Capacity: ${val}/100. MODERATE drainage. May require drainage improvements for construction.`;
+//           return `Drainage Capacity: ${val}/100. POOR drainage. Flat/low-lying terrain prone to waterlogging.`;
+
+//         // New Physical Factors
+//         case "ruggedness":
+//           if (val >= 80) return `Terrain Ruggedness: ${val}/100. LOW ruggedness (${(100-val).toFixed(1)}% ruggedness index). Smooth terrain ideal for construction.`;
+//           if (val >= 60) return `Terrain Ruggedness: ${val}/100. MODERATE ruggedness (${(100-val).toFixed(1)}% ruggedness index). Some terrain variation requiring grading.`;
+//           if (val >= 40) return `Terrain Ruggedness: ${val}/100. HIGH ruggedness (${(100-val).toFixed(1)}% ruggedness index). Challenging terrain requiring earthwork.`;
+//           return `Terrain Ruggedness: ${val}/100. VERY HIGH ruggedness (${(100-val).toFixed(1)}% ruggedness index). Extremely difficult terrain.`;
+
+//         case "stability":
+//           if (val >= 80) return `Ground Stability: ${val}/100. HIGH stability. Low landslide/erosion risk (${(100-val).toFixed(1)}% instability index).`;
+//           if (val >= 60) return `Ground Stability: ${val}/100. MODERATE stability. Some instability concerns (${(100-val).toFixed(1)}% instability index).`;
+//           if (val >= 40) return `Ground Stability: ${val}/100. LOW stability. Significant instability risk (${(100-val).toFixed(1)}% instability index).`;
+//           return `Ground Stability: ${val}/100. VERY LOW stability. High landslide/erosion risk (${(100-val).toFixed(1)}% instability index).`;
+
+//         // New Environmental Factors
+//         case "biodiversity":
+//           const speciesCount = raw?.species_count || raw?.biodiversity_index || 'N/A';
+//           const habitatQuality = raw?.habitat_quality || raw?.ecosystem_health || 'N/A';
+//           const protectedArea = raw?.protected_area_distance || raw?.conservation_area || 'N/A';
+          
+//           if (val >= 80) {
+//             return `Biodiversity Index: ${val}/100. HIGH biodiversity (${val.toFixed(1)}% diversity score). Species count: ${speciesCount}, Habitat quality: ${habitatQuality}. Rich ecosystem services with high conservation value. Distance to protected area: ${protectedArea}km.`;
+//           }
+//           if (val >= 60) {
+//             return `Biodiversity Index: ${val}/100. MODERATE biodiversity (${val.toFixed(1)}% diversity score). Species count: ${speciesCount}, Habitat quality: ${habitatQuality}. Balanced ecosystem with moderate conservation value. Distance to protected area: ${protectedArea}km.`;
+//           }
+//           if (val >= 40) {
+//             return `Biodiversity Index: ${val}/100. LOW biodiversity (${val.toFixed(1)}% diversity score). Species count: ${speciesCount}, Habitat quality: ${habitatQuality}. Limited ecosystem diversity with basic conservation needs. Distance to protected area: ${protectedArea}km.`;
+//           }
+//           return `Biodiversity Index: ${val}/100. VERY LOW biodiversity (${val.toFixed(1)}% diversity score). Species count: ${speciesCount}, Habitat quality: ${habitatQuality}. Poor ecosystem health requiring restoration. Distance to protected area: ${protectedArea}km.`;
+
+//         case "heatIsland":
+//           const urbanHeatIntensity = raw?.urban_heat_intensity || raw?.heat_island_index || 'N/A';
+//           const surfaceTemp = raw?.surface_temperature || raw?.land_surface_temp || 'N/A';
+//           const greenSpaceRatio = raw?.green_space_ratio || raw?.vegetation_cover || 'N/A';
+          
+//           if (val >= 80) {
+//             return `Heat Island Effect: ${val}/100. LOW heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${surfaceTemp}°C, Urban heat index: ${urbanHeatIntensity}. Green space ratio: ${greenSpaceRatio}%. Cool microclimate with minimal urban warming.`;
+//           }
+//           if (val >= 60) {
+//             return `Heat Island Effect: ${val}/100. MODERATE heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${surfaceTemp}°C, Urban heat index: ${urbanHeatIntensity}. Green space ratio: ${greenSpaceRatio}%. Some urban warming effect present.`;
+//           }
+//           if (val >= 40) {
+//             return `Heat Island Effect: ${val}/100. HIGH heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${surfaceTemp}°C, Urban heat index: ${urbanHeatIntensity}. Green space ratio: ${greenSpaceRatio}%. Significant urban warming requiring mitigation.`;
+//           }
+//           return `Heat Island Effect: ${val}/100. VERY HIGH heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${surfaceTemp}°C, Urban heat index: ${urbanHeatIntensity}. Green space ratio: ${greenSpaceRatio}%. Extreme urban heat with high cooling costs.`;
+
+//         case "heat_island":
+//           const heatIslandIntensity = raw?.urban_heat_intensity || raw?.heat_island_index || 'N/A';
+//           const heatIslandSurfaceTemp = raw?.surface_temperature || raw?.land_surface_temp || 'N/A';
+//           const heatIslandGreenSpace = raw?.green_space_ratio || raw?.vegetation_cover || 'N/A';
+          
+//           if (val >= 80) {
+//             return `Heat Island Effect: ${val}/100. LOW heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${heatIslandSurfaceTemp}°C, Urban heat index: ${heatIslandIntensity}. Green space ratio: ${heatIslandGreenSpace}%. Cool microclimate with minimal urban warming.`;
+//           }
+//           if (val >= 60) {
+//             return `Heat Island Effect: ${val}/100. MODERATE heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${heatIslandSurfaceTemp}°C, Urban heat index: ${heatIslandIntensity}. Green space ratio: ${heatIslandGreenSpace}%. Some urban warming effect present.`;
+//           }
+//           if (val >= 40) {
+//             return `Heat Island Effect: ${val}/100. HIGH heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${heatIslandSurfaceTemp}°C, Urban heat index: ${heatIslandIntensity}. Green space ratio: ${heatIslandGreenSpace}%. Significant urban warming requiring mitigation.`;
+//           }
+//           return `Heat Island Effect: ${val}/100. VERY HIGH heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${heatIslandSurfaceTemp}°C, Urban heat index: ${heatIslandIntensity}. Green space ratio: ${heatIslandGreenSpace}%. Extreme urban heat with high cooling costs.`;
+
+//         // New Hydrology Factor
+//         case "groundwater":
+//           const groundwaterLevel = raw?.depth_m || raw?.water_table_depth || 'N/A';
+//           const yieldRate = raw?.yield_rate || raw?.groundwater_yield || 'N/A';
+//           const gwQuality = raw?.water_quality_index || raw?.groundwater_quality || 'N/A';
+          
+//           if (val >= 80) {
+//             return `Groundwater Availability: ${val}/100. EXCELLENT groundwater (${groundwaterLevel}m depth). Yield rate: ${yieldRate} L/min, Quality: ${gwQuality}. Abundant subsurface water with excellent quality for development.`;
+//           }
+//           if (val >= 60) {
+//             return `Groundwater Availability: ${val}/100. GOOD groundwater (${groundwaterLevel}m depth). Yield rate: ${yieldRate} L/min, Quality: ${gwQuality}. Adequate subsurface water supply with good quality.`;
+//           }
+//           if (val >= 40) {
+//             return `Groundwater Availability: ${val}/100. POOR groundwater (${groundwaterLevel}m depth). Yield rate: ${yieldRate} L/min, Quality: ${gwQuality}. Limited groundwater availability requiring conservation measures.`;
+//           }
+//           return `Groundwater Availability: ${val}/100. VERY POOR groundwater (${groundwaterLevel}m depth). Yield rate: ${yieldRate} L/min, Quality: ${gwQuality}. Scarce groundwater resources requiring alternative water sources.`;
+
+//         // Risk & Resilience Factors
+//         case "multiHazard":
+//           const floodRisk = raw?.flood_risk || 'N/A';
+//           const erosionRisk = raw?.erosion_risk || 'N/A';
+//           if (val >= 80) return `Multi-Hazard Risk: ${val}/100. LOW risk. Minimal exposure to floods (${floodRisk}) and erosion (${erosionRisk}).`;
+//           if (val >= 60) return `Multi-Hazard Risk: ${val}/100. MODERATE risk. Some hazard exposure. Flood: ${floodRisk}, Erosion: ${erosionRisk}.`;
+//           if (val >= 40) return `Multi-Hazard Risk: ${val}/100. HIGH risk. Significant hazard exposure. Flood: ${floodRisk}, Erosion: ${erosionRisk}.`;
+//           return `Multi-Hazard Risk: ${val}/100. VERY HIGH risk. Multiple hazards. Critical flood: ${floodRisk}, erosion: ${erosionRisk}.`;
+
+//         case "multi_hazard":
+//           const mhFloodRisk = raw?.flood_risk || 'N/A';
+//           const mhErosionRisk = raw?.erosion_risk || 'N/A';
+//           if (val >= 80) return `Multi-Hazard Risk: ${val}/100. LOW risk. Minimal exposure to floods (${mhFloodRisk}) and erosion (${mhErosionRisk}).`;
+//           if (val >= 60) return `Multi-Hazard Risk: ${val}/100. MODERATE risk. Some hazard exposure. Flood: ${mhFloodRisk}, Erosion: ${mhErosionRisk}.`;
+//           if (val >= 40) return `Multi-Hazard Risk: ${val}/100. HIGH risk. Significant hazard exposure. Flood: ${mhFloodRisk}, Erosion: ${mhErosionRisk}.`;
+//           return `Multi-Hazard Risk: ${val}/100. VERY HIGH risk. Multiple hazards. Critical flood: ${mhFloodRisk}, erosion: ${mhErosionRisk}.`;
+
+//         case "climateChange":
+//           const tempRise = raw?.temp_projection || 'N/A';
+//           const seaLevelRisk = raw?.sea_level_risk || 'N/A';
+//           if (val >= 80) return `Climate Change Resilience: ${val}/100. HIGH resilience. Low climate stress. Temp: ${tempRise}°C, Sea level: ${seaLevelRisk}.`;
+//           if (val >= 60) return `Climate Change Resilience: ${val}/100. MODERATE resilience. Some adaptation needed. Temp: ${tempRise}°C, Sea level: ${seaLevelRisk}.`;
+//           if (val >= 40) return `Climate Change Resilience: ${val}/100. LOW resilience. Significant vulnerability. Temp: ${tempRise}°C, Sea level: ${seaLevelRisk}.`;
+//           return `Climate Change Resilience: ${val}/100. VERY LOW resilience. High climate impact. Temp: ${tempRise}°C, Sea level: ${seaLevelRisk}.`;
+
+//         case "climate_change":
+//           const ccTempRise = raw?.temp_projection || 'N/A';
+//           const ccSeaLevelRisk = raw?.sea_level_risk || 'N/A';
+//           if (val >= 80) return `Climate Change Resilience: ${val}/100. HIGH resilience. Low climate stress. Temp: ${ccTempRise}°C, Sea level: ${ccSeaLevelRisk}.`;
+//           if (val >= 60) return `Climate Change Resilience: ${val}/100. MODERATE resilience. Some adaptation needed. Temp: ${ccTempRise}°C, Sea level: ${ccSeaLevelRisk}.`;
+//           if (val >= 40) return `Climate Change Resilience: ${val}/100. LOW resilience. Significant vulnerability. Temp: ${ccTempRise}°C, Sea level: ${ccSeaLevelRisk}.`;
+//           return `Climate Change Resilience: ${val}/100. VERY LOW resilience. High climate impact. Temp: ${ccTempRise}°C, Sea level: ${ccSeaLevelRisk}.`;
+
+//         case "recovery":
+//           const infraAccess = raw?.infrastructure_access || 'N/A';
+//           const emergencyServices = raw?.emergency_services || 'N/A';
+//           if (val >= 80) return `Recovery Capacity: ${val}/100. EXCELLENT recovery. Strong infrastructure (${infraAccess}) and emergency response (${emergencyServices}).`;
+//           if (val >= 60) return `Recovery Capacity: ${val}/100. GOOD recovery. Adequate systems. Infrastructure: ${infraAccess}, Emergency: ${emergencyServices}.`;
+//           if (val >= 40) return `Recovery Capacity: ${val}/100. POOR recovery. Limited capabilities. Infrastructure: ${infraAccess}, Emergency: ${emergencyServices}.`;
+//           return `Recovery Capacity: ${val}/100. VERY POOR recovery. Minimal infrastructure. Infrastructure: ${infraAccess}, Emergency: ${emergencyServices}.`;
+
+//         case "habitability":
+//           const airQualityIndex = raw?.aqi || 'N/A';
+//           const habitabilityWaterQuality = raw?.water_quality || 'N/A';
+//           const livabilityScore = raw?.livability || 'N/A';
+//           if (val >= 80) return `Long-term Habitability: ${val}/100. EXCELLENT habitability. Sustainable conditions. AQI: ${airQualityIndex}, Water: ${habitabilityWaterQuality}, Livability: ${livabilityScore}.`;
+//           if (val >= 60) return `Long-term Habitability: ${val}/100. GOOD habitability. Viable settlement. AQI: ${airQualityIndex}, Water: ${habitabilityWaterQuality}, Livability: ${livabilityScore}.`;
+//           if (val >= 40) return `Long-term Habitability: ${val}/100. POOR habitability. Challenging conditions. AQI: ${airQualityIndex}, Water: ${habitabilityWaterQuality}, Livability: ${livabilityScore}.`;
+//           return `Long-term Habitability: ${val}/100. VERY POOR habitability. Unsustainable living. AQI: ${airQualityIndex}, Water: ${habitabilityWaterQuality}, Livability: ${livabilityScore}.`;
+
+//         default:
+//           return `Score: ${val}/100. ${label}`;
+//       }
+//     };
+
+//     const allFactors = [];
+
+//     Object.entries(meta).forEach(([category, factors]) => {
+
+//       Object.entries(factors).forEach(([factorKey, factor]) => {
+
+//         allFactors.push({ category, factorKey, factor });
+
+//       });
+
+//     });
 
 
 
-    // Flatten all factors from all categories for display
+//     return (
+//         <div className="evidence-section-container">
+//             <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+            
+//             <div className="evidence-categories">
+//                 {Object.entries(meta).map(([category, factors]) => {
+//                     // Get category score for display
+//                     const categoryScore = data?.category_scores?.[category] || 0;
+//                     const categoryColorClass = categoryScore < 40 ? "tone-red" : categoryScore < 70 ? "tone-yellow" : "tone-green";
+                    
+//                     // Calculate role-based weighted score for this category
+//                     const weightedCategoryScore = calculateRoleBasedWeightedScore(category, factors);
+                    
+//                     // Define factor order to match bar chart exactly (using backend keys)
+//                     const factorOrder = {
+//                         physical: ['elevation','ruggedness','slope',   'stability'],
+//                         environmental: ['pollution', 'soil', 'vegetation', 'biodiversity', 'heat_island'],
+//                         hydrology: ['drainage','flood','groundwater', 'water'  ],
+//                         climatic: ['intensity', 'rainfall', 'thermal'],  // Heat stress (intensity) first
+//                         socio_econ: ['infrastructure', 'landuse', 'population'],
+//                         risk_resilience: ['multi_hazard', 'climate_change', 'recovery', 'habitability']
+//                     };
+                    
+//                     // Sort factors according to bar chart order
+//                     const orderedFactors = factorOrder[category] 
+//                         ? factorOrder[category].map(key => [key, factors[key]]).filter(([_, factor]) => factor)
+//                         : Object.entries(factors);
+                    
+//                     return (
+//                         <div key={category} className="evidence-category-container">
+//                             {/* Category Header */}
+//                             <div className={`evidence-category-header-container ${categoryColorClass}`}>
+//                                 <div className="category-header-content">
+//                                     <h4 className="evidence-category-title">
+//                                         {category.replace('_', ' ').toUpperCase()}
+//                                         <span className="evidence-category-score">({categoryScore.toFixed(1)}/100)</span>
+//                                         <span className="evidence-weighted-score">Weighted: ({weightedCategoryScore.toFixed(1)}/100)</span>
+//                                     </h4>
+//                                     <p className="evidence-category-description">
+//                                         {getCategoryDescription(category)}
+//                                     </p>
+//                                     <div className="evidence-category-weights">
+//                                         <span className="weight-info">Category Weight: 16.67%</span>
+//                                     </div>
+//                                 </div>
+//                             </div>
+                            
+//                             {/* Sequential Factor Cards */}
+//                             <div className="evidence-factors-sequential">
+//                                 {orderedFactors.map(([factorKey, factor]) => {
+//                                     const displayValue = factor.value !== null && factor.value !== undefined 
+//                                         ? (typeof factor.value === 'number' ? factor.value.toFixed(1) : factor.value)
+//                                         : 'N/A';
+                                    
+//                                     const numericValue = typeof factor.value === 'number' ? factor.value : 50;
+//                                     const colorClass = numericValue < 40 ? "tone-red" : numericValue < 70 ? "tone-yellow" : "tone-green";
+//                                     const evidenceText = generateEvidence(factorKey, factor);
+                                    
+//                                     // Get role-based weight for this factor
+//                                     const factorWeight = getFactorWeight(category, factorKey);
+//                                     const globalWeight = (16.67 * factorWeight / 100).toFixed(2);
+                                    
+//                                     return (
+//                                         <div
+//                                             key={`${category}-${factorKey}`}
+//                                             className={`evidence-factor-card ${colorClass}`}
+//                                         >
+//                                             {/* Factor Header with Weighting Info */}
+//                                             <div className="factor-card-header">
+//                                                 <div className="factor-header-left">
+//                                                     <h5 className="factor-name">
+//                                                         {factorLabels[factorKey] || factorKey.replace(/([A-Z])/g, ' $1').trim().toUpperCase()}
+//                                                     </h5>
+//                                                     <div className="factor-weighting-info">
+//                                                         <span className="factor-score">{displayValue}/100</span>
+//                                                         <span className="weight-breakdown">
+//                                                             {factorWeight}% of category → {globalWeight}% global
+//                                                         </span>
+//                                                     </div>
+//                                                 </div>
+//                                                 <div className={`factor-status-badge ${colorClass}`}>
+//                                                     {numericValue >= 70 ? 'HIGH' : numericValue >= 40 ? 'MODERATE' : 'LOW'}
+//                                                 </div>
+//                                             </div>
+                                            
+//                                             {/* Evidence Content */}
+//                                             <div className="factor-card-content">
+//                                                 <div className="evidence-text">
+//                                                     {evidenceText}
+//                                                 </div>
+                                                
+//                                                 {/* Numerical Justification */}
+//                                                 {/* <div className="numerical-justification">
+//                                                     <h6>Numerical Analysis:</h6>
+//                                                     <div className="justification-details">
+//                                                         {factor.raw !== undefined && (
+//                                                             <div className="raw-data">
+//                                                                 <span className="data-label">Raw Value:</span>
+//                                                                 <span className="data-value">
+//                                                                     {typeof factor.raw === 'object' ? JSON.stringify(factor.raw) : factor.raw}
+//                                                                 </span>
+//                                                             </div>
+//                                                         )}
+//                                                         <div className="score-breakdown">
+//                                                             <span className="data-label">Score Calculation:</span>
+//                                                             <span className="data-value">
+//                                                                 {numericValue >= 70 ? 'Excellent range (70-100)' : 
+//                                                                  numericValue >= 40 ? 'Moderate range (40-69)' : 
+//                                                                  'Poor range (0-39)'}
+//                                                             </span>
+//                                                         </div>
+//                                                         <div className="weight-impact">
+//                                                             <span className="data-label">Weight Impact:</span>
+//                                                             <span className="data-value">
+//                                                                 {(numericValue * factorWeight / 100).toFixed(1)} points to category score
+//                                                             </span>
+//                                                         </div>
+//                                                     </div>
+//                                                 </div> */}
+                                                
+//                                                 {/* Metadata - Compact Single Row */}
+//                                                 <div className="factor-metadata-compact">
+//                                                     <div className="metadata-row">
+//                                                         {factor.source && (
+//                                                             <span className="metadata-item-compact">
+//                                                                 📍 {factor.source}
+//                                                             </span>
+//                                                         )}
+//                                                         {factor.unit && (
+//                                                             <span className="metadata-item-compact">
+//                                                                 📏 {factor.unit}
+//                                                             </span>
+//                                                         )}
+//                                                         <span className="metadata-item-compact">
+//                                                             ⚖️ {getFactorRole(category, factorKey)}
+//                                                         </span>
+//                                                     </div>
+//                                                 </div>
+//                                             </div>
+//                                         </div>
+//                                     );
+//                                 })}
+//                             </div>
+//                         </div>
+//                     );
+//                 })}
+//             </div>
+//         </div>
+//     );
+    
 
-    const allFactors = [];
-
-    Object.entries(meta).forEach(([category, factors]) => {
-
-      Object.entries(factors).forEach(([factorKey, factor]) => {
-
-        allFactors.push({ category, factorKey, factor });
-
-      });
-
-    });
+// };
+const EvidenceSection = ({ data }) => {
+  // const meta = data.explanation?.factors_meta;
+  const meta = data?.explanation?.factors_meta || data?.factors_meta || {};
 
 
-
+  if (!meta) {
     return (
-
-        <div className="evidence-section-container">
-
-            <h3 className="evidence-title">EVIDENCE DETAILS</h3>
-
-
-
-            <div className="evidence-list">
-
-                {allFactors.map(({ category, factorKey, factor }) => {
-
-                    const displayValue = factor.value !== null && factor.value !== undefined 
-
-                        ? (typeof factor.value === 'number' ? factor.value.toFixed(1) : factor.value)
-
-                        : 'N/A';
-
-                    
-
-                    const numericValue = typeof factor.value === 'number' ? factor.value : 50;
-
-                    
-
-                    const colorClass = numericValue < 40 ? "red" : numericValue < 70 ? "yellow" : "green";
-
-                    
-
-                    const evidenceText = generateEvidence(factorKey, factor);
-
-
-
-                    return (
-
-                        <div
-
-                            key={`${category}-${factorKey}`}
-
-                            className={`evidence-item evidence-${colorClass}`}
-
-                        >
-
-                            <div className="evidence-header">
-
-                              <strong className={`evidence-factor-name ${colorClass}`}>
-
-                                {factorLabels[factorKey] || factorKey.toUpperCase()}
-
-                                <span className="evidence-score-inline">
-
-                                  ({displayValue})
-
-                                </span>
-
-                              </strong>
-
-                            </div>
-
-
-
-                            <div className="evidence-text">
-
-                                {evidenceText}
-
-                            </div>
-
-                            {factor.source && (
-
-                                <div className="evidence-source">
-
-                                    <small>Source: {factor.source}</small>
-
-                                </div>
-
-                            )}
-
-                        </div>
-
-                    );
-
-                })}
-
-            </div>
-
-        </div>
-
+      <div className="card evidence-card">
+        <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+        <p>No evidence metadata available.</p>
+      </div>
     );
+  }
 
+  // ✅ FIX: Define factorLabels inside the component so it's accessible
+  const factorLabels = {
+    slope: "SLOPE",
+    elevation: "ELEVATION",
+    ruggedness: "RUGGEDNESS",
+    stability: "STABILITY",
+    flood: "FLOOD RISK",
+    water: "WATER PROXIMITY",
+    drainage: "DRAINAGE",
+    groundwater: "GROUNDWATER",
+    vegetation: "VEGETATION",
+    soil: "SOIL QUALITY",
+    pollution: "AIR POLLUTION",
+    biodiversity: "BIODIVERSITY",
+    heat_island: "HEAT ISLAND",
+    rainfall: "RAINFALL",
+    thermal: "THERMAL COMFORT",
+    intensity: "HEAT STRESS",
+    landuse: "LANDUSE",
+    infrastructure: "PROXIMITY",
+    population: "POPULATION",
+    multi_hazard: "MULTI-HAZARD",
+    climate_change: "CLIMATE CHANGE",
+    recovery: "RECOVERY CAPACITY",
+    habitability: "HABITABILITY"
+  };
+
+  // ✅ FIX: Define generateEvidence helper logic
+  const generateEvidence = (factorKey, factor) => {
+    if (factor.evidence) return factor.evidence;
+    const val = factor.value || 0;
+    return `Score: ${val}/100. Analysis based on regional ${factorKey.replace(/_/g, ' ')} telemetry.`;
+  };
+
+  const getFactorWeight = (category, factorKey) => {
+    const weights = {
+      physical: { slope: 30, stability: 25, elevation: 25, ruggedness: 20 },
+      hydrology: { flood: 35, groundwater: 25, drainage: 20, water: 20 },
+      environmental: { biodiversity: 25, pollution: 25, soil: 20, heat_island: 15, vegetation: 15 },
+      climatic: { thermal: 40, intensity: 35, rainfall: 25 },
+      socio_econ: { infrastructure: 40, landuse: 30, population: 30 },
+      risk_resilience: { multi_hazard: 35, climate_change: 25, habitability: 20, recovery: 20 }
+    };
+    return weights[category]?.[factorKey] || 0;
+  };
+
+  const calculateRoleBasedWeightedScore = (category, factors) => {
+    let weightedSum = 0;
+    let totalWeight = 0;
+    Object.entries(factors).forEach(([factorKey, factor]) => {
+      const weight = getFactorWeight(category, factorKey);
+      const value = typeof factor.value === 'number' ? factor.value : 50;
+      weightedSum += value * weight;
+      totalWeight += weight;
+    });
+    return totalWeight > 0 ? weightedSum / totalWeight : 0;
+  };
+
+  const getFactorRole = (category, factorKey) => {
+    const roles = {
+      physical: { slope: "Primary construction constraint", stability: "Landslide/erosion safety", elevation: "Flood & climate baseline", ruggedness: "Construction difficulty" },
+      hydrology: { flood: "Catastrophic failure driver", water: "Resource + flood modifier", drainage: "Surface runoff handling", groundwater: "Foundation durability" },
+      environmental: { vegetation: "Surface cover indicator", soil: "Semi-permanent land constraint", pollution: "Human health impact", biodiversity: "Legal/ecological constraint", heat_island: "Urban stress indicator" },
+      climatic: { rainfall: "Flood & water balance", thermal: "Human livability", intensity: "Peak stress risk" },
+      socio_econ: { landuse: "Legal feasibility", infrastructure: "Development enabler", population: "Demand & pressure" },
+      risk_resilience: { multi_hazard: "Compound disaster risk", climate_change: "Long-term exposure", recovery: "Post-event resilience", habitability: "Sustained livability" }
+    };
+    return roles[category]?.[factorKey] || "Supporting factor";
+  };
+
+  const getCategoryDescription = (category) => {
+    const descriptions = {
+      physical: "Physical terrain characteristics including slope, elevation, ruggedness, and ground stability. Critical for foundation design, construction costs, and site accessibility.",
+      environmental: "Environmental conditions covering vegetation, soil quality, air pollution, biodiversity, and urban heat island effects. Essential for environmental compliance and sustainability.",
+      hydrology: "Water-related factors including flood risk, water proximity, drainage capacity, and groundwater availability. Vital for water management and flood prevention.",
+      climatic: "Climate conditions such as rainfall patterns, thermal comfort, and heat stress intensity. Important for HVAC design, energy efficiency, and climate resilience.",
+      socio_econ: "Socio-economic factors including land use classification, infrastructure access, and population density. Key for market analysis and development feasibility.",
+      risk_resilience: "Risk assessment and resilience factors covering multi-hazard risks, climate change impacts, recovery capacity, and long-term habitability. Critical for disaster preparedness and sustainable development."
+    };
+    return descriptions[category] || "Category analysis and assessment.";
+  };
+
+  const factorOrder = {
+    physical: ['elevation', 'ruggedness', 'slope', 'stability'],
+    environmental: ['biodiversity', 'heat_island','pollution', 'soil', 'vegetation' ],
+    hydrology: ['drainage', 'flood', 'groundwater', 'water'],
+    climatic: ['intensity', 'rainfall', 'thermal'],
+    socio_econ: ['infrastructure', 'landuse', 'population'],
+    risk_resilience: [ 'climate_change',  'habitability','multi_hazard','recovery',]
+  };
+
+  return (
+    <div className="evidence-section-container">
+      <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+      <div className="evidence-categories">
+        {/* {Object.entries(meta).map(([category, categoryGroup]) => { */}
+        {Object.entries(meta).map(([category, categoryGroupRaw]) => {
+  const categoryGroup = categoryGroupRaw || {};
+
+          // const categoryScore = data?.category_scores?.[category] || 0;
+          const categoryScore =
+          data?.category_scores?.[category] ||
+          data?.explanation?.category_scores?.[category] ||
+          0;
+
+          const weightedScore = calculateRoleBasedWeightedScore(category, categoryGroup);
+          const categoryColorClass = categoryScore < 40 ? "tone-red" : categoryScore < 70 ? "tone-yellow" : "tone-green";
+
+          const orderedFactorKeys = factorOrder[category]
+            ? factorOrder[category].filter(key => categoryGroup[key])
+            : Object.keys(categoryGroup);
+
+          return (
+            <div key={category} className="evidence-category-container">
+              <div className={`evidence-category-header-container ${categoryColorClass}`}>
+                <div className="category-header-content">
+                  <h4 className="evidence-category-title">
+                    {/* {category.replace('_', ' ').toUpperCase()} */}
+                    {category.replaceAll('_', ' ').toUpperCase()}
+
+                    <span className="evidence-category-score">({categoryScore.toFixed(1)}/100)</span>
+                    <span className="evidence-weighted-score">Weighted: ({weightedScore.toFixed(1)}/100)</span>
+                  </h4>
+                  <p className="evidence-category-description">{getCategoryDescription(category)}</p>
+                </div>
+              </div>
+
+              <div className="evidence-factors-sequential">
+                {orderedFactorKeys.map((factorKey) => {
+                  const factor = categoryGroup[factorKey];
+                  const numericValue = typeof factor.value === 'number' ? factor.value : 50;
+                  const factorColor = numericValue < 40 ? "tone-red" : numericValue < 70 ? "tone-yellow" : "tone-green";
+                  const evidenceText = factor.evidence || generateEvidence(factorKey, factor);
+                  const factorWeight = getFactorWeight(category, factorKey);
+                  const globalWeight = (16.67 * factorWeight / 100).toFixed(2);
+
+                  return (
+                    <div key={`${category}-${factorKey}`} className={`evidence-factor-card ${factorColor}`}>
+                      <div className="factor-card-header">
+                        <div className="factor-header-left">
+                          <h5 className="factor-name">{factorLabels[factorKey] || factorKey.replace(/_/g, ' ').toUpperCase()}</h5>
+                          <div className="factor-weighting-info">
+                            <span className="factor-score">{numericValue.toFixed(1)}/100</span>
+                            <span className="weight-breakdown">{factorWeight}% of cat → {globalWeight}% global</span>
+                          </div>
+                        </div>
+                        <div className={`factor-status-badge ${factorColor}`}>
+                          {numericValue >= 70 ? 'HIGH' : numericValue >= 40 ? 'MID' : 'LOW'}
+                        </div>
+                      </div>
+                      <div className="factor-card-content">
+                        <div className="evidence-text">{evidenceText}</div>
+                        <div className="factor-metadata-compact">
+                          <div className="metadata-row">
+                            <span className="metadata-item-compact">📍 {factor.source || 'Data Engine'}</span>
+                            {factor.unit && <span className="metadata-item-compact">📏 {factor.unit}</span>}
+                            <span className="metadata-item-compact">⚖️ {getFactorRole(category, factorKey)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 

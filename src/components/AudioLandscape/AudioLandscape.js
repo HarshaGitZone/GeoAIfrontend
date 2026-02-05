@@ -102,12 +102,16 @@ const AudioLandscape = ({
     if (siteASoundRef.current) {
       console.log("🔇 Stopping Site A audio");
       try {
+        // Force stop with multiple methods
         siteASoundRef.current.stop();
+        siteASoundRef.current.pause();
         siteASoundRef.current.unload();
+        siteASoundRef.current = null;
       } catch (e) {
         console.warn("Error stopping Site A audio:", e);
+        // Ensure reference is cleared even if stop fails
+        siteASoundRef.current = null;
       }
-      siteASoundRef.current = null;
     }
   }, []);
 
@@ -116,32 +120,54 @@ const AudioLandscape = ({
     if (siteBSoundRef.current) {
       console.log("🔇 Stopping Site B audio");
       try {
+        // Force stop with multiple methods
         siteBSoundRef.current.stop();
+        siteBSoundRef.current.pause();
         siteBSoundRef.current.unload();
+        siteBSoundRef.current = null;
       } catch (e) {
         console.warn("Error stopping Site B audio:", e);
+        // Ensure reference is cleared even if stop fails
+        siteBSoundRef.current = null;
       }
-      siteBSoundRef.current = null;
     }
   }, []);
 
+  // 🎵 GLOBAL AUDIO STOP - Force stop all audio
+  const stopAllAudio = useCallback(() => {
+    console.log("🔇 STOPPING ALL AUDIO - Force termination");
+    stopSiteAAudio();
+    stopSiteBAudio();
+    
+    // Additional cleanup - stop any other audio instances
+    try {
+      // Stop any global Howl instances
+      if (typeof Howl !== 'undefined') {
+        Howl.stop();
+      }
+    } catch (e) {
+      console.warn("Error stopping global audio:", e);
+    }
+  }, [stopSiteAAudio, stopSiteBAudio]);
+
   // 🎵 START SITE A AUDIO
   const startSiteAAudio = useCallback((biome) => {
-    // Don't stop Site B when starting Site A - they should play together
+    // Always stop existing audio first
     if (siteASoundRef.current) {
       stopSiteAAudio();
     }
     
+    // Check if audio should be playing
     if (!isEnabled || !siteAPlaying) {
-      console.log("🔇 Site A audio disabled or muted");
+      console.log("🔇 Site A audio disabled or muted - not starting");
       return;
     }
 
-    console.log(`🎵 Starting Site A audio: ${biome}`);
+    console.log("🎵 Starting Site A audio for biome:", biome);
     const sound = new Howl({
       src: getAudioSources(biome),
       loop: true,
-      volume: 0.25, // Slightly lower volume for Site A
+      volume: 0.25,
       html5: true,
       onplay: () => console.log(`🎵 Site A playing: ${biome}`),
       onplayerror: (id, err) => console.warn(`⚠️ Site A audio blocked: ${biome}`, err),
@@ -166,21 +192,22 @@ const AudioLandscape = ({
 
   // 🎵 START SITE B AUDIO
   const startSiteBAudio = useCallback((biome) => {
-    // Don't stop Site A when starting Site B - they should play together
+    // Always stop existing audio first
     if (siteBSoundRef.current) {
       stopSiteBAudio();
     }
     
+    // Check if audio should be playing
     if (!isEnabled || !siteBPlaying) {
-      console.log("🔇 Site B audio disabled or muted");
+      console.log("🔇 Site B audio disabled or muted - not starting");
       return;
     }
 
-    console.log(`🎵 Starting Site B audio: ${biome}`);
+    console.log("🎵 Starting Site B audio for biome:", biome);
     const sound = new Howl({
       src: getAudioSources(biome),
       loop: true,
-      volume: 0.25, // Slightly lower volume for Site B
+      volume: 0.25,
       html5: true,
       onplay: () => console.log(`🎵 Site B playing: ${biome}`),
       onplayerror: (id, err) => console.warn(`⚠️ Site B audio blocked: ${biome}`, err),
@@ -278,6 +305,12 @@ const AudioLandscape = ({
       stopSiteBAudio();
     }
 
+    // 🎵 FORCE STOP ALL AUDIO IF BOTH SITES ARE MUTED
+    if (!siteAPlaying && !siteBPlaying) {
+      console.log("🔇 Both sites muted - forcing complete audio stop");
+      stopAllAudio();
+    }
+
   }, [
     activeFactors, 
     compareFactors, 
@@ -293,16 +326,16 @@ const AudioLandscape = ({
     startSiteAAudio,
     startSiteBAudio,
     stopSiteAAudio,
-    stopSiteBAudio
+    stopSiteBAudio,
+    stopAllAudio
   ]);
 
   // 🧹 CLEANUP ON UNMOUNT
   useEffect(() => {
     return () => {
-      stopSiteAAudio();
-      stopSiteBAudio();
+      stopAllAudio();
     };
-  }, [stopSiteAAudio, stopSiteBAudio]);
+  }, [stopAllAudio]);
 
   return null;
 };

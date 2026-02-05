@@ -12,27 +12,30 @@ import {
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
-// 15 factors in order of 5 categories (same as bar view)
+// 23 factors in order of 6 categories (same as bar view)
 const FACTOR_ORDER = [
-  'slope', 'elevation',                           // Physical Terrain
-  'vegetation', 'soil', 'pollution',              // Environmental
-  'flood', 'water', 'drainage',                   // Hydrology
-  'rainfall', 'thermal', 'intensity',              // Climatic
-  'landuse', 'infrastructure', 'population'        // Socio-Economic
+  'slope', 'elevation', 'ruggedness', 'stability',           // Physical Terrain (4)
+  'vegetation', 'soil', 'pollution', 'biodiversity', 'heatIsland', // Environmental (5)
+  'flood', 'water', 'drainage', 'groundwater',                   // Hydrology (4)
+  'rainfall', 'thermal', 'intensity',                            // Climatic (3)
+  'landuse', 'infrastructure', 'population',                      // Socio-Economic (3)
+  'multiHazard', 'climateChange', 'recovery', 'habitability'     // Risk & Resilience (4)
 ];
 const FACTOR_LABELS = {
-  slope: 'Slope', elevation: 'Elevation',
-  vegetation: 'Vegetation', soil: 'Soil', pollution: 'Pollution',
-  flood: 'Flood', water: 'Water', drainage: 'Drainage',
+  slope: 'Slope', elevation: 'Elevation', ruggedness: 'Ruggedness', stability: 'Stability',
+  vegetation: 'Vegetation', soil: 'Soil', pollution: 'Pollution', biodiversity: 'Biodiversity', heatIsland: 'Heat Island',
+  flood: 'Flood', water: 'Water', drainage: 'Drainage', groundwater: 'Groundwater',
   rainfall: 'Rainfall', thermal: 'Thermal', intensity: 'Intensity',
-  landuse: 'Landuse', infrastructure: 'Infra', population: 'Population'
+  landuse: 'Landuse', infrastructure: 'Infra', population: 'Population',
+  multiHazard: 'Multi-Hazard', climateChange: 'Climate Change', recovery: 'Recovery', habitability: 'Habitability'
 };
 const CATEGORY_LABELS = {
   physical_terrain: 'Physical',
   environmental: 'Environmental',
   hydrology: 'Hydrology',
   climatic: 'Climatic',
-  socio_econ: 'Socio-Economic'
+  socio_econ: 'Socio-Economic',
+  risk_resilience: 'Risk & Resilience'
 };
 
 /** Use 0-100 suitability score for display (same as bar view). Prefer scaled_score when present (e.g. slope, elevation). */
@@ -92,7 +95,7 @@ const RadarChart = ({ data, isDarkMode, categoryScores }) => {
   return (
     <div className="radar-chart-wrapper">
       {categoryScores && typeof categoryScores === 'object' && Object.keys(categoryScores).length > 0 && (
-        <div className="radar-five-categories">
+        <div className="radar-six-categories">
           {Object.entries(categoryScores).map(([catKey, score]) => (
             <span key={catKey} className="radar-cat-badge">
               {CATEGORY_LABELS[catKey] || catKey}: {(score ?? 0).toFixed(0)}%
