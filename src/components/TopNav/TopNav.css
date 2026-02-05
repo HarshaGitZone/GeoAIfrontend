@@ -2924,3 +2924,37 @@
 }
 
 
+
+
+/* Sync the status dot with the palette color */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  /* Use the dynamic variable updated by your JS function */
+  background: var(--accent-color) !important; 
+  border-radius: 50%;
+  /* Updates the glow to match the color */
+  box-shadow: 0 0 12px var(--accent-color) !important;
+  animation: glow 2s infinite alternate;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Sync the 'AI' part of the logo with the palette color */
+.logo span {
+  color: var(--accent-color) !important;
+  transition: color 0.3s ease;
+}
+
+/* Keyframes for the glowing effect */
+@keyframes glow {
+  from { 
+    opacity: 0.6; 
+    transform: scale(0.9); 
+    box-shadow: 0 0 8px var(--accent-color);
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1.1); 
+    box-shadow: 0 0 15px var(--accent-color);
+  }
+}

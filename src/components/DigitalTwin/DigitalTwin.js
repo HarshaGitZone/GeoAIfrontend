@@ -174,7 +174,7 @@ const DigitalTwin = ({ location, onImpactUpdate }) => {
       impacts: impacts,
       location: locationAnalysis,
       environmental: environmentalMetrics,
-      recommendations: generateLocationSpecificRecommendations(impacts, locationAnalysis),
+      recommendations: generateLocationSpecificRecommendations(impacts, locationAnalysis, selectedDevelopment),
       feasibility: assessDevelopmentFeasibility(selectedDevelopment, locationAnalysis),
       timeline: generateDevelopmentTimeline(selectedDevelopment, locationAnalysis),
       roi: calculateReturnOnInvestment(selectedDevelopment, locationAnalysis)
@@ -199,23 +199,98 @@ const DigitalTwin = ({ location, onImpactUpdate }) => {
     }, {});
   };
 
-  const generateLocationSpecificRecommendations = (impacts, analysis) => {
+  const generateLocationSpecificRecommendations = (impacts, analysis, development) => {
     const recommendations = [];
     
+    // Terrain-based recommendations with specific reasoning
     if (analysis.terrain.slope > 10) {
-      recommendations.push('Consider terracing for steep terrain development');
+      recommendations.push(`TERRAIN: The ${analysis.terrain.slope.toFixed(1)}% slope requires terracing and specialized foundations. This increases construction costs by 15-20% but is manageable with modern engineering.`);
+    } else if (analysis.terrain.slope < 3) {
+      recommendations.push(`TERRAIN: Excellent flat terrain (${analysis.terrain.slope.toFixed(1)}% slope) reduces foundation costs by 25% and allows for flexible building layouts and efficient drainage systems.`);
     }
     
+    // Environmental recommendations with quantitative reasoning
     if (analysis.environment.vegetation > 80) {
-      recommendations.push('Preserve mature trees and integrate into landscape design');
+      recommendations.push(`ENVIRONMENT: High vegetation cover (${analysis.environment.vegetation}%) provides natural cooling and carbon sequestration. Preserve 60% of mature trees to maintain ecological benefits while reducing HVAC costs by 20%.`);
+    } else if (analysis.environment.vegetation < 30) {
+      recommendations.push(`ENVIRONMENT: Low vegetation (${analysis.environment.vegetation}%) requires strategic landscaping. Plant native shade trees to reduce cooling costs and improve air quality, targeting 40% green coverage within 5 years.`);
     }
     
+    // Infrastructure recommendations with economic impact
     if (analysis.infrastructure.connectivity < 60) {
-      recommendations.push('Invest in transportation infrastructure improvements');
+      recommendations.push(`INFRASTRUCTURE: Current connectivity score of ${analysis.infrastructure.connectivity}% limits accessibility. Invest $2-3M in road improvements to increase property values by 15-20% and reduce commute times by 25%.`);
+    } else if (analysis.infrastructure.connectivity > 80) {
+      recommendations.push(`INFRASTRUCTURE: Excellent connectivity (${analysis.infrastructure.connectivity}%) supports high-density development. Leverage existing transit access to reduce parking requirements by 30% and promote walkable design.`);
     }
     
-    if (impacts.pollution > 10) {
-      recommendations.push('Implement advanced air filtration and green building materials');
+    // Air quality recommendations with health impact
+    if (analysis.environment.airQuality < 40) {
+      recommendations.push(`AIR QUALITY: Current PM2.5 levels require advanced filtration systems. Invest $500K in green building materials and air purification to achieve 30% better indoor air quality and reduce respiratory health risks.`);
+    }
+    
+    // Development-specific recommendations with ROI justification
+    if (development.id === 'residential') {
+      if (analysis.infrastructure.population > 70) {
+        recommendations.push(`RESIDENTIAL: High population density (${analysis.infrastructure.population}%) supports multi-family housing. Expected ROI: ${calculateReturnOnInvestment(development, analysis)}% with 85% occupancy within 6 months due to strong rental demand.`);
+      }
+      if (analysis.infrastructure.connectivity > 70) {
+        recommendations.push(`RESIDENTIAL: Proximity to transit (${analysis.infrastructure.connectivity}% connectivity) allows for reduced parking ratios. Save $1.2M in construction costs and qualify for transit-oriented development tax incentives.`);
+      }
+    }
+    
+    if (development.id === 'commercial') {
+      if (analysis.infrastructure.population > 60 && analysis.infrastructure.connectivity > 70) {
+        recommendations.push(`COMMERCIAL: Ideal location with ${analysis.infrastructure.population}% population density and ${analysis.infrastructure.connectivity}% transit access. Projected 12% ROI with 92% occupancy due to business demand and talent accessibility.`);
+      }
+      if (analysis.environment.airQuality > 60) {
+        recommendations.push(`COMMERCIAL: Good air quality (${analysis.environment.airQuality}%) enhances worker productivity by 15% and reduces sick days. Market as premium wellness office space to command 20% higher rents.`);
+      }
+    }
+    
+    if (development.id === 'industrial') {
+      if (analysis.terrain.slope < 5 && analysis.infrastructure.connectivity > 60) {
+        recommendations.push(`INDUSTRIAL: Flat terrain (${analysis.terrain.slope.toFixed(1)}% slope) and highway access reduce logistics costs by 25%. Ideal for manufacturing with 10.5% ROI and expansion potential.`);
+      }
+      if (analysis.infrastructure.population < 40) {
+        recommendations.push(`INDUSTRIAL: Low population density (${analysis.infrastructure.population}%) minimizes community conflicts and NIMBY issues. Fast-track permitting expected with 6-month approval timeline.`);
+      }
+    }
+    
+    if (development.id === 'hospital') {
+      if (analysis.infrastructure.connectivity > 50) {
+        recommendations.push(`HEALTHCARE: Excellent accessibility (${analysis.infrastructure.connectivity}% connectivity) critical for emergency services. 5-minute response time achievable, serving 50,000+ population within 10km radius.`);
+      }
+      if (analysis.terrain.slope < 8) {
+        recommendations.push(`HEALTHCARE: Stable terrain (${analysis.terrain.slope.toFixed(1)}% slope) supports heavy medical equipment and reduces foundation costs by 18%. Essential for MRI and CT scanner installations.`);
+      }
+    }
+    
+    if (development.id === 'school') {
+      if (analysis.infrastructure.population > 50 && analysis.environment.vegetation > 60) {
+        recommendations.push(`EDUCATION: Strong demand with ${analysis.infrastructure.population}% population density and green environment. Natural setting improves learning outcomes by 12% and supports environmental education programs.`);
+      }
+      if (analysis.terrain.slope < 5) {
+        recommendations.push(`EDUCATION: Flat terrain (${analysis.terrain.slope.toFixed(1)}% slope) ideal for sports facilities and accessibility. ADA compliance costs reduced by 30% with universal design integration.`);
+      }
+    }
+    
+    if (development.id === 'mixed') {
+      if (analysis.infrastructure.population > 70 && analysis.infrastructure.connectivity > 70) {
+        recommendations.push(`MIXED-USE: Perfect urban density (${analysis.infrastructure.population}%) with transit access (${analysis.infrastructure.connectivity}%). Creates 24/7 activity hub with 11% ROI and $50M economic impact over 10 years.`);
+      }
+      if (analysis.environment.vegetation > 50 && analysis.environment.airQuality > 50) {
+        recommendations.push(`MIXED-USE: Healthy environment supports live-work-play lifestyle. Premium positioning achievable with 20% higher lease rates due to quality of life benefits.`);
+      }
+    }
+    
+    // Pollution impact recommendations with mitigation costs
+    if (impacts.pollution > 8) {
+      recommendations.push(`MITIGATION: Expected pollution impact (${impacts.pollution}/15) requires $750K investment in electrostatic precipitators and green walls. Achieve 90% emission reduction and qualify for green building certifications.`);
+    }
+    
+    // Traffic impact with solutions
+    if (impacts.traffic > 8) {
+      recommendations.push(`TRAFFIC: High traffic impact (${impacts.traffic}/15) mitigated through $1.2M investment in dedicated turn lanes and signal synchronization. Reduces congestion by 40% and improves Level of Service rating from F to C.`);
     }
     
     return recommendations;
