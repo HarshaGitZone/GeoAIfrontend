@@ -12131,3 +12131,58 @@ html body [data-theme='light'] .digital-twin-card *[style*="color:#fff"] {
     }
 }
 
+
+
+/* LandSuitabilityChecker.css */
+
+.tab-buttons-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tab-buttons-container button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+}
+
+/* --- MOBILE OPTIMIZATION (Geo-Responsive) --- */
+@media (max-width: 768px) {
+  .tab-buttons-container {
+    gap: 4px; /* Tighten gap for small screens */
+    flex: 1;
+    justify-content: space-around;
+  }
+
+  .tab-buttons-container button {
+    padding: 10px; /* Square-ish touch targets */
+    justify-content: center;
+    min-width: 50px;
+  }
+
+  /* Hide the text labels on small screens */
+  .tab-buttons-container .tab-text {
+    display: none;
+  }
+
+  /* Make the icons slightly larger for better touch interaction */
+  .tab-buttons-container .tab-icon {
+    font-size: 1.4rem;
+    margin: 0;
+  }
+
+  /* Ensure the fullscreen control stays visible but compact */
+  .fullscreen-controls {
+    margin-left: 8px;
+  }
+}
+
+/* Ensure icons are always visible even if text is hidden */
+.tab-icon {
+  display: inline-block;
+}
+
+

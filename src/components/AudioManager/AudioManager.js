@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Howl } from 'howler';
 
 /**
  * 🎵 GLOBAL AUDIO MANAGER SYSTEM
  * 
  * Features:
- * - Global mute/unmute control
+ * - Global mute/unmute control (Master switch)
+ * - Independent A/B site controls (Sub-mixers)
  * - Analysis completion notifications
  * - A/B analysis dual audio controls
  * - Local file priority system
  * - Factor-based audio mapping
- * - Professional audio management
  */
 
 // 🏠 LOCAL AUDIO FILES (Priority 1)
@@ -18,341 +18,249 @@ const LOCAL_AUDIO_SOURCES = {
   // Environmental Biomes
   ocean: '/sounds/ocean.mp3',
   forest: '/sounds/forest.mp3',
-  mountain: '/sounds/mountain.webm', // Note: webm format
+  mountain: '/sounds/mountain.mp3', // Updated to match actual file
   river: '/sounds/river.mp3',
   coastal: '/sounds/ocean.mp3', // Fallback to ocean
   wetland: '/sounds/river.mp3', // Fallback to river
   rural: '/sounds/rural.mp3',
-  agricultural: '/sounds/rural.mp3', // Fallback to rural
-  suburban: '/sounds/urban.mp3', // Fallback to urban
-  
+
   // Urban/Industrial
   urban: '/sounds/urban.mp3',
   industrial: '/sounds/traffic.mp3', // Using traffic as industrial
-  
+  suburban: '/sounds/urban.mp3', // Fallback to urban
+  agricultural: '/sounds/rural.mp3', // Fallback to rural
+
   // Weather/Climate
   storm: '/sounds/flood.mp3', // Fallback to flood
   flood: '/sounds/flood.mp3',
   drought: '/sounds/ambient.mp3', // Fallback to ambient
-  
+
   // Default/Ambient
   ambient: '/sounds/ambient.mp3',
-  
+
   // System Sounds
   success: '/sounds/success.mp3',
   notification: '/sounds/success.mp3', // Fallback to success
   analysis_complete: '/sounds/success.mp3' // Fallback to success
 };
 
-const AudioManager = ({ 
-  children, 
-  onAnalysisComplete, 
+const AudioManager = ({
+  children,
+  onAnalysisComplete,
   onABAnalysisComplete,
   siteAFactors,
   siteBFactors,
   siteALabel,
-  siteBLabel 
+  siteBLabel,
+  // isGlobalMute,      // REMOVED: User requested no global mute
+  // setIsGlobalMute,   // REMOVED
+  siteAPlaying,      // State for Site A mute (passed from TopNav)
+  setSiteAPlaying,   // Setter for Site A
+  siteBPlaying,      // State for Site B mute (passed from TopNav)
+  setSiteBPlaying,   // Setter for Site B
+  isCompareMode      // Whether we are in comparison mode
 }) => {
-  const [isMuted, setIsMuted] = useState(false);
-  const [isABMode, setIsABMode] = useState(false);
-  const [siteAPlaying, setSiteAPlaying] = useState(false);
-  const [siteBPlaying, setSiteBPlaying] = useState(false);
-  
+  // We no longer keep local mute state if props are provided
+  // But we fallback to local if not provided for standalone usage
+  // const [localMute, setLocalMute] = useState(false);
+
+  // Resolve effective mute state
+  // const isMuted = isGlobalMute !== undefined ? isGlobalMute : localMute;
+  // const toggleMute = setIsGlobalMute
+  //   ? () => setIsGlobalMute(!isGlobalMute)
+  //   : () => setLocalMute(!localMute);
+
   const audioRefs = useRef({
-    global: null,
     siteA: null,
     siteB: null,
     notification: null
   });
 
-  // AUDIO SOURCE MANAGEMENT - LOCAL FILES ONLY
+  // AUDIO SOURCE MANAGEMENT
   const getAudioSource = useCallback((audioKey) => {
-    // Priority 1: Local files only
     if (LOCAL_AUDIO_SOURCES[audioKey]) {
-      console.log(` Using local audio: ${audioKey}`);
       return LOCAL_AUDIO_SOURCES[audioKey];
     }
-    
-    console.log(` No local audio source found for: ${audioKey}`);
+    console.warn(`⚠️ No audio source found for: ${audioKey}`);
     return null;
   }, []);
 
   // FACTOR-BASED BIOME DETECTION
-  const detectBiomeFromFactors = useCallback((factors, label) => {
-    if (!factors && !label) return 'ambient';
-    
-    const textLabel = label?.toLowerCase() || '';
-    
-    // Text-based detection
+  const detectBiomeFromFactors = useCallback((factors, label, siteName) => {
+    // 1. Text-based detection (simple override)
+    const textLabel = (label || siteName || '').toLowerCase();
+
+    // Explicit keywords in name take priority
     if (textLabel.includes('ocean') || textLabel.includes('sea')) return 'ocean';
-    if (textLabel.includes('forest') || textLabel.includes('woods')) return 'forest';
-    if (textLabel.includes('mountain') || textLabel.includes('hill')) return 'mountain';
-    if (textLabel.includes('river') || textLabel.includes('stream')) return 'river';
-    if (textLabel.includes('urban') || textLabel.includes('city')) return 'urban';
-    if (textLabel.includes('industrial') || textLabel.includes('factory')) return 'industrial';
-    if (textLabel.includes('storm') || textLabel.includes('thunder')) return 'storm';
-    if (textLabel.includes('flood') || textLabel.includes('wet')) return 'flood';
-    if (textLabel.includes('drought') || textLabel.includes('dry')) return 'drought';
-    if (textLabel.includes('rural') || textLabel.includes('countryside')) return 'rural';
-    if (textLabel.includes('agricultural') || textLabel.includes('farm')) return 'agricultural';
-    if (textLabel.includes('suburban') || textLabel.includes('residential')) return 'suburban';
-    
-    // Factor-based detection
-    if (factors) {
-      let flatFactors = factors;
-      
-      // Handle nested structure
-      if (factors.climatic || factors.environmental || factors.hydrology || factors.physical || factors.socio_econ) {
-        flatFactors = {
-          slope: factors.physical?.slope || 50,
-          elevation: factors.physical?.elevation || 50,
-          flood: factors.hydrology?.flood || 50,
-          water: factors.hydrology?.water || 50,
-          drainage: factors.hydrology?.drainage || 50,
-          vegetation: factors.environmental?.vegetation || 50,
-          pollution: factors.environmental?.pollution || 50,
-          rainfall: factors.climatic?.rainfall || 50,
-          intensity: factors.climatic?.intensity || 50,
-          drought: factors.climatic?.drought || 50,
-          storm: factors.climatic?.storm || 50,
-          landuse: factors.socio_econ?.landuse || 50,
-          infrastructure: factors.socio_eon?.infrastructure || 50,
-          population: factors.socio_econ?.population || 50
-        };
-      }
-      
-      const {
-        slope, elevation, flood, water, drainage,
-        vegetation, pollution, rainfall, intensity,
-        drought, storm, landuse, infrastructure, population
-      } = flatFactors;
-      
-      // Water-based biomes
-      if (water > 70 || flood > 70) return flood > 80 ? 'flood' : 'river';
-      if (water > 50) return 'coastal';
-      
-      // Forest-based biomes
-      if (vegetation > 70 && pollution < 30) return 'forest';
-      if (vegetation > 50 && pollution < 50) return 'rural';
-      
-      // Urban-based biomes
-      if (infrastructure > 70 || population > 70) return 'urban';
-      if (infrastructure > 50 || population > 50) return 'suburban';
-      if (infrastructure > 70 && pollution > 50) return 'industrial';
-      
-      // Mountain-based biomes
-      if (elevation > 70 || slope > 70) return 'mountain';
-      
-      // Climate-based biomes
-      if (rainfall < 20 || drought > 70) return 'drought';
-      if (storm > 70 || intensity > 80) return 'storm';
-      
-      // Agricultural
-      if (landuse > 60 && vegetation > 40) return 'agricultural';
-      
-      // Wetland
-      if (water > 40 && vegetation > 50 && drainage < 40) return 'wetland';
-    }
-    
+    if (textLabel.includes('forest') || textLabel.includes('woods') || textLabel.includes('jungle')) return 'forest';
+    if (textLabel.includes('mountain') || textLabel.includes('hill') || textLabel.includes('peak')) return 'mountain';
+    if (textLabel.includes('river') || textLabel.includes('creek') || textLabel.includes('stream')) return 'river';
+    if (textLabel.includes('city') || textLabel.includes('downtown') || textLabel.includes('urban')) return 'urban';
+
+    // 2. Factor-based detection
+    if (!factors) return 'ambient';
+
+    // Normalize factors structure (handle both flat and nested)
+    const f = {
+      slope: factors.physical?.slope?.value ?? factors.slope ?? 50,
+      elevation: factors.physical?.elevation?.value ?? factors.elevation ?? 50,
+      flood: factors.hydrology?.flood?.value ?? factors.hydrology?.flood ?? 50,
+      water: factors.hydrology?.water?.value ?? factors.hydrology?.water ?? 50,
+      vegetation: factors.environmental?.vegetation?.value ?? factors.vegetation ?? 50,
+      pollution: factors.environmental?.pollution?.value ?? factors.pollution ?? 50,
+      infrastructure: factors.socio_econ?.infrastructure?.value ?? factors.infrastructure ?? 50,
+      population: factors.socio_econ?.population?.value ?? factors.population ?? 50,
+      rainfall: factors.climatic?.rainfall?.value ?? factors.rainfall ?? 50,
+    };
+
+    // Logic Tree
+    if (f.water > 70 || f.flood > 70) return 'river';
+    if (f.vegetation > 70 && f.pollution < 40) return 'forest';
+    if (f.infrastructure > 70 || f.population > 70) return 'urban';
+    if (f.elevation > 70 || f.slope > 70) return 'mountain';
+    if (f.rainfall > 80) return 'storm';
+    if (f.vegetation > 50 && f.infrastructure < 40) return 'rural';
+
     return 'ambient';
   }, []);
 
-  // 🎵 PLAY AUDIO WITH MUTE RESPECT
-  const playAudio = useCallback((audioKey, options = {}) => {
-    if (isMuted) {
-      console.log(`🔇 Audio muted: ${audioKey}`);
+  // 🎵 PLAY AUDIO HELPER
+  const playTrack = useCallback((trackKey, type, volume = 0.5) => {
+    // If master mute is on, don't play anything
+    // if (isMuted) return; // REMOVED GLOBAL MUTE CHECK
+
+    const source = getAudioSource(trackKey);
+    if (!source) return;
+
+    // Stop existing track of this type
+    if (audioRefs.current[type]) {
+      audioRefs.current[type].stop();
+    }
+
+    const sound = new Howl({
+      src: [source],
+      volume: volume,
+      loop: type !== 'notification', // Notifications don't loop
+      onend: () => {
+        if (type === 'notification') {
+          // Cleanup notification ref
+          audioRefs.current[type] = null;
+        }
+      }
+    });
+
+    sound.play();
+    audioRefs.current[type] = sound;
+  }, [getAudioSource]);
+
+  // 🔄 SITE A AUDIO LOGIC
+  useEffect(() => {
+    // 1. If Global Mute is ON -> Stop A -> REMOVED
+    // if (isMuted) {
+    //   if (audioRefs.current.siteA) audioRefs.current.siteA.pause();
+    //   return;
+    // }
+
+    // 2. If Site A is Disabled (Local Mute) -> Stop A
+    if (!siteAPlaying) {
+      if (audioRefs.current.siteA) audioRefs.current.siteA.pause();
       return;
     }
-    
-    const audioSource = getAudioSource(audioKey);
-    if (!audioSource) return;
-    
-    console.log(`🎵 Playing audio: ${audioKey}`);
-    
-    const sound = new Howl({
-      src: [audioSource],
-      volume: options.volume || 0.5,
-      loop: options.loop || false,
-      onload: () => console.log(`✅ Audio loaded: ${audioKey}`),
-      onloaderror: (id, error) => console.log(`❌ Audio load error: ${audioKey}`, error),
-      onplay: () => console.log(`🎬 Audio playing: ${audioKey}`),
-      onend: () => options.onEnd && options.onEnd()
-    });
-    
-    sound.play();
-    return sound;
-  }, [isMuted, getAudioSource]);
 
-  // 🔔 ANALYSIS COMPLETE NOTIFICATION
-  const notifyAnalysisComplete = useCallback(() => {
-    if (!isMuted) {
-      playAudio('analysis_complete', { volume: 0.3 });
+    // 3. If NO factors -> Stop A
+    if (!siteAFactors) {
+      if (audioRefs.current.siteA) audioRefs.current.siteA.stop();
+      return;
     }
-  }, [isMuted, playAudio]);
 
-  // 🔄 A/B ANALYSIS SETUP
-  const setupABAnalysis = useCallback(() => {
-    setIsABMode(true);
-    
-    // Stop any existing audio
-    if (audioRefs.current.siteA) {
-      audioRefs.current.siteA.stop();
-      audioRefs.current.siteA = null;
-    }
-    if (audioRefs.current.siteB) {
-      audioRefs.current.siteB.stop();
-      audioRefs.current.siteB = null;
-    }
-    
-    // Setup site A audio
-    if (siteAFactors || siteALabel) {
-      const biomeA = detectBiomeFromFactors(siteAFactors, siteALabel);
-      const audioA = playAudio(biomeA, { 
-        loop: true, 
-        volume: 0.4,
-        onEnd: () => setSiteAPlaying(false)
-      });
-      audioRefs.current.siteA = audioA;
-      setSiteAPlaying(true);
-    }
-    
-    // Setup site B audio
-    if (siteBFactors || siteBLabel) {
-      const biomeB = detectBiomeFromFactors(siteBFactors, siteBLabel);
-      const audioB = playAudio(biomeB, { 
-        loop: true, 
-        volume: 0.4,
-        onEnd: () => setSiteBPlaying(false)
-      });
-      audioRefs.current.siteB = audioB;
-      setSiteBPlaying(true);
-    }
-    
-    // Play notification
-    if (!isMuted) {
-      setTimeout(() => {
-        playAudio('notification', { volume: 0.3 });
-      }, 500);
-    }
-  }, [isMuted, playAudio, detectBiomeFromFactors, siteAFactors, siteALabel, siteBFactors, siteBLabel]);
+    // 4. Play/Resume A
+    // If already playing the correct track, just ensure it's playing
+    // For now, we simple re-detect and play. Howler handles overlaps if we manage refs well.
+    const biome = detectBiomeFromFactors(siteAFactors, siteALabel, 'Site A');
 
-  // 🎛️ TOGGLE SITE AUDIO
-  const toggleSiteAudio = useCallback((site) => {
-    if (site === 'A') {
-      if (audioRefs.current.siteA) {
-        if (siteAPlaying) {
-          audioRefs.current.siteA.pause();
-          setSiteAPlaying(false);
-        } else {
-          audioRefs.current.siteA.play();
-          setSiteAPlaying(true);
-        }
-      }
-    } else if (site === 'B') {
-      if (audioRefs.current.siteB) {
-        if (siteBPlaying) {
-          audioRefs.current.siteB.pause();
-          setSiteBPlaying(false);
-        } else {
-          audioRefs.current.siteB.play();
-          setSiteBPlaying(true);
-        }
-      }
+    // Resume if exists and paused, or start new
+    if (audioRefs.current.siteA && !audioRefs.current.siteA.playing()) {
+      audioRefs.current.siteA.play();
+    } else if (!audioRefs.current.siteA) {
+      playTrack(biome, 'siteA', 0.4);
+    } else {
+      // If biome changed, restart (Advanced optimization, skipping for now to ensure robustness)
+      // For simple toggle, existing logic handles resume
     }
-  }, [siteAPlaying, siteBPlaying]);
 
-  // 🔇 TOGGLE GLOBAL MUTE
-  const toggleMute = useCallback(() => {
-    setIsMuted(prev => {
-      const newMuteState = !prev;
-      
-      // Handle existing audio
-      if (audioRefs.current.siteA) {
-        if (newMuteState) {
-          audioRefs.current.siteA.pause();
-          setSiteAPlaying(false);
-        } else if (isABMode) {
-          audioRefs.current.siteA.play();
-          setSiteAPlaying(true);
-        }
-      }
-      
-      if (audioRefs.current.siteB) {
-        if (newMuteState) {
-          audioRefs.current.siteB.pause();
-          setSiteBPlaying(false);
-        } else if (isABMode) {
-          audioRefs.current.siteB.play();
-          setSiteBPlaying(true);
-        }
-      }
-      
-      console.log(newMuteState ? '🔇 Audio muted' : '🔊 Audio unmuted');
-      return newMuteState;
-    });
-  }, [isABMode]);
+  }, [siteAPlaying, siteAFactors, siteALabel, detectBiomeFromFactors, playTrack]);
 
-  // 🎯 EFFECTS
+  // 🔄 SITE B AUDIO LOGIC (Only in Compare Mode)
   useEffect(() => {
-    if (onAnalysisComplete) {
-      notifyAnalysisComplete();
+    // CRITICAL FIX: Only play B if factors exist AND we are in compare mode
+    const shouldPlayB = isCompareMode && siteBFactors && Object.keys(siteBFactors).length > 0;
+
+    // 1. If Global Mute is ON -> Stop B -> REMOVED
+    // if (isMuted) {
+    //   if (audioRefs.current.siteB) audioRefs.current.siteB.pause();
+    //   return;
+    // }
+
+    // 2. If Not in Compare Mode OR Site B Local Mute is ON -> Stop B
+    // Also stop if shouldPlayB is false (no data yet)
+    if (!shouldPlayB || !siteBPlaying) {
+      if (audioRefs.current.siteB) audioRefs.current.siteB.pause();
+      return;
     }
-  }, [onAnalysisComplete, notifyAnalysisComplete]);
+
+    // 3. Play/Resume B
+    const biome = detectBiomeFromFactors(siteBFactors, siteBLabel, 'Site B');
+
+    if (audioRefs.current.siteB && !audioRefs.current.siteB.playing()) {
+      audioRefs.current.siteB.play();
+    } else if (!audioRefs.current.siteB) {
+      playTrack(biome, 'siteB', 0.4);
+    }
+
+  }, [isCompareMode, siteBPlaying, siteBFactors, siteBLabel, detectBiomeFromFactors, playTrack]);
+
+  // 🔔 SUCCESS / NOTIFICATION TRIGGER
+  // Listen for changes in factors to trigger success sound
+  useEffect(() => {
+    // Triggers if Site A is UNMUTED
+    if (siteAFactors && siteAPlaying) {
+      // Debounce or check if it's a NEW analysis could be complex, 
+      // but for now, we assume simple prop updates trigger this.
+      // We'll use a unique key if available, or just rely on parent to not spam updates.
+      playTrack('success', 'notification', 0.3);
+    }
+  }, [siteAFactors, siteAPlaying, playTrack]); // siteAFactors changing implies new analysis
 
   useEffect(() => {
-    if (onABAnalysisComplete) {
-      setupABAnalysis();
+    // Triggers if Compare Mode is ON AND Site B is UNMUTED AND factors exist
+    if (isCompareMode && siteBFactors && siteBPlaying) {
+      // Optional: Distinct sound for comparison or same success sound
+      // Adding a small delay to avoid exact overlap if both load instantly
+      setTimeout(() => playTrack('success', 'notification', 0.3), 200);
     }
-  }, [onABAnalysisComplete, setupABAnalysis]);
+  }, [isCompareMode, siteBFactors, siteBPlaying, playTrack]);
 
-  // 🧹 CLEANUP
+
+  // 🧹 CLEANUP ON UNMOUNT
   useEffect(() => {
-    const currentAudioRefs = audioRefs.current;
+    // Store current refs in effect scope
+    const currentRefs = audioRefs.current;
+    
     return () => {
-      Object.values(currentAudioRefs).forEach(audio => {
-        if (audio) {
-          audio.stop();
-          audio.unload();
-        }
+      Object.values(currentRefs).forEach(sound => {
+        if (sound) sound.unload();
       });
     };
   }, []);
 
   return (
-    <div className="audio-manager">
+    <>
       {children}
-      
-      {/* 🎛️ Global Audio Controls */}
-      <div className="audio-controls-fixed">
-        <button 
-          className={`audio-control-btn ${isMuted ? 'muted' : 'unmuted'}`}
-          onClick={toggleMute}
-          title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-        >
-          {isMuted ? '🔇' : '🔊'}
-        </button>
-        
-        {/* A/B Analysis Controls */}
-        {isABMode && (
-          <div className="ab-audio-controls">
-            <button 
-              className={`ab-audio-btn site-a ${siteAPlaying ? 'playing' : 'paused'}`}
-              onClick={() => toggleSiteAudio('A')}
-              title={`Site A Audio - ${siteALabel || 'Location A'}`}
-            >
-              📍 A
-            </button>
-            <button 
-              className={`ab-audio-btn site-b ${siteBPlaying ? 'playing' : 'paused'}`}
-              onClick={() => toggleSiteAudio('B')}
-              title={`Site B Audio - ${siteBLabel || 'Location B'}`}
-            >
-              📍 B
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+      {/* 
+         We don't render controls here anymore because they are in TopNav.
+         This component is now a logical wrapper/context provider.
+      */}
+    </>
   );
 };
 

@@ -2,18 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import "./TopNav.css";
 import QRCode from "react-qr-code";
 
-export default function TopNav({ 
-  isDarkMode, 
+export default function TopNav({
+  isDarkMode,
   setIsDarkMode,
   isAudioEnabled,
-  setIsAudioEnabled, 
-  analysisHistory = [], 
-  compareResult, 
-  isCompareMode, 
-  siteAPlaying, 
-  setSiteAPlaying, 
-  siteBPlaying, 
-  setSiteBPlaying 
+  setIsAudioEnabled,
+  analysisHistory = [],
+  compareResult,
+  isCompareMode,
+  siteAPlaying,
+  setSiteAPlaying,
+  siteBPlaying,
+  setSiteBPlaying
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const [showTeam, setShowTeam] = useState(false);
@@ -84,7 +84,7 @@ export default function TopNav({
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    
+
     const handleResize = () => {
       const small = window.innerWidth < 768;
       setIsSmallScreen(small);
@@ -116,59 +116,59 @@ export default function TopNav({
       >
         <div className="nav-content-shell">
           <div className="nav-group left">
-            
-                <div className="nav-group right">
-                  {!isSmallScreen && (
-              <div className="compact-sys">
-                <span className="date-val">{currentTime.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
-                <span className="time-val">{currentTime.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-              </div>
-            )}
-            <div className="team-trigger-wrapper">
-              <button className={`team-btn ${showTeam ? "active" : ""}`} onClick={() => setShowTeam(!showTeam)}>Team</button>
-              <div className={`compact-team-pane ${showTeam ? "show" : ""}`}>
-                <div className="pane-inner">
-                   <div className="pane-header">
+
+            <div className="nav-group right">
+              {!isSmallScreen && (
+                <div className="compact-sys">
+                  <span className="date-val">{currentTime.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}</span>
+                  <span className="time-val">{currentTime.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                </div>
+              )}
+              <div className="team-trigger-wrapper">
+                <button className={`team-btn ${showTeam ? "active" : ""}`} onClick={() => setShowTeam(!showTeam)}>Team</button>
+                <div className={`compact-team-pane ${showTeam ? "show" : ""}`}>
+                  <div className="pane-inner">
+                    <div className="pane-header">
                       <h4 className="project-title">Project Development Team</h4>
                       <p className="guide-text">Guided by: <span>Dr. G. Naga Chandrika</span></p>
                       <div className="header-divider"></div>
-                   </div>
-                   <div className="team-grid">
+                    </div>
+                    <div className="team-grid">
                       <div className="member-card">Adepu Vaishnavi</div>
                       <div className="member-card">Chinni Jyothika</div>
                       <div className="member-card">Harsha vardhan Botlagunta</div>
                       <div className="member-card">Maganti Pranathi</div>
-                   </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            
-            <button className={`icon-btn ${showHistoryTable ? "active" : ""}`} onClick={() => setShowHistoryTable(true)}>🕒</button>
-            <a href="/wild-facts" className="icon-btn" title="Wild World Facts" style={{ textDecoration: 'none', color: 'inherit' }}>🌍</a>
-          </div>
-            
-          <div className="nav-group center">
-            <div className="brand-wrap">
-              <div className="status-dot" />
-              <h1 className="logo">Geo<span>AI</span></h1>
-            </div>
-          </div>
 
-          
-            
-            <button 
-              className={`icon-btn audio-toggle ${siteAPlaying ? "active" : ""}`} 
+
+              <button className={`icon-btn ${showHistoryTable ? "active" : ""}`} onClick={() => setShowHistoryTable(true)}>🕒</button>
+              <a href="/wild-facts" className="icon-btn" title="Wild World Facts" style={{ textDecoration: 'none', color: 'inherit' }}>🌍</a>
+            </div>
+
+            <div className="nav-group center">
+              <div className="brand-wrap">
+                <div className="status-dot" />
+                <h1 className="logo">Geo<span>AI</span></h1>
+              </div>
+            </div>
+
+
+{/* 
+            <button
+              className={`icon-btn audio-toggle ${siteAPlaying ? "active" : ""}`}
               onClick={() => setSiteAPlaying(!siteAPlaying)}
               title={siteAPlaying ? "Mute Site A Audio" : "Play Site A Audio"}
               style={{ fontSize: '1.2rem' }}
             >
               {siteAPlaying ? "🔊" : "🔇"}
             </button>
-            
-            {isCompareMode && compareResult && (
-              <button 
-                className={`icon-btn audio-toggle-b ${siteBPlaying ? "active" : ""}`} 
+
+            {isCompareMode && compareResult && compareResult.factors && (
+              <button
+                className={`icon-btn audio-toggle-b ${siteBPlaying ? "active" : ""}`}
                 onClick={() => {
                   console.log('🔇 Site B button clicked, current state:', siteBPlaying);
                   setSiteBPlaying(!siteBPlaying);
@@ -178,23 +178,46 @@ export default function TopNav({
               >
                 {siteBPlaying ? "🔊" : "🔇"}
               </button>
-            )}
-            <div className="palette-wrapper" 
-                 onMouseEnter={handleMouseEnterPalette} 
-                 onMouseLeave={handleMouseLeavePalette}>
-              <button 
+            )} */}
+            {/* SITE A AUDIO BUTTON (Always visible if audio is globally enabled) */}
+{isAudioEnabled && (
+  <button 
+    className={`icon-btn audio-toggle ${siteAPlaying ? "active" : "muted"}`} 
+    onClick={() => setSiteAPlaying(!siteAPlaying)}
+    title={siteAPlaying ? "Mute Site A" : "Unmute Site A"}
+  >
+    {siteAPlaying ? "🔊" : "🔇"}
+    <span className="audio-label">A</span>
+  </button>
+)}
+
+{/* SITE B AUDIO BUTTON (Only visible during active comparison with data) */}
+{isAudioEnabled && isCompareMode && compareResult && (
+  <button 
+    className={`icon-btn audio-toggle-b ${siteBPlaying ? "active" : "muted"}`} 
+    onClick={() => setSiteBPlaying(!siteBPlaying)}
+    title={siteBPlaying ? "Mute Site B" : "Unmute Site B"}
+  >
+    {siteBPlaying ? "🔊" : "🔇"}
+    <span className="audio-label">B</span>
+  </button>
+)}
+            <div className="palette-wrapper"
+              onMouseEnter={handleMouseEnterPalette}
+              onMouseLeave={handleMouseLeavePalette}>
+              <button
                 className={`icon-btn palette-trigger ${showPalette ? "active" : ""}`}
                 onClick={handlePaletteIconClick}
               >
                 🎨
               </button>
-              
+
               <div className={`palette-dropdown ${showPalette ? "expanded" : ""}`}>
                 {themes.map((t) => (
-                  <div 
-                    key={t.name} 
-                    className="color-dot" 
-                    style={{ backgroundColor: t.color }} 
+                  <div
+                    key={t.name}
+                    className="color-dot"
+                    style={{ backgroundColor: t.color }}
                     onClick={(e) => {
                       e.stopPropagation();
                       changeThemeColor(t.color);
@@ -219,19 +242,19 @@ export default function TopNav({
               <div className="qr-expanded-overlay" onClick={() => setExpandedQR(null)}>
                 <div className="qr-expanded-card" onClick={(e) => e.stopPropagation()}>
                   <div className="qr-container">
-                    <QRCode 
-                      value={expandedQR.link} 
-                      size={240} 
-                      bgColor="#ffffff" 
-                      fgColor="#000000" 
+                    <QRCode
+                      value={expandedQR.link}
+                      size={240}
+                      bgColor="#ffffff"
+                      fgColor="#000000"
                     />
                   </div>
 
                   <div className="qr-info">
                     {expandedQR.name.includes("vs") ? (
                       <div className="comparison-title-wrap">
-                         <span className="analysis-tag">Comparison Analysis</span>
-                         <h4>{expandedQR.name}</h4>
+                        <span className="analysis-tag">Comparison Analysis</span>
+                        <h4>{expandedQR.name}</h4>
                       </div>
                     ) : (
                       <h4>{expandedQR.name} Report</h4>
@@ -243,7 +266,7 @@ export default function TopNav({
                 </div>
               </div>
             )}
-            
+
             <div className="modal-header" style={{ borderBottomColor: 'var(--accent-color)' }}>
               <h3>🛰️ Analysis History</h3>
               <button className="modal-close" onClick={() => setShowHistoryTable(false)}>✖</button>
@@ -270,16 +293,16 @@ export default function TopNav({
 
                       const baseUrl = `${window.location.origin}${window.location.pathname}`;
                       let dynamicLink = `${baseUrl}?lat=${item.lat}&lng=${item.lng}&nameA=${encodeURIComponent(item.name || "Location A")}`;
-                      
+
                       if (isComparison) {
                         dynamicLink += `&bLat=${encodeURIComponent(item.bLat)}&bLng=${encodeURIComponent(item.bLng)}&nameB=${encodeURIComponent(item.nameB || "Location B")}&compare=true`;
                       }
 
                       const getScoreColor = (s) => (s < 40 ? '#ef4444' : s < 70 ? '#f59e0b' : '#10b981');
                       const analysisDate = item.timestamp ? new Date(item.timestamp) : null;
-                      const formattedTime = analysisDate 
-                        ? analysisDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric'}) + ' ' + 
-                          analysisDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      const formattedTime = analysisDate
+                        ? analysisDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' +
+                        analysisDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                         : "N/A";
 
                       return (
@@ -312,7 +335,7 @@ export default function TopNav({
                                 {isComparison && <small style={{ fontSize: '9px', marginRight: '4px', opacity: 0.8 }}>A:</small>}
                                 {item.score.toFixed(1)}%
                               </span>
-                              
+
                               {isComparison && item.scoreB !== undefined && (
                                 <span className="score-badge" style={{ backgroundColor: getScoreColor(item.scoreB), minWidth: '60px' }}>
                                   <small style={{ fontSize: '9px', marginRight: '4px', opacity: 0.8 }}>B:</small>
@@ -325,18 +348,18 @@ export default function TopNav({
                           <td style={{ fontSize: '11px', whiteSpace: 'nowrap', opacity: 0.8 }}>
                             {formattedTime}
                           </td>
-         
+
                           <td style={{ textAlign: 'center' }}>
-                            <div 
+                            <div
                               className="qr-mini-wrapper"
                               onClick={() => {
-                                const displayName = isComparison 
-                                  ? `${item.name} vs ${item.nameB}` 
+                                const displayName = isComparison
+                                  ? `${item.name} vs ${item.nameB}`
                                   : item.name;
 
-                                setExpandedQR({ 
-                                  link: dynamicLink, 
-                                  name: displayName 
+                                setExpandedQR({
+                                  link: dynamicLink,
+                                  name: displayName
                                 });
                               }}
                               style={{ cursor: 'zoom-in', background: '#fff', padding: '3px', borderRadius: '4px', display: 'inline-block' }}
@@ -346,16 +369,16 @@ export default function TopNav({
                           </td>
 
                           <td>
-                            <a 
-                              href={dynamicLink} 
-                              target="_blank" 
+                            <a
+                              href={dynamicLink}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="history-direct-link"
-                              style={{ 
-                                fontSize: '11px', 
-                                textDecoration: 'none', 
-                                padding: '6px 10px', 
-                                borderRadius: '6px', 
+                              style={{
+                                fontSize: '11px',
+                                textDecoration: 'none',
+                                padding: '6px 10px',
+                                borderRadius: '6px',
                                 border: '1px solid var(--accent-color)',
                                 display: 'inline-block'
                               }}

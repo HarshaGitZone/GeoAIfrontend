@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, memo,  } from "react";
+import React, { useState, useEffect, useCallback, useRef, memo, } from "react";
 // import { Marker, useMap, useMapEvents } from "react-leaflet";
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents, Popup } from "react-leaflet";
 import FactorBar from "../FactorBar/FactorBar";
@@ -8,7 +8,7 @@ import L from "leaflet";
 import ProMap from '../ProMap/ProMap';
 import "./LandSuitabilityChecker.css";
 import TopNav from "../TopNav/TopNav";
-import RadarChart from "../RadarChart/RadarChart"; 
+import RadarChart from "../RadarChart/RadarChart";
 import WeatherCard from '../Weather/WeatherCard';
 import HazardsCard from '../HazardsCard/HazardsCard';
 import SnapshotGeo from '../SnapshotGeo/SnapshotGeo';
@@ -424,9 +424,9 @@ const getSitePotential = (factors, activeSpectral) => {
 
         : f.thermal > 70
 
-        ? "comfortable climate conditions"
+          ? "comfortable climate conditions"
 
-        : "stable terrain conditions";
+          : "stable terrain conditions";
 
 
 
@@ -626,7 +626,7 @@ const getSitePotential = (factors, activeSpectral) => {
 
 //   const rating = score > 80 ? "A" : score > 60 ? "B" : score > 40 ? "C" : "F";
 
-  
+
 
 //   return (
 
@@ -688,7 +688,7 @@ const PotentialSection = ({ factors, score }) => {
 
   const rating = score > 80 ? "A" : score > 60 ? "B" : score > 40 ? "C" : "F";
 
-  
+
 
   return (
 
@@ -704,7 +704,7 @@ const PotentialSection = ({ factors, score }) => {
 
         </div>
 
-        
+
 
         {/* Force these to be side-by-side with a new wrapper class */}
 
@@ -762,13 +762,13 @@ const PotentialSection = ({ factors, score }) => {
 
 
 
-  const FactorsSection = memo(({ 
+const FactorsSection = memo(({
 
- 
 
-  data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode, 
 
-  onOpenHistory, mapVariety, isCompareMode, activeSpectral, mapMode, 
+  data, latVal, lngVal, locationName, isDarkMode, viewMode, setViewMode,
+
+  onOpenHistory, mapVariety, isCompareMode, activeSpectral, mapMode,
 
   active3DStyle, setLat, setLng, isSelectingB, handleCompareSelect,
 
@@ -784,7 +784,7 @@ const PotentialSection = ({ factors, score }) => {
 
   const isValidCoords = !isNaN(nLat) && !isNaN(nLng);
 
-const { factors, category_scores, suitability_score } = data;
+  const { factors, category_scores, suitability_score } = data;
 
 
 
@@ -852,7 +852,7 @@ const { factors, category_scores, suitability_score } = data;
 
 
 
-// --- UPDATED CATEGORIZED FACTOR CARD ---
+  // --- UPDATED CATEGORIZED FACTOR CARD ---
 
   const FactorCard = (
 
@@ -870,7 +870,7 @@ const { factors, category_scores, suitability_score } = data;
 
         <button className="view-toggle" onClick={() => setViewMode(viewMode === "bars" ? "radar" : "bars")}>
 
-            {viewMode === "bars" ? "🕸️ Radar View" : "📊 Bar View"}
+          {viewMode === "bars" ? "🕸️ Radar View" : "📊 Bar View"}
 
         </button>
 
@@ -888,7 +888,7 @@ const { factors, category_scores, suitability_score } = data;
 
             <div key={catKey} className="factor-category-group animate-in">
 
-              
+
 
               {/* MAJOR CATEGORY HEADER */}
 
@@ -910,7 +910,7 @@ const { factors, category_scores, suitability_score } = data;
 
               </div>
 
-              
+
 
               {/* INDIVIDUAL SUB-FACTORS (The 23 Factors) */}
 
@@ -924,17 +924,18 @@ const { factors, category_scores, suitability_score } = data;
 
                   return (
 
-                  <FactorBar 
+                    <FactorBar
 
-                    key={fKey} 
+                      key={fKey}
 
-                    label={fKey.replace(/_/g, ' ').toUpperCase()} 
+                      label={fKey.replace(/_/g, ' ').toUpperCase()}
 
-                    value={displayVal}
+                      value={displayVal}
 
-                  />
+                    />
 
-                );})}
+                  );
+                })}
 
               </div>
 
@@ -942,9 +943,9 @@ const { factors, category_scores, suitability_score } = data;
 
           ))}
 
-          
 
-         {/* TOTAL SUITABILITY SUMMARY */}
+
+          {/* TOTAL SUITABILITY SUMMARY */}
 
           <div className="suitability-summation-bar">
 
@@ -960,27 +961,27 @@ const { factors, category_scores, suitability_score } = data;
 
         </div>
 
-  // Inside FactorsSection memo, update the RadarChart component call:
+        // Inside FactorsSection memo, update the RadarChart component call:
 
-) : (
+      ) : (
 
-  <div className="radar-container" style={{ height: '350px', width: '100%', position: 'relative' }}>
+        <div className="radar-container" style={{ height: '350px', width: '100%', position: 'relative' }}>
 
-      <RadarChart 
+          <RadarChart
 
-        key={`radar-${nLat}-${nLng}`} 
+            key={`radar-${nLat}-${nLng}`}
 
-        data={Object.values(factors).reduce((acc, cat) => ({ ...acc, ...cat }), {})} 
+            data={Object.values(factors).reduce((acc, cat) => ({ ...acc, ...cat }), {})}
 
-        isDarkMode={isDarkMode}
+            isDarkMode={isDarkMode}
 
-        categoryScores={category_scores}
+            categoryScores={category_scores}
 
-      />
+          />
 
-  </div>
+        </div>
 
-)}
+      )}
 
     </div>
 
@@ -992,111 +993,111 @@ const { factors, category_scores, suitability_score } = data;
 
       <div className={`card hero-card glass-morphic ${data.suitability_score < 40 ? 'danger-glow' : ''}`}>
 
- 
 
-<div className="mini-map-context">
 
-  {isValidCoords ? (
+        <div className="mini-map-context">
 
-    mapMode === "2D" ? (
+          {isValidCoords ? (
 
-      /* 2D Minimap */
+            mapMode === "2D" ? (
 
-      <MapContainer 
+              /* 2D Minimap */
 
-        center={[nLat, nLng]} 
+              <MapContainer
 
-        // zoom={15} 
+                center={[nLat, nLng]}
 
-        zoom={16}               // ✅ REQUIRED: Pass the state
+                // zoom={15} 
 
-    // key={`map-2d-${zoom}`}
+                zoom={16}               // ✅ REQUIRED: Pass the state
 
-        zoomControl={false} 
+                // key={`map-2d-${zoom}`}
 
-        dragging={false} 
+                zoomControl={false}
 
-        scrollWheelZoom={false}    // 🔒 LOCK: Prevents zooming inside the mini-card
+                dragging={false}
 
-    doubleClickZoom={false}
+                scrollWheelZoom={false}    // 🔒 LOCK: Prevents zooming inside the mini-card
 
-    touchZoom={false}
+                doubleClickZoom={false}
 
-        style={{ height: "100%", width: "100%" }}
+                touchZoom={false}
 
-        key={`minimap-${nLat}-${nLng}`}
+                style={{ height: "100%", width: "100%" }}
 
-      >
+                key={`minimap-${nLat}-${nLng}`}
 
-        {/* 🚀 THIS IS THE FIX: It watches lat/lng and moves the engine */}
+              >
 
-        <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
+                {/* 🚀 THIS IS THE FIX: It watches lat/lng and moves the engine */}
 
-        {/* ✅ RESTORED FOR MINIMAP */}
+                <TileLayer url={varieties[mapVariety] || varieties.hybrid} />
 
-        {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+                {/* ✅ RESTORED FOR MINIMAP */}
 
-          <TileLayer 
+                {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
 
-            key={activeSpectral} 
+                  <TileLayer
 
-            url={spectralLayers[activeSpectral]} 
+                    key={activeSpectral}
 
-            opacity={0.7} 
+                    url={spectralLayers[activeSpectral]}
 
-            zIndex={100} 
+                    opacity={0.7}
 
-          />
+                    zIndex={100}
 
-        )}
+                  />
 
-  
+                )}
 
-    {/* Use a simple Marker instead of LocationMarker to keep it static */}
 
-    <Marker position={[nLat, nLng]} />
 
-      </MapContainer>
+                {/* Use a simple Marker instead of LocationMarker to keep it static */}
 
-    ) : (
+                <Marker position={[nLat, nLng]} />
 
-      /* 3D Minimap */
+              </MapContainer>
 
-      <ProMap 
+            ) : (
 
-        lat={nLat} 
+              /* 3D Minimap */
 
-        lng={nLng} 
+              <ProMap
 
-        setLat={setLat} // Fixed: Passing setter to 3D
+                lat={nLat}
 
-    setLng={setLng}
+                lng={nLng}
 
-    // zoom={currentZoom}
+                setLat={setLat} // Fixed: Passing setter to 3D
 
-    zoom={16}
+                setLng={setLng}
 
-        factors={data.factors} 
+                // zoom={currentZoom}
 
-        isDarkMode={isDarkMode} 
+                zoom={16}
 
-        activeStyle={active3DStyle}
+                factors={data.factors}
 
-        interactive={false}
+                isDarkMode={isDarkMode}
 
-      />
+                activeStyle={active3DStyle}
 
-    )
+                interactive={false}
 
-  ) : (
+              />
 
-    <div className="empty-results" style={{ fontSize: '11px' }}>Awaiting Analysis...</div>
+            )
 
-  )}
+          ) : (
 
-  <div className="mini-map-label">{mapMode} Tactical Preview</div>
+            <div className="empty-results" style={{ fontSize: '11px' }}>Awaiting Analysis...</div>
 
-</div>
+          )}
+
+          <div className="mini-map-label">{mapMode} Tactical Preview</div>
+
+        </div>
 
 
 
@@ -1112,7 +1113,7 @@ const { factors, category_scores, suitability_score } = data;
 
         </div>
 
-        
+
 
         <div className="suitability-header-row">
 
@@ -1122,7 +1123,7 @@ const { factors, category_scores, suitability_score } = data;
 
 
 
-        <div className="score-value" style={{ "--score-color": data.suitability_score < 40 ? "#ef4444" : data.suitability_score < 70 ? "#f59e0b" : "#10b981"}}>
+        <div className="score-value" style={{ "--score-color": data.suitability_score < 40 ? "#ef4444" : data.suitability_score < 70 ? "#f59e0b" : "#10b981" }}>
 
           {data.suitability_score?.toFixed(1)}
 
@@ -1150,13 +1151,13 @@ const { factors, category_scores, suitability_score } = data;
 
         )}
 
-          <div className="history-action-container">
+        <div className="history-action-container">
 
-          <button 
+          <button
 
-            className="history-pro-btn" 
+            className="history-pro-btn"
 
-            onClick={() => onOpenHistory(data, locationName, latVal, lngVal)} 
+            onClick={() => onOpenHistory(data, locationName, latVal, lngVal)}
 
             title="Execute Temporal Analysis"
 
@@ -1180,7 +1181,7 @@ const { factors, category_scores, suitability_score } = data;
 
 
 
-      
+
 
     </>
 
@@ -1216,13 +1217,13 @@ const MapCenterSync = ({ setViewCenter }) => {
 
 /* --- TACTICAL MAP CONTROLLER --- */
 
-const TacticalMapController = ({ 
+const TacticalMapController = ({
 
-  latA, lngA, latB, lngB, currentLat, currentLng, 
+  latA, lngA, latB, lngB, currentLat, currentLng,
 
-  setLat, setLng, isSelectingB, setBLatInput, setBLngInput, 
+  setLat, setLng, isSelectingB, setBLatInput, setBLngInput,
 
-  isTacticalMode, setViewCenter, setZoom 
+  isTacticalMode, setViewCenter, setZoom
 
 }) => {
 
@@ -1310,7 +1311,7 @@ const TacticalMapController = ({
 
       }
 
-      
+
 
       // Get actual device location using geolocation API
 
@@ -1392,7 +1393,7 @@ const TacticalMapController = ({
 
     };
 
-  }, [map, latA, lngA, latB, lngB, currentLat, currentLng, setZoom,setLat,setLng]);
+  }, [map, latA, lngA, latB, lngB, currentLat, currentLng, setZoom, setLat, setLng]);
 
 
 
@@ -1472,59 +1473,59 @@ const TacticalMapController = ({
 
 };
 
-  
+
 
 export default function LandSuitabilityChecker() {
 
 
 
-const handleZoomIn = () => {
+  const handleZoomIn = () => {
 
-  setZoom(z => Math.min(z + 1, 20));
+    setZoom(z => Math.min(z + 1, 20));
 
-};
-
-
-
-const handleZoomOut = () => {
-
-  setZoom(z => Math.max(z - 1, 0));
-
-};
+  };
 
 
 
-// 3. FULLSCREEN FIX: Add a null check to avoid the error you saw
+  const handleZoomOut = () => {
 
-const toggleFullScreen = () => {
+    setZoom(z => Math.max(z - 1, 0));
 
-  const mapElement = mapViewportRef.current;
-
-  if (!mapElement) return;
+  };
 
 
 
-  if (!document.fullscreenElement) {
+  // 3. FULLSCREEN FIX: Add a null check to avoid the error you saw
 
-    mapElement.requestFullscreen().catch(err => {
+  const toggleFullScreen = () => {
 
-      console.error("Fullscreen failed:", err);
+    const mapElement = mapViewportRef.current;
 
-    });
+    if (!mapElement) return;
 
-  } else {
 
-    document.exitFullscreen();
 
-  }
+    if (!document.fullscreenElement) {
 
-};
+      mapElement.requestFullscreen().catch(err => {
 
-const [isTacticalMode, setIsTacticalMode] = useState(false);
+        console.error("Fullscreen failed:", err);
 
-const [mapMode, setMapMode] = useState("2D"); // "2D" or "3D"
+      });
 
-const [active3DStyle, setActive3DStyle] = useState("satellite");
+    } else {
+
+      document.exitFullscreen();
+
+    }
+
+  };
+
+  const [isTacticalMode, setIsTacticalMode] = useState(false);
+
+  const [mapMode, setMapMode] = useState("2D"); // "2D" or "3D"
+
+  const [active3DStyle, setActive3DStyle] = useState("satellite");
 
   const initialAnalysisRef = useRef(false); // Flag to prevent double execution on mount
 
@@ -1532,9 +1533,9 @@ const [active3DStyle, setActive3DStyle] = useState("satellite");
 
   const [deviceLocation, setDeviceLocation] = useState({ lat: null, lng: null });
 
-  const [analysisHistory, setAnalysisHistory] = useState(() => 
+  const [analysisHistory, setAnalysisHistory] = useState(() =>
 
-      JSON.parse(localStorage.getItem("analysis_history")) || []
+    JSON.parse(localStorage.getItem("analysis_history")) || []
 
   );
 
@@ -1542,7 +1543,7 @@ const [active3DStyle, setActive3DStyle] = useState("satellite");
   const [siteAPlaying, setSiteAPlaying] = useState(true); // Default ON
   const [siteBPlaying, setSiteBPlaying] = useState(true); // Default ON when available
 
-  
+
 
   const [lat, setLat] = useState(() => localStorage.getItem("geo_lat") || "17.385");
 
@@ -1574,13 +1575,13 @@ const [active3DStyle, setActive3DStyle] = useState("satellite");
 
   const [compareResult, setCompareResult] = useState(() => JSON.parse(localStorage.getItem("geo_last_compare_result")) || null);
 
-const [isCompareMode, setIsCompareMode] = useState(() => JSON.parse(localStorage.getItem("geo_is_compare")) || false);
+  const [isCompareMode, setIsCompareMode] = useState(() => JSON.parse(localStorage.getItem("geo_is_compare")) || false);
 
-const [showLocationB, setShowLocationB] = useState(() => JSON.parse(localStorage.getItem("geo_show_b")) || false);
+  const [showLocationB, setShowLocationB] = useState(() => JSON.parse(localStorage.getItem("geo_show_b")) || false);
 
-const [locationAName, setLocationAName] = useState(() => localStorage.getItem("geo_name_a") || "Site A");
+  const [locationAName, setLocationAName] = useState(() => localStorage.getItem("geo_name_a") || "Site A");
 
-const [locationBName, setLocationBName] = useState(() => localStorage.getItem("geo_name_b") || "Site B");
+  const [locationBName, setLocationBName] = useState(() => localStorage.getItem("geo_name_b") || "Site B");
 
   const [sidebarWidth, setSidebarWidth] = useState(() => Number(localStorage.getItem("sidebar_width")) || 320);
 
@@ -1617,29 +1618,29 @@ const [locationBName, setLocationBName] = useState(() => localStorage.getItem("g
 
   const [debug] = useState(false);
 
-  const [viewMode, setViewMode] = useState("bars"); 
+  const [viewMode, setViewMode] = useState("bars");
 
-// Add these near your other useState calls
+  // Add these near your other useState calls
 
-const [analyzedCoords, setAnalyzedCoords] = useState(() => ({
+  const [analyzedCoords, setAnalyzedCoords] = useState(() => ({
 
-  lat: localStorage.getItem("geo_lat_analyzed") || null,
+    lat: localStorage.getItem("geo_lat_analyzed") || null,
 
-  lng: localStorage.getItem("geo_lng_analyzed") || null
+    lng: localStorage.getItem("geo_lng_analyzed") || null
 
-}));
+  }));
 
 
 
-const [analyzedCoordsB, setAnalyzedCoordsB] = useState(() => ({
+  const [analyzedCoordsB, setAnalyzedCoordsB] = useState(() => ({
 
-  lat: localStorage.getItem("geo_lat_b_analyzed") || null,
+    lat: localStorage.getItem("geo_lat_b_analyzed") || null,
 
-  lng: localStorage.getItem("geo_lng_b_analyzed") || null
+    lng: localStorage.getItem("geo_lng_b_analyzed") || null
 
-}));
+  }));
 
-const [editingIndex, setEditingIndex] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
 
   const [editingName, setEditingName] = useState("");
 
@@ -1657,7 +1658,7 @@ const [editingIndex, setEditingIndex] = useState(null);
 
   const [isBFromSavedPlace] = useState(false);
 
-  
+
 
   const [showNearby, setShowNearby] = useState(false);
 
@@ -1677,13 +1678,13 @@ const [editingIndex, setEditingIndex] = useState(null);
 
   const [isAnalysisFullscreen, setIsAnalysisFullscreen] = useState(false);
 
-  
+
 
   // State variables needed for Digital Twin functionality
   const [isDigitalTwinDragging, setIsDigitalTwinDragging] = useState(false);
   const [digitalTwinPosition, setDigitalTwinPosition] = useState({ x: 0, y: 0 });
   const [digitalTwinStart, setDigitalTwinStart] = useState({ x: 0, y: 0 });
-  
+
   // Chat history for GeoGPT (kept for compatibility)
   const [chatHistory] = useState([{ role: 'assistant', content: 'Hello! I\'m GeoGPT Intelligence. What would you like to know about our geospatial analysis?' }]);
   const chatEndRef = useRef(null);
@@ -1731,19 +1732,19 @@ const [editingIndex, setEditingIndex] = useState(null);
 
   // Snapshot States
 
-const [snapshotData, setSnapshotData] = useState(null);       // Site A
+  const [snapshotData, setSnapshotData] = useState(null);       // Site A
 
-// const [setSnapshotDataB] = useState(null); 
+  // const [setSnapshotDataB] = useState(null); 
 
-const [snapshotDataB, setSnapshotDataB] = useState(null);   // Site B
+  const [snapshotDataB, setSnapshotDataB] = useState(null);   // Site B
 
-const [snapshotLoading, setSnapshotLoading] = useState(false);
+  const [snapshotLoading, setSnapshotLoading] = useState(false);
 
 
 
-// --- UTILITY FUNCTIONS DEFINED FIRST TO AVOID NO-UNDEF ERRORS ---
+  // --- UTILITY FUNCTIONS DEFINED FIRST TO AVOID NO-UNDEF ERRORS ---
 
-  
+
 
   const fetchSnapshot = useCallback(async (tLat, tLng) => {
 
@@ -1761,11 +1762,11 @@ const [snapshotLoading, setSnapshotLoading] = useState(false);
 
       return await res.json();
 
-    } catch (err) { 
+    } catch (err) {
 
       console.error("Snapshot error:", err);
 
-      return null; 
+      return null;
 
     }
 
@@ -1783,7 +1784,7 @@ const [snapshotLoading, setSnapshotLoading] = useState(false);
 
         method: "POST",
 
-        headers: { 
+        headers: {
 
           "Content-Type": "application/json",
 
@@ -1803,7 +1804,7 @@ const [snapshotLoading, setSnapshotLoading] = useState(false);
 
       console.error("Analysis Request Failed:", error);
 
-      throw error; 
+      throw error;
 
     }
 
@@ -1811,7 +1812,7 @@ const [snapshotLoading, setSnapshotLoading] = useState(false);
 
 
 
-const resolveLocationName = useCallback((targetLat, targetLng, defaultFallback) => {
+  const resolveLocationName = useCallback((targetLat, targetLng, defaultFallback) => {
 
     const curLat = parseFloat(targetLat).toFixed(4);
 
@@ -1821,7 +1822,7 @@ const resolveLocationName = useCallback((targetLat, targetLng, defaultFallback) 
 
     // Condition 1: Check Saved Places
 
-    const matchedPlace = savedPlaces.find(p => 
+    const matchedPlace = savedPlaces.find(p =>
 
       p.lat.toFixed(4) === curLat && p.lng.toFixed(4) === curLng
 
@@ -1847,13 +1848,13 @@ const resolveLocationName = useCallback((targetLat, targetLng, defaultFallback) 
 
     return userName || defaultFallback;
 
-}, [savedPlaces, deviceLocation]);
+  }, [savedPlaces, deviceLocation]);
 
 
 
 
 
-const handleCompareSelect = useCallback(async (tLat, tLng, existingName = null) => {
+  const handleCompareSelect = useCallback(async (tLat, tLng, existingName = null) => {
 
     setIsSelectingB(false);
 
@@ -1861,11 +1862,11 @@ const handleCompareSelect = useCallback(async (tLat, tLng, existingName = null) 
 
     setBLngInput(tLng.toString());
 
-    
+
 
     let name = existingName || resolveLocationName(tLat, tLng, "Site B");
 
-    
+
 
     setCompareName(name);
 
@@ -1875,19 +1876,19 @@ const handleCompareSelect = useCallback(async (tLat, tLng, existingName = null) 
 
     setIsCompareMode(true);
 
-    setCompareResult(null); 
+    setCompareResult(null);
 
 
 
-    try { 
+    try {
 
       // FIXED: Parallel fetch for both suitability and snapshot identity for Site B
 
       const [suitResult, snapData] = await Promise.all([
 
-          performAnalysis(tLat, tLng),
+        performAnalysis(tLat, tLng),
 
-          fetchSnapshot(tLat, tLng)
+        fetchSnapshot(tLat, tLng)
 
       ]);
 
@@ -1901,754 +1902,754 @@ const handleCompareSelect = useCallback(async (tLat, tLng, existingName = null) 
 
       // 📍 PERSISTENCE FIX: Save analyzed coords so the Red marker stays
 
-        const coordsB = { lat: tLat.toString(), lng: tLng.toString() };
+      const coordsB = { lat: tLat.toString(), lng: tLng.toString() };
 
-        setAnalyzedCoordsB(coordsB);
+      setAnalyzedCoordsB(coordsB);
 
-        localStorage.setItem("geo_lat_b_analyzed", tLat.toString());
+      localStorage.setItem("geo_lat_b_analyzed", tLat.toString());
 
-        localStorage.setItem("geo_lng_b_analyzed", tLng.toString());
+      localStorage.setItem("geo_lng_b_analyzed", tLng.toString());
 
-    } catch (err) { 
+    } catch (err) {
 
-      console.error(err); 
+      console.error(err);
 
-    } finally { 
+    } finally {
 
-      setCompareLoading(false); 
+      setCompareLoading(false);
 
     }
 
-}, [resolveLocationName, performAnalysis, fetchSnapshot]);
-
-
-
-useEffect(() => {
-
-  if (navigator.geolocation) {
-
-    navigator.geolocation.getCurrentPosition((pos) => {
-
-      setDeviceLocation({
-
-        lat: pos.coords.latitude.toFixed(4),
-
-        lng: pos.coords.longitude.toFixed(4)
-
-      });
-
-    });
-
-  }
-
-}, []);
-
-
-
-
-
-
-
-const handleSubmit = useCallback(async (e) => {
-
-  // Safe check for automatic calls from useEffect (where 'e' might be undefined)
-
-  if (e && e.preventDefault) e.preventDefault();
-
-
-
-  // Check if coordinates have changed since last analysis
-
-  const hasAChanged = analyzedCoords.lat !== lat || analyzedCoords.lng !== lng;
-
-
-
-  // 1. Determine Name A: 
-
-  // Use existing state if set, otherwise use resolver (Saved Places > My Loc > Prompt)
-
-  // Logic preserves your requirement to re-prompt if coordinates moved
-
-  let nameA = locationAName;
-
-  if (locationAName === "Site A" || hasAChanged) {
-
-    nameA = resolveLocationName(lat, lng, "Site A");
-
-    setLocationAName(nameA);
-
-  } else {
-
-    setLocationAName(nameA);
-
-  }
-
-
-
-  // Reset results and start loading states
-  // But keep snapshot data persistent until analysis is closed
-
-  setResult(null);
-
-  setCompareResult(null);
-
-  // Don't clear snapshot data - keep cards persistent
-  // setSnapshotData(null);
-  // if (setSnapshotDataB) setSnapshotDataB(null);
-
-  setLoading(true);
-
-  setSnapshotLoading(true);
-
-
-
-  // Capture current state of comparison for this specific submission
-
-  const activeCompareMode = showLocationB && bLatInput && bLngInput;
-
-
-
-  if (activeCompareMode) {
-
-    setIsCompareMode(true);
-
-    setCompareLoading(true);
-
-    
-
-    // Determine Name B for UI consistency
-
-    const nameB = (locationBName && locationBName !== "Site B") 
-
-      ? locationBName 
-
-      : resolveLocationName(bLatInput, bLngInput, "Site B");
-
-      
-
-    setLocationBName(nameB);
-
-    setCompareName(nameB);
-
-  } else {
-
-    setIsCompareMode(false);
-
-  }
-
-
-
-  // Build the list of parallel tasks
-
-  const tasks = [
-
-    performAnalysis(lat, lng),
-
-    fetchSnapshot(lat, lng)
-
-  ];
-
-
-
-  if (activeCompareMode) {
-
-    tasks.push(performAnalysis(bLatInput, bLngInput));
-
-    tasks.push(fetchSnapshot(bLatInput, bLngInput));
-
-  }
-
-
-
-  try {
-
-    const results = await Promise.allSettled(tasks);
-
-
-
-    // --- SITE A RESULTS & UNIFIED HISTORY ---
-
-    if (results[0].status === 'fulfilled') {
-
-      const analysisData = results[0].value;
-
-      setResult(analysisData);
-
-      // const coordsA = { lat, lng };
-
-      setAnalyzedCoords({ lat, lng });
-
-      localStorage.setItem("geo_lat_analyzed", lat);
-
-    localStorage.setItem("geo_lng_analyzed", lng);
-
-      // Identify Score B from the task results (index 2) directly to ensure history accuracy
-
-      const scoreBVal = (activeCompareMode && results[2]?.status === 'fulfilled') 
-
-        ? results[2].value.suitability_score 
-
-        : undefined;
-
-
-
-      // Final check for nameB to ensure the history entry isn't saved as default "Site B" if a name exists
-
-      const finalNameB = activeCompareMode 
-
-        ? (locationBName !== "Site B" ? locationBName : resolveLocationName(bLatInput, bLngInput, "Site B")) 
-
-        : null;
-
-
-
-      // UNIFIED HISTORY ENTRY: Stores both sites in one row if comparing.
-
-      const newHistoryEntry = {
-
-        name: nameA,
-
-        lat,
-
-        lng,
-
-        score: analysisData.suitability_score,
-
-        timestamp: new Date().getTime(),
-
-        // Comparison Data:
-
-        isCompareMode: activeCompareMode,
-
-        nameB: finalNameB,
-
-        bLat: activeCompareMode ? bLatInput : null,
-
-        bLng: activeCompareMode ? bLngInput : null,
-
-        scoreB: scoreBVal 
-
-      };
-
-
-
-      setAnalysisHistory(prev => {
-
-        const updated = [newHistoryEntry, ...prev].slice(0, 20);
-
-        localStorage.setItem("analysis_history", JSON.stringify(updated));
-
-        return updated;
-
-      });
-
-    }
-
-
-
-    if (results[1].status === 'fulfilled') {
-
-      setSnapshotData(results[1].value);
-
-    }
-
-
-
-    // --- SITE B DATA PROCESSING (UI states only) ---
-
-    if (activeCompareMode) {
-
-      if (results[2] && results[2].status === 'fulfilled') {
-
-        const compareData = results[2].value;
-
-        setCompareResult(compareData);
-
-        setAnalyzedCoordsB({ lat: bLatInput.toString(), lng: bLngInput.toString() });
-
-      }
-
-
-
-      if (results[3] && results[3].status === 'fulfilled') {
-
-        if (setSnapshotDataB) setSnapshotDataB(results[3].value);
-
-      }
-
-    }
-
-
-
-  } catch (err) {
-
-    console.error("Critical Analysis Error:", err);
-
-  } finally {
-
-    setLoading(false);
-
-    setCompareLoading(false);
-
-    setSnapshotLoading(false);
-
-  }
-
-}, [
-
-  lat, 
-
-  lng, 
-
-  locationAName, 
-
-  locationBName, 
-
-  bLatInput, 
-
-  bLngInput, 
-
-  showLocationB, 
-
-  resolveLocationName, 
-
-  performAnalysis, 
-
-  fetchSnapshot, 
-
-  setSnapshotDataB, 
-
-  setAnalysisHistory,
-
-  analyzedCoords.lat, 
-
-  analyzedCoords.lng,
-
-]);
-
-
-
-
-
-const mapViewportRef = useRef(null); // Reference for Fullscreen targeting
-
-
-
-useEffect(() => {
-
-  const params = new URLSearchParams(window.location.search);
-
-  // 1. Skip logic if currently loading a shared link
-
-  if (params.get("bLat")) return;
-
-
-
-  const currentLatB = parseFloat(bLatInput).toFixed(4);
-
-  const currentLngB = parseFloat(bLngInput).toFixed(4);
-
-
-
-  // 2. Check if the new coordinates match a Saved Place
-
-  const matchedB = savedPlaces.find(p => 
-
-    parseFloat(p.lat).toFixed(4) === currentLatB && 
-
-    parseFloat(p.lng).toFixed(4) === currentLngB
-
-  );
-
-
-
-  if (matchedB) {
-
-    // 3. Adopt saved name
-
-    setLocationBName(matchedB.name);
-
-  } else if (analyzedCoordsB.lat && bLatInput !== analyzedCoordsB.lat.toString()) {
-
-    // 4. Reset to "Site B" and clear old comparison data
-
-    setLocationBName("Site B");
-
-    // setCompareResult(null);
-
-  }
-
-}, [bLatInput, bLngInput, analyzedCoordsB.lat, savedPlaces]);
-
-
-
-useEffect(() => {
-
-  const params = new URLSearchParams(window.location.search);
-
-  if (params.get("lat")) return; // Don't interfere with share links
-
-
-
-  const currentLat = parseFloat(lat).toFixed(4);
-
-  const currentLng = parseFloat(lng).toFixed(4);
-
-
-
-  // 1. Check if the new coordinates match a Saved Place
-
-  const matched = savedPlaces.find(p => 
-
-    p.lat.toFixed(4) === currentLat && p.lng.toFixed(4) === currentLng
-
-  );
-
-
-
-  if (matched) {
-
-    // Automatically adopt the saved name
-
-    setLocationAName(matched.name);
-
-  } else if (analyzedCoords.lat && lat !== analyzedCoords.lat.toString()) {
-
-    // 2. Only reset to "Site A" if coordinates moved away from last analysis 
-
-    // AND it's not a saved place
-
-    setLocationAName("Site A");
-
-    // setResult(null); 
-
-  }
-
-}, [lat, lng, analyzedCoords, savedPlaces]); // Added savedPlaces to dependencies
-
-
-
-useEffect(() => {
-
-  // Check if we already handled the URL analysis to prevent loops
-
-  if (initialAnalysisRef.current) return;
-
-  const params = new URLSearchParams(window.location.search);
-
-
-
-  const sharedLat = params.get("lat");
-
-  const sharedLng = params.get("lng");
-
-  const sharedNameA = params.get("nameA");
-
-  const sharedBLat = params.get("bLat");
-
-  const sharedBLng = params.get("bLng");
-
-  const sharedNameB = params.get("nameB");
-
-  const isSharedCompare = params.get("compare") === "1" || params.get("compare") === "true";
-
-  
-
-  let shouldAnalyze = false;
-
-
-
-  if (sharedLat && sharedLng) {
-
-    // 1. Set main location state
-
-    setLat(sharedLat);
-
-    setLng(sharedLng);
-
-    // 2. Persist to Local Storage immediately so other 
-
-    // components don't default to 0.0000
-
-    localStorage.setItem("geo_lat", sharedLat);
-
-    localStorage.setItem("geo_lng", sharedLng);
-
-    // if (sharedNameA) {
-
-    //   // Decode name here so handleSubmit sees a set name and skips the prompt
-
-    //   setLocationAName(decodeURIComponent(sharedNameA));
-
-    // }
-
-    if (sharedNameA) {
-
-      const decodedName = decodeURIComponent(sharedNameA);
-
-      setLocationAName(decodedName);
-
-      localStorage.setItem("geo_name_a", decodedName);
-
-    }
-
-    shouldAnalyze = true; 
-
-  }
-
-
-
-  if (isSharedCompare && sharedBLat && sharedBLng) {
-
-    // 2. Set comparison inputs
-
-    setBLatInput(sharedBLat);
-
-    setBLngInput(sharedBLng);
-
-    
-
-    // Decode Site B name
-
-    const decodedB = sharedNameB ? decodeURIComponent(sharedNameB) : "Site B";
-
-    setLocationBName(decodedB);
-
-    setCompareName(decodedB);
-
-    
-
-    // 3. Enable comparison UI modes
-
-    setShowLocationB(true);
-
-    setIsCompareMode(true);
-
-    
-
-    // 4. Trigger Site B analysis immediately using the decoded name to bypass prompts
-
-    handleCompareSelect(sharedBLat, sharedBLng, decodedB);
-
-  }
-
-
-
-  // 5. Auto-trigger the main analysis for Site A
-
-  if (shouldAnalyze) {
-
-
-
-    initialAnalysisRef.current = true;
-
-    const timer = setTimeout(() => {
-
-      handleSubmit(); 
-
-    }, 500);
-
-    return () => clearTimeout(timer);
-
-  }
-
-  
-
-  // handleSubmit is now included to satisfy the ESLint warning
-
-}, [handleCompareSelect, handleSubmit]);
-
-
-
-// ✅ FIX: Ensure comparison history is saved after URL-based analysis (DEPLOYED FIX)
-
-useEffect(() => {
-
-  if (!result || !compareResult || !isCompareMode) return;
-
-
-
-  setAnalysisHistory(prev => {
-
-    const exists = prev.some(
-
-      h =>
-
-        h.lat === lat &&
-
-        h.lng === lng &&
-
-        h.bLat === bLatInput &&
-
-        h.bLng === bLngInput
-
-    );
-
-    if (exists) return prev;
-
-
-
-    const entry = {
-
-      name: locationAName,
-
-      lat,
-
-      lng,
-
-      score: result.suitability_score,
-
-      isCompareMode: true,
-
-      nameB: locationBName,
-
-      bLat: bLatInput,
-
-      bLng: bLngInput,
-
-      scoreB: compareResult.suitability_score,
-
-      timestamp: Date.now()
-
-    };
-
-
-
-    const updated = [entry, ...prev].slice(0, 20);
-
-    localStorage.setItem("analysis_history", JSON.stringify(updated));
-
-    return updated;
-
-  });
-
-}, [
-
-  result,
-
-  compareResult,
-
-  isCompareMode,
-
-  lat,
-
-  lng,
-
-  bLatInput,
-
-  bLngInput,
-
-  locationAName,
-
-  locationBName
-
-]);
-
-
-
- 
-
-
-
-
-
-  
+  }, [resolveLocationName, performAnalysis, fetchSnapshot]);
 
 
 
   useEffect(() => {
 
-  // --- Standard UI State ---
+    if (navigator.geolocation) {
 
-  localStorage.setItem("geo_lat", lat);
+      navigator.geolocation.getCurrentPosition((pos) => {
 
-  localStorage.setItem("geo_lng", lng);
+        setDeviceLocation({
 
-  localStorage.setItem("geo_name_a", locationAName); // Persist Name A
+          lat: pos.coords.latitude.toFixed(4),
 
-  localStorage.setItem("geo_name_b", locationBName); // Persistence
+          lng: pos.coords.longitude.toFixed(4)
 
-  localStorage.setItem("geo_is_compare", JSON.stringify(isCompareMode));
+        });
 
-  localStorage.setItem("geo_show_b", JSON.stringify(showLocationB));
-
-  localStorage.setItem("geo_zoom", zoom);
-
-  localStorage.setItem("geo_theme", JSON.stringify(isDarkMode));
-
-  localStorage.setItem("geo_map_style", mapVariety);
-
-  localStorage.setItem("sidebar_width", sidebarWidth);
-
-  localStorage.setItem("bottom_height", bottomHeight);
-
-  localStorage.setItem("savedPlaces", JSON.stringify(savedPlaces));
-
-  
-
-  // --- Analysis Results Persistence ---
-
-  if (compareResult) localStorage.setItem("geo_last_compare_result", JSON.stringify(compareResult));
-
-  if (result) {
-
-    localStorage.setItem("geo_last_result", JSON.stringify(result));
-
-  } else {
-
-    localStorage.removeItem("geo_last_result");
-
-  }
-
-
-
-  // --- Comparison State Persistence ---
-
-  localStorage.setItem("geo_is_compare", JSON.stringify(isCompareMode));
-
-  localStorage.setItem("geo_show_b", JSON.stringify(showLocationB));
-
-  
-
-  if (showLocationB) {
-
-    localStorage.setItem("geo_lat_b", bLatInput);
-
-    localStorage.setItem("geo_lng_b", bLngInput);
-
-    localStorage.setItem("geo_name_b", locationBName); // Persist Name B
-
-    
-
-    if (compareResult) {
-
-      localStorage.setItem("geo_last_compare_result", JSON.stringify(compareResult));
+      });
 
     }
 
-  }
+  }, []);
 
 
 
-  // --- Theme Application ---
-
-  document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light");
 
 
 
-}, [
 
-  lat, lng, locationAName, zoom, isDarkMode, sidebarWidth, bottomHeight, 
+  const handleSubmit = useCallback(async (e) => {
 
-  result, savedPlaces, mapVariety, isCompareMode, showLocationB, 
+    // Safe check for automatic calls from useEffect (where 'e' might be undefined)
 
-  bLatInput, bLngInput, locationBName, compareResult
-
-]);
+    if (e && e.preventDefault) e.preventDefault();
 
 
 
- 
+    // Check if coordinates have changed since last analysis
+
+    const hasAChanged = analyzedCoords.lat !== lat || analyzedCoords.lng !== lng;
+
+
+
+    // 1. Determine Name A: 
+
+    // Use existing state if set, otherwise use resolver (Saved Places > My Loc > Prompt)
+
+    // Logic preserves your requirement to re-prompt if coordinates moved
+
+    let nameA = locationAName;
+
+    if (locationAName === "Site A" || hasAChanged) {
+
+      nameA = resolveLocationName(lat, lng, "Site A");
+
+      setLocationAName(nameA);
+
+    } else {
+
+      setLocationAName(nameA);
+
+    }
+
+
+
+    // Reset results and start loading states
+    // But keep snapshot data persistent until analysis is closed
+
+    setResult(null);
+
+    setCompareResult(null);
+
+    // Don't clear snapshot data - keep cards persistent
+    // setSnapshotData(null);
+    // if (setSnapshotDataB) setSnapshotDataB(null);
+
+    setLoading(true);
+
+    setSnapshotLoading(true);
+
+
+
+    // Capture current state of comparison for this specific submission
+
+    const activeCompareMode = showLocationB && bLatInput && bLngInput;
+
+
+
+    if (activeCompareMode) {
+
+      setIsCompareMode(true);
+
+      setCompareLoading(true);
+
+
+
+      // Determine Name B for UI consistency
+
+      const nameB = (locationBName && locationBName !== "Site B")
+
+        ? locationBName
+
+        : resolveLocationName(bLatInput, bLngInput, "Site B");
+
+
+
+      setLocationBName(nameB);
+
+      setCompareName(nameB);
+
+    } else {
+
+      setIsCompareMode(false);
+
+    }
+
+
+
+    // Build the list of parallel tasks
+
+    const tasks = [
+
+      performAnalysis(lat, lng),
+
+      fetchSnapshot(lat, lng)
+
+    ];
+
+
+
+    if (activeCompareMode) {
+
+      tasks.push(performAnalysis(bLatInput, bLngInput));
+
+      tasks.push(fetchSnapshot(bLatInput, bLngInput));
+
+    }
+
+
+
+    try {
+
+      const results = await Promise.allSettled(tasks);
+
+
+
+      // --- SITE A RESULTS & UNIFIED HISTORY ---
+
+      if (results[0].status === 'fulfilled') {
+
+        const analysisData = results[0].value;
+
+        setResult(analysisData);
+
+        // const coordsA = { lat, lng };
+
+        setAnalyzedCoords({ lat, lng });
+
+        localStorage.setItem("geo_lat_analyzed", lat);
+
+        localStorage.setItem("geo_lng_analyzed", lng);
+
+        // Identify Score B from the task results (index 2) directly to ensure history accuracy
+
+        const scoreBVal = (activeCompareMode && results[2]?.status === 'fulfilled')
+
+          ? results[2].value.suitability_score
+
+          : undefined;
+
+
+
+        // Final check for nameB to ensure the history entry isn't saved as default "Site B" if a name exists
+
+        const finalNameB = activeCompareMode
+
+          ? (locationBName !== "Site B" ? locationBName : resolveLocationName(bLatInput, bLngInput, "Site B"))
+
+          : null;
+
+
+
+        // UNIFIED HISTORY ENTRY: Stores both sites in one row if comparing.
+
+        const newHistoryEntry = {
+
+          name: nameA,
+
+          lat,
+
+          lng,
+
+          score: analysisData.suitability_score,
+
+          timestamp: new Date().getTime(),
+
+          // Comparison Data:
+
+          isCompareMode: activeCompareMode,
+
+          nameB: finalNameB,
+
+          bLat: activeCompareMode ? bLatInput : null,
+
+          bLng: activeCompareMode ? bLngInput : null,
+
+          scoreB: scoreBVal
+
+        };
+
+
+
+        setAnalysisHistory(prev => {
+
+          const updated = [newHistoryEntry, ...prev].slice(0, 20);
+
+          localStorage.setItem("analysis_history", JSON.stringify(updated));
+
+          return updated;
+
+        });
+
+      }
+
+
+
+      if (results[1].status === 'fulfilled') {
+
+        setSnapshotData(results[1].value);
+
+      }
+
+
+
+      // --- SITE B DATA PROCESSING (UI states only) ---
+
+      if (activeCompareMode) {
+
+        if (results[2] && results[2].status === 'fulfilled') {
+
+          const compareData = results[2].value;
+
+          setCompareResult(compareData);
+
+          setAnalyzedCoordsB({ lat: bLatInput.toString(), lng: bLngInput.toString() });
+
+        }
+
+
+
+        if (results[3] && results[3].status === 'fulfilled') {
+
+          if (setSnapshotDataB) setSnapshotDataB(results[3].value);
+
+        }
+
+      }
+
+
+
+    } catch (err) {
+
+      console.error("Critical Analysis Error:", err);
+
+    } finally {
+
+      setLoading(false);
+
+      setCompareLoading(false);
+
+      setSnapshotLoading(false);
+
+    }
+
+  }, [
+
+    lat,
+
+    lng,
+
+    locationAName,
+
+    locationBName,
+
+    bLatInput,
+
+    bLngInput,
+
+    showLocationB,
+
+    resolveLocationName,
+
+    performAnalysis,
+
+    fetchSnapshot,
+
+    setSnapshotDataB,
+
+    setAnalysisHistory,
+
+    analyzedCoords.lat,
+
+    analyzedCoords.lng,
+
+  ]);
+
+
+
+
+
+  const mapViewportRef = useRef(null); // Reference for Fullscreen targeting
+
+
+
+  useEffect(() => {
+
+    const params = new URLSearchParams(window.location.search);
+
+    // 1. Skip logic if currently loading a shared link
+
+    if (params.get("bLat")) return;
+
+
+
+    const currentLatB = parseFloat(bLatInput).toFixed(4);
+
+    const currentLngB = parseFloat(bLngInput).toFixed(4);
+
+
+
+    // 2. Check if the new coordinates match a Saved Place
+
+    const matchedB = savedPlaces.find(p =>
+
+      parseFloat(p.lat).toFixed(4) === currentLatB &&
+
+      parseFloat(p.lng).toFixed(4) === currentLngB
+
+    );
+
+
+
+    if (matchedB) {
+
+      // 3. Adopt saved name
+
+      setLocationBName(matchedB.name);
+
+    } else if (analyzedCoordsB.lat && bLatInput !== analyzedCoordsB.lat.toString()) {
+
+      // 4. Reset to "Site B" and clear old comparison data
+
+      setLocationBName("Site B");
+
+      // setCompareResult(null);
+
+    }
+
+  }, [bLatInput, bLngInput, analyzedCoordsB.lat, savedPlaces]);
+
+
+
+  useEffect(() => {
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("lat")) return; // Don't interfere with share links
+
+
+
+    const currentLat = parseFloat(lat).toFixed(4);
+
+    const currentLng = parseFloat(lng).toFixed(4);
+
+
+
+    // 1. Check if the new coordinates match a Saved Place
+
+    const matched = savedPlaces.find(p =>
+
+      p.lat.toFixed(4) === currentLat && p.lng.toFixed(4) === currentLng
+
+    );
+
+
+
+    if (matched) {
+
+      // Automatically adopt the saved name
+
+      setLocationAName(matched.name);
+
+    } else if (analyzedCoords.lat && lat !== analyzedCoords.lat.toString()) {
+
+      // 2. Only reset to "Site A" if coordinates moved away from last analysis 
+
+      // AND it's not a saved place
+
+      setLocationAName("Site A");
+
+      // setResult(null); 
+
+    }
+
+  }, [lat, lng, analyzedCoords, savedPlaces]); // Added savedPlaces to dependencies
+
+
+
+  useEffect(() => {
+
+    // Check if we already handled the URL analysis to prevent loops
+
+    if (initialAnalysisRef.current) return;
+
+    const params = new URLSearchParams(window.location.search);
+
+
+
+    const sharedLat = params.get("lat");
+
+    const sharedLng = params.get("lng");
+
+    const sharedNameA = params.get("nameA");
+
+    const sharedBLat = params.get("bLat");
+
+    const sharedBLng = params.get("bLng");
+
+    const sharedNameB = params.get("nameB");
+
+    const isSharedCompare = params.get("compare") === "1" || params.get("compare") === "true";
+
+
+
+    let shouldAnalyze = false;
+
+
+
+    if (sharedLat && sharedLng) {
+
+      // 1. Set main location state
+
+      setLat(sharedLat);
+
+      setLng(sharedLng);
+
+      // 2. Persist to Local Storage immediately so other 
+
+      // components don't default to 0.0000
+
+      localStorage.setItem("geo_lat", sharedLat);
+
+      localStorage.setItem("geo_lng", sharedLng);
+
+      // if (sharedNameA) {
+
+      //   // Decode name here so handleSubmit sees a set name and skips the prompt
+
+      //   setLocationAName(decodeURIComponent(sharedNameA));
+
+      // }
+
+      if (sharedNameA) {
+
+        const decodedName = decodeURIComponent(sharedNameA);
+
+        setLocationAName(decodedName);
+
+        localStorage.setItem("geo_name_a", decodedName);
+
+      }
+
+      shouldAnalyze = true;
+
+    }
+
+
+
+    if (isSharedCompare && sharedBLat && sharedBLng) {
+
+      // 2. Set comparison inputs
+
+      setBLatInput(sharedBLat);
+
+      setBLngInput(sharedBLng);
+
+
+
+      // Decode Site B name
+
+      const decodedB = sharedNameB ? decodeURIComponent(sharedNameB) : "Site B";
+
+      setLocationBName(decodedB);
+
+      setCompareName(decodedB);
+
+
+
+      // 3. Enable comparison UI modes
+
+      setShowLocationB(true);
+
+      setIsCompareMode(true);
+
+
+
+      // 4. Trigger Site B analysis immediately using the decoded name to bypass prompts
+
+      handleCompareSelect(sharedBLat, sharedBLng, decodedB);
+
+    }
+
+
+
+    // 5. Auto-trigger the main analysis for Site A
+
+    if (shouldAnalyze) {
+
+
+
+      initialAnalysisRef.current = true;
+
+      const timer = setTimeout(() => {
+
+        handleSubmit();
+
+      }, 500);
+
+      return () => clearTimeout(timer);
+
+    }
+
+
+
+    // handleSubmit is now included to satisfy the ESLint warning
+
+  }, [handleCompareSelect, handleSubmit]);
+
+
+
+  // ✅ FIX: Ensure comparison history is saved after URL-based analysis (DEPLOYED FIX)
+
+  useEffect(() => {
+
+    if (!result || !compareResult || !isCompareMode) return;
+
+
+
+    setAnalysisHistory(prev => {
+
+      const exists = prev.some(
+
+        h =>
+
+          h.lat === lat &&
+
+          h.lng === lng &&
+
+          h.bLat === bLatInput &&
+
+          h.bLng === bLngInput
+
+      );
+
+      if (exists) return prev;
+
+
+
+      const entry = {
+
+        name: locationAName,
+
+        lat,
+
+        lng,
+
+        score: result.suitability_score,
+
+        isCompareMode: true,
+
+        nameB: locationBName,
+
+        bLat: bLatInput,
+
+        bLng: bLngInput,
+
+        scoreB: compareResult.suitability_score,
+
+        timestamp: Date.now()
+
+      };
+
+
+
+      const updated = [entry, ...prev].slice(0, 20);
+
+      localStorage.setItem("analysis_history", JSON.stringify(updated));
+
+      return updated;
+
+    });
+
+  }, [
+
+    result,
+
+    compareResult,
+
+    isCompareMode,
+
+    lat,
+
+    lng,
+
+    bLatInput,
+
+    bLngInput,
+
+    locationAName,
+
+    locationBName
+
+  ]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+  useEffect(() => {
+
+    // --- Standard UI State ---
+
+    localStorage.setItem("geo_lat", lat);
+
+    localStorage.setItem("geo_lng", lng);
+
+    localStorage.setItem("geo_name_a", locationAName); // Persist Name A
+
+    localStorage.setItem("geo_name_b", locationBName); // Persistence
+
+    localStorage.setItem("geo_is_compare", JSON.stringify(isCompareMode));
+
+    localStorage.setItem("geo_show_b", JSON.stringify(showLocationB));
+
+    localStorage.setItem("geo_zoom", zoom);
+
+    localStorage.setItem("geo_theme", JSON.stringify(isDarkMode));
+
+    localStorage.setItem("geo_map_style", mapVariety);
+
+    localStorage.setItem("sidebar_width", sidebarWidth);
+
+    localStorage.setItem("bottom_height", bottomHeight);
+
+    localStorage.setItem("savedPlaces", JSON.stringify(savedPlaces));
+
+
+
+    // --- Analysis Results Persistence ---
+
+    if (compareResult) localStorage.setItem("geo_last_compare_result", JSON.stringify(compareResult));
+
+    if (result) {
+
+      localStorage.setItem("geo_last_result", JSON.stringify(result));
+
+    } else {
+
+      localStorage.removeItem("geo_last_result");
+
+    }
+
+
+
+    // --- Comparison State Persistence ---
+
+    localStorage.setItem("geo_is_compare", JSON.stringify(isCompareMode));
+
+    localStorage.setItem("geo_show_b", JSON.stringify(showLocationB));
+
+
+
+    if (showLocationB) {
+
+      localStorage.setItem("geo_lat_b", bLatInput);
+
+      localStorage.setItem("geo_lng_b", bLngInput);
+
+      localStorage.setItem("geo_name_b", locationBName); // Persist Name B
+
+
+
+      if (compareResult) {
+
+        localStorage.setItem("geo_last_compare_result", JSON.stringify(compareResult));
+
+      }
+
+    }
+
+
+
+    // --- Theme Application ---
+
+    document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light");
+
+
+
+  }, [
+
+    lat, lng, locationAName, zoom, isDarkMode, sidebarWidth, bottomHeight,
+
+    result, savedPlaces, mapVariety, isCompareMode, showLocationB,
+
+    bLatInput, bLngInput, locationBName, compareResult
+
+  ]);
+
+
+
+
 
 
 
@@ -2669,10 +2670,10 @@ useEffect(() => {
       // Calculate height from bottom of viewport for proper stretching
       const viewportHeight = window.innerHeight;
       const distanceFromBottom = viewportHeight - e.clientY;
-      
+
       // Convert to actual height (distance from bottom)
       const newHeight = Math.max(200, Math.min(viewportHeight * 0.8, distanceFromBottom));
-      
+
       setBottomHeight(newHeight);
 
     }
@@ -2795,7 +2796,7 @@ useEffect(() => {
 
 
 
-const handleOpenHistory = useCallback((targetData, targetName, targetLat, targetLng) => {
+  const handleOpenHistory = useCallback((targetData, targetName, targetLat, targetLng) => {
 
     const base = `${window.location.origin}${(window.location.pathname || '/').replace(/\/?$/, '')}`;
 
@@ -2803,7 +2804,7 @@ const handleOpenHistory = useCallback((targetData, targetName, targetLat, target
 
     window.open(url, '_blank', 'noopener,noreferrer');
 
-}, []);
+  }, []);
 
 
 
@@ -2821,7 +2822,7 @@ const handleOpenHistory = useCallback((targetData, targetName, targetLat, target
 
       setLng(deviceLng.toString());
 
-      
+
 
       // Also move the map view to the user's location
 
@@ -2845,7 +2846,7 @@ const handleOpenHistory = useCallback((targetData, targetName, targetLat, target
 
   };
 
-const [activeSpectral, setActiveSpectral] = useState("standard");
+  const [activeSpectral, setActiveSpectral] = useState("standard");
 
   const handleMyLocationB = () => {
 
@@ -2887,804 +2888,195 @@ const [activeSpectral, setActiveSpectral] = useState("standard");
 
 
 
-  // const EvidenceSection = ({ data }) => (
+  // const EvidenceSection = ({ data }) => {
+  //   // const meta = data.explanation?.factors_meta;
+  //   const meta = data?.explanation?.factors_meta || data?.factors_meta || {};
 
-  //   <div className="card evidence-card" style={{ height: 'auto' }}>
 
-  //     <h3>Evidence Details</h3>
+  //   if (!meta) {
+  //     return (
+  //       <div className="card evidence-card">
+  //         <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+  //         <p>No evidence metadata available.</p>
+  //       </div>
+  //     );
+  //   }
 
-  //     <div className="evidence-list">
+  //   // ✅ FIX: Define factorLabels inside the component so it's accessible
+  //   const factorLabels = {
+  //     slope: "SLOPE",
+  //     elevation: "ELEVATION",
+  //     ruggedness: "RUGGEDNESS",
+  //     stability: "STABILITY",
+  //     flood: "FLOOD RISK",
+  //     water: "WATER PROXIMITY",
+  //     drainage: "DRAINAGE",
+  //     groundwater: "GROUNDWATER",
+  //     vegetation: "VEGETATION",
+  //     soil: "SOIL QUALITY",
+  //     pollution: "AIR POLLUTION",
+  //     biodiversity: "BIODIVERSITY",
+  //     heat_island: "HEAT ISLAND",
+  //     rainfall: "RAINFALL",
+  //     thermal: "THERMAL COMFORT",
+  //     intensity: "HEAT STRESS",
+  //     landuse: "LANDUSE",
+  //     infrastructure: "PROXIMITY",
+  //     population: "POPULATION",
+  //     multi_hazard: "MULTI-HAZARD",
+  //     climate_change: "CLIMATE CHANGE",
+  //     recovery: "RECOVERY CAPACITY",
+  //     habitability: "HABITABILITY"
+  //   };
 
-  //       {['rainfall', 'flood', 'landslide', 'soil', 'proximity', 'water', 'pollution', 'landuse'].map(id => {
+  //   // ✅ FIX: Define generateEvidence helper logic
+  //   const generateEvidence = (factorKey, factor) => {
+  //     if (factor.evidence) return factor.evidence;
+  //     const val = factor.value || 0;
+  //     return `Score: ${val}/100. Analysis based on regional ${factorKey.replace(/_/g, ' ')} telemetry.`;
+  //   };
 
-  //         const val = data.factors[id] ?? 0;
+  //   const getFactorWeight = (category, factorKey) => {
+  //     const weights = {
+  //       physical: { slope: 30, stability: 25, elevation: 25, ruggedness: 20 },
+  //       hydrology: { flood: 35, groundwater: 25, drainage: 20, water: 20 },
+  //       environmental: { biodiversity: 25, pollution: 25, soil: 20, heat_island: 15, vegetation: 15 },
+  //       climatic: { thermal: 40, intensity: 35, rainfall: 25 },
+  //       socio_econ: { infrastructure: 40, landuse: 30, population: 30 },
+  //       risk_resilience: { multi_hazard: 35, climate_change: 25, habitability: 20, recovery: 20 }
+  //     };
+  //     return weights[category]?.[factorKey] || 0;
+  //   };
 
-  //         const meta = data.explanation?.factors_meta?.[id];
+  //   const calculateRoleBasedWeightedScore = (category, factors) => {
+  //     let weightedSum = 0;
+  //     let totalWeight = 0;
+  //     Object.entries(factors).forEach(([factorKey, factor]) => {
+  //       const weight = getFactorWeight(category, factorKey);
+  //       const value = typeof factor.value === 'number' ? factor.value : 50;
+  //       weightedSum += value * weight;
+  //       totalWeight += weight;
+  //     });
+  //     return totalWeight > 0 ? weightedSum / totalWeight : 0;
+  //   };
 
-  //         if (!meta) return null;
+  //   const getFactorRole = (category, factorKey) => {
+  //     const roles = {
+  //       physical: { slope: "Primary construction constraint", stability: "Landslide/erosion safety", elevation: "Flood & climate baseline", ruggedness: "Construction difficulty" },
+  //       hydrology: { flood: "Catastrophic failure driver", water: "Resource + flood modifier", drainage: "Surface runoff handling", groundwater: "Foundation durability" },
+  //       environmental: { vegetation: "Surface cover indicator", soil: "Semi-permanent land constraint", pollution: "Human health impact", biodiversity: "Legal/ecological constraint", heat_island: "Urban stress indicator" },
+  //       climatic: { rainfall: "Flood & water balance", thermal: "Human livability", intensity: "Peak stress risk" },
+  //       socio_econ: { landuse: "Legal feasibility", infrastructure: "Development enabler", population: "Demand & pressure" },
+  //       risk_resilience: { multi_hazard: "Compound disaster risk", climate_change: "Long-term exposure", recovery: "Post-event resilience", habitability: "Sustained livability" }
+  //     };
+  //     return roles[category]?.[factorKey] || "Supporting factor";
+  //   };
 
-  //         return (
+  //   const getCategoryDescription = (category) => {
+  //     const descriptions = {
+  //       physical: "Physical terrain characteristics including slope, elevation, ruggedness, and ground stability. Critical for foundation design, construction costs, and site accessibility.",
+  //       environmental: "Environmental conditions covering vegetation, soil quality, air pollution, biodiversity, and urban heat island effects. Essential for environmental compliance and sustainability.",
+  //       hydrology: "Water-related factors including flood risk, water proximity, drainage capacity, and groundwater availability. Vital for water management and flood prevention.",
+  //       climatic: "Climate conditions such as rainfall patterns, thermal comfort, and heat stress intensity. Important for HVAC design, energy efficiency, and climate resilience.",
+  //       socio_econ: "Socio-economic factors including land use classification, infrastructure access, and population density. Key for market analysis and development feasibility.",
+  //       risk_resilience: "Risk assessment and resilience factors covering multi-hazard risks, climate change impacts, recovery capacity, and long-term habitability. Critical for disaster preparedness and sustainable development."
+  //     };
+  //     return descriptions[category] || "Category analysis and assessment.";
+  //   };
 
-  //           <div key={id} className={`evidence-entry tone-${val < 40 ? "red" : val < 70 ? "yellow" : "green"}`}>
+  //   const factorOrder = {
+  //     physical: ['elevation', 'ruggedness', 'slope', 'stability'],
+  //     environmental: ['biodiversity', 'heat_island', 'pollution', 'soil', 'vegetation'],
+  //     hydrology: ['drainage', 'flood', 'groundwater', 'water'],
+  //     climatic: ['intensity', 'rainfall', 'thermal'],
+  //     socio_econ: ['infrastructure', 'landuse', 'population'],
+  //     risk_resilience: ['climate_change', 'habitability', 'multi_hazard', 'recovery', L]
+  //   };
 
-  //             <strong>{id.toUpperCase()} ({val.toFixed(1)})</strong>
+  //   return (
+  //     <div className="evidence-section-container">
+  //       <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+  //       <div className="evidence-categories">
+  //         {/* {Object.entries(meta).map(([category, categoryGroup]) => { */}
+  //         {Object.entries(meta).map(([category, categoryGroupRaw]) => {
+  //           const categoryGroup = categoryGroupRaw || {};
 
-  //             <p>{meta.reason}</p>
+  //           // const categoryScore = data?.category_scores?.[category] || 0;
+  //           const categoryScore =
+  //             data?.category_scores?.[category] ||
+  //             data?.explanation?.category_scores?.[category] ||
+  //             0;
 
-  //           </div>
+  //           const weightedScore = calculateRoleBasedWeightedScore(category, categoryGroup);
+  //           const categoryColorClass = categoryScore < 40 ? "tone-red" : categoryScore < 70 ? "tone-yellow" : "tone-green";
 
-  //         );
+  //           const orderedFactorKeys = factorOrder[category]
+  //             ? factorOrder[category].filter(key => categoryGroup[key])
+  //             : Object.keys(categoryGroup);
 
-  //       })}
+  //           return (
+  //             <div key={category} className="evidence-category-container">
+  //               <div className={`evidence-category-header-container ${categoryColorClass}`}>
+  //                 <div className="category-header-content">
+  //                   <h4 className="evidence-category-title">
+  //                     {/* {category.replace('_', ' ').toUpperCase()} */}
+  //                     {category.replaceAll('_', ' ').toUpperCase()}
 
+  //                     <span className="evidence-category-score">({categoryScore.toFixed(1)}/100)</span>
+  //                     <span className="evidence-weighted-score">Weighted: ({weightedScore.toFixed(1)}/100)</span>
+  //                   </h4>
+  //                   <p className="evidence-category-description">{getCategoryDescription(category)}</p>
+  //                 </div>
+  //               </div>
+
+  //               <div className="evidence-factors-sequential">
+  //                 {orderedFactorKeys.map((factorKey) => {
+  //                   const factor = categoryGroup[factorKey];
+  //                   const numericValue = typeof factor.value === 'number' ? factor.value : 50;
+  //                   const factorColor = numericValue < 40 ? "tone-red" : numericValue < 70 ? "tone-yellow" : "tone-green";
+  //                   const evidenceText = factor.evidence || generateEvidence(factorKey, factor);
+  //                   const factorWeight = getFactorWeight(category, factorKey);
+  //                   const globalWeight = (16.67 * factorWeight / 100).toFixed(2);
+
+  //                   return (
+  //                     <div key={`${category}-${factorKey}`} className={`evidence-factor-card ${factorColor}`}>
+  //                       <div className="factor-card-header">
+  //                         <div className="factor-header-left">
+  //                           <h5 className="factor-name">{factorLabels[factorKey] || factorKey.replace(/_/g, ' ').toUpperCase()}</h5>
+  //                           <div className="factor-weighting-info">
+  //                             <span className="factor-score">{numericValue.toFixed(1)}/100</span>
+  //                             <span className="weight-breakdown">{factorWeight}% of cat → {globalWeight}% global</span>
+  //                           </div>
+  //                         </div>
+  //                         <div className={`factor-status-badge ${factorColor}`}>
+  //                           {numericValue >= 70 ? 'HIGH' : numericValue >= 40 ? 'MID' : 'LOW'}
+  //                         </div>
+  //                       </div>
+  //                       <div className="factor-card-content">
+  //                         <div className="evidence-text">{evidenceText}</div>
+  //                         <div className="factor-metadata-compact">
+  //                           <div className="metadata-row">
+  //                             <span className="metadata-item-compact">📍 {factor.source || 'Data Engine'}</span>
+  //                             {factor.unit && <span className="metadata-item-compact">📏 {factor.unit}</span>}
+  //                             <span className="metadata-item-compact">⚖️ {getFactorRole(category, factorKey)}</span>
+  //                           </div>
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                   );
+  //                 })}
+  //               </div>
+  //             </div>
+  //           );
+  //         })}
+  //       </div>
   //     </div>
-
-  //   </div>
-
-  // );
-
-//   const EvidenceSection = ({ data }) => {
-
-//     const meta = data.explanation?.factors_meta;
-
-
-
-//     if (!meta) {
-
-//       return (
-
-//         <div className="card evidence-card">
-
-//           <h3 className="evidence-title">EVIDENCE DETAILS</h3>
-
-//           <p>No evidence metadata available.</p>
-
-//         </div>
-
-//       );
-
-//     }
-
-
-
-//     // Factor display names (all 14 factors)
-
-//     const factorLabels = {
-
-//       // Physical (2)
-
-//       slope: "SLOPE",
-
-//       elevation: "ELEVATION", 
-
-//       ruggedness: "RUGGEDNESS",
-
-//       stability: "STABILITY",
-
-//       // Hydrology
-
-//       flood: "FLOOD RISK",
-
-//       water: "WATER PROXIMITY",
-
-//       drainage: "DRAINAGE",
-
-//       groundwater: "GROUNDWATER",
-
-//       // Environmental
-
-//       vegetation: "VEGETATION",
-
-//       soil: "SOIL QUALITY",
-
-//       pollution: "AIR POLLUTION",
-
-//       biodiversity: "BIODIVERSITY",
-
-//       heatIsland: "HEAT ISLAND",
-
-//       heat_island: "HEAT ISLAND",  // Backend key mapping
-
-//       // Climatic
-
-//       rainfall: "RAINFALL",
-
-//       thermal: "THERMAL COMFORT",
-
-//       intensity: "HEAT STRESS",
-
-//       // Socio-Economic
-
-//       landuse: "LANDUSE",
-
-//       infrastructure: "PROXIMITY",
-
-//       population: "POPULATION",
-
-//       // Risk & Resilience
-
-//       multiHazard: "MULTI-HAZARD",
-
-//       climateChange: "CLIMATE CHANGE",
-
-//       recovery: "RECOVERY CAPACITY",
-
-//       habitability: "HABITABILITY",
-
-//       // Backend key mappings for Risk & Resilience
-
-//       multi_hazard: "MULTI-HAZARD",
-
-//       climate_change: "CLIMATE CHANGE"
-
-//     };
-
-
-
-//     // Role-based factor weights according to engineering priorities
-//     const getFactorWeight = (category, factorKey) => {
-//       const weights = {
-//         physical: {
-//           slope: 30,      // Primary construction constraint
-//           stability: 25,  // Landslide/erosion safety
-//           elevation: 25,  // Flood & climate baseline
-//           ruggedness: 20  // Construction difficulty
-//         },
-//         hydrology: {
-//           flood: 35,           // Catastrophic failure driver
-//           groundwater: 25,      // Foundation durability
-//           drainage: 20,         // Surface runoff handling
-//           water: 20             // Resource + flood modifier
-//         },
-//         environmental: {
-//           biodiversity: 25,     // Legal/ecological constraint
-//           pollution: 25,        // Human health impact
-//           soil: 20,             // Semi-permanent land constraint
-//           heatIsland: 15,       // Urban stress indicator
-//           vegetation: 15       // Surface cover indicator
-//         },
-//         climatic: {
-//           thermal: 40,         // Human livability
-//           intensity: 35,        // Peak stress risk
-//           rainfall: 25          // Flood & water balance
-//         },
-//         socio_econ: {
-//           infrastructure: 40,   // Development enabler
-//           landuse: 30,          // Legal feasibility
-//           population: 30        // Demand & pressure
-//         },
-//         risk_resilience: {
-//           multiHazard: 35,      // Compound disaster risk
-//           climateChange: 25,    // Long-term exposure
-//           habitability: 20,      // Sustained livability
-//           recovery: 20           // Post-event resilience
-//         }
-//       };
-      
-//       return weights[category]?.[factorKey] || 0;
-//     };
-
-//     // Calculate role-based weighted score for a category
-//     const calculateRoleBasedWeightedScore = (category, factors) => {
-//       let weightedSum = 0;
-//       let totalWeight = 0;
-      
-//       Object.entries(factors).forEach(([factorKey, factor]) => {
-//         const weight = getFactorWeight(category, factorKey);
-//         const value = typeof factor.value === 'number' ? factor.value : 50;
-        
-//         weightedSum += value * weight;
-//         totalWeight += weight;
-//       });
-      
-//       return totalWeight > 0 ? weightedSum / totalWeight : 0;
-//     };
-
-//     // Get role description for each factor
-//     const getFactorRole = (category, factorKey) => {
-//       const roles = {
-//         physical: {
-//           slope: "Primary construction constraint",
-//           stability: "Landslide/erosion safety", 
-//           elevation: "Flood & climate baseline",
-//           ruggedness: "Construction difficulty"
-//         },
-//         hydrology: {
-//           flood: "Catastrophic failure driver",
-//           water: "Resource + flood modifier",
-//           drainage: "Surface runoff handling",
-//           groundwater: "Foundation durability"
-//         },
-//         environmental: {
-//           vegetation: "Surface cover indicator",
-//           soil: "Semi-permanent land constraint",
-//           pollution: "Human health impact",
-//           biodiversity: "Legal/ecological constraint",
-//           heatIsland: "Urban stress indicator"
-//         },
-//         climatic: {
-//           rainfall: "Flood & water balance",
-//           thermal: "Human livability",
-//           intensity: "Peak stress risk"
-//         },
-//         socio_econ: {
-//           landuse: "Legal feasibility",
-//           infrastructure: "Development enabler",
-//           population: "Demand & pressure"
-//         },
-//         risk_resilience: {
-//           multiHazard: "Compound disaster risk",
-//           climateChange: "Long-term exposure",
-//           recovery: "Post-event resilience",
-//           habitability: "Sustained livability"
-//         }
-//       };
-      
-//       return roles[category]?.[factorKey] || "Supporting factor";
-//     };
-
-//     // Get detailed description for each category
-
-//     const getCategoryDescription = (category) => {
-//       const descriptions = {
-//         physical: "Physical terrain characteristics including slope, elevation, ruggedness, and ground stability. Critical for foundation design, construction costs, and site accessibility.",
-//         environmental: "Environmental conditions covering vegetation, soil quality, air pollution, biodiversity, and urban heat island effects. Essential for environmental compliance and sustainability.",
-//         hydrology: "Water-related factors including flood risk, water proximity, drainage capacity, and groundwater availability. Vital for water management and flood prevention.",
-//         climatic: "Climate conditions such as rainfall patterns, thermal comfort, and heat stress intensity. Important for HVAC design, energy efficiency, and climate resilience.",
-//         socio_econ: "Socio-economic factors including land use classification, infrastructure access, and population density. Key for market analysis and development feasibility.",
-//         risk_resilience: "Risk assessment and resilience factors covering multi-hazard risks, climate change impacts, recovery capacity, and long-term habitability. Critical for disaster preparedness and sustainable development."
-//       };
-//       return descriptions[category] || "Category analysis and assessment.";
-//     };
-
-//     // Generate evidence text if not provided
-
-//     const generateEvidence = (factorKey, factor) => {
-
-//       if (factor.evidence) return factor.evidence;
-
-      
-
-//       const val = factor.value;
-
-//       const raw = factor.raw;
-
-//       const label = factor.label || "";
-
-      
-
-//       // Generate detailed evidence based on factor type
-
-//       switch(factorKey) {
-
-//         case "slope":
-
-//           if (val < 3) return `Slope: ${val}% gradient. VERY FLAT terrain. IDEAL for construction with minimal grading required. No slope stability concerns.`;
-
-//           if (val < 8) return `Slope: ${val}% gradient. GENTLE slope. Suitable for most construction types with minor earthwork. Good natural drainage.`;
-
-//           if (val < 15) return `Slope: ${val}% gradient. MODERATE slope. Requires careful site planning and grading. May need retaining structures.`;
-
-//           if (val < 30) return `Slope: ${val}% gradient. STEEP terrain. HIGH construction costs due to extensive earthwork and stabilization requirements.`;
-
-//           return `Slope: ${val}% gradient. VERY STEEP terrain. NOT SUITABLE for standard construction. Landslide and erosion risk elevated.`;
-
-        
-
-//         case "elevation":
-
-//           if (val < 50) return `Elevation: ${val}m above sea level. LOW elevation coastal/floodplain zone. Monitor for sea-level and flood risks.`;
-
-//           if (val < 200) return `Elevation: ${val}m above sea level. LOW to MODERATE elevation. Good accessibility with manageable flood exposure.`;
-
-//           if (val < 600) return `Elevation: ${val}m above sea level. MODERATE elevation. Optimal range for most construction activities.`;
-
-//           if (val < 1500) return `Elevation: ${val}m above sea level. HIGH elevation. Consider temperature extremes and access logistics.`;
-
-//           return `Elevation: ${val}m above sea level. VERY HIGH elevation. Challenging conditions - reduced oxygen, extreme weather.`;
-
-        
-
-//         case "flood":
-
-//           const waterDist = data?.factors?.hydrology?.water?.distance_km;
-
-//           if (waterDist !== undefined) {
-
-//             if (waterDist < 0.5) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water body. HIGH FLOOD RISK during monsoon/heavy rainfall.`;
-
-//             if (waterDist < 1.5) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water. MODERATE risk - floods only with exceptional rainfall.`;
-
-//             if (waterDist < 3.0) return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Located ${waterDist.toFixed(2)}km from water. LOW flood risk. Natural terrain provides protection.`;
-
-//             return `COMBINED ASSESSMENT: Flood safety score ${val}/100. Remote location ${waterDist.toFixed(2)}km from water sources. VERY LOW flood risk.`;
-
-//           }
-
-//           return `Flood safety score: ${val}/100. ${label}. Analysis based on regional hydrology patterns.`;
-
-        
-
-//         case "water":
-
-//           const dist = factor.distance_km;
-
-//           if (dist !== undefined && dist !== null) {
-
-//             if (dist < 0.02) return `Location is ON a water body. Score: 0/100. NOT SUITABLE for terrestrial construction.`;
-
-//             if (dist < 0.5) return `Located approximately ${dist.toFixed(2)}km from nearest water body. CLOSE proximity - irrigation advantage but flood monitoring needed.`;
-
-//             if (dist < 2.0) return `Located approximately ${dist.toFixed(2)}km from nearest water body. MODERATE water access for utility and agriculture needs.`;
-
-//             return `Located approximately ${dist.toFixed(2)}km from nearest water body. DISTANT from surface water - may require well/borewell for water supply.`;
-
-//           }
-
-//           return `Water proximity score: ${val}/100. ${label}`;
-
-        
-
-//         case "vegetation":
-
-//           const ndvi = raw || (val / 100);
-
-//           if (val < 20) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). BARE/BUILT-UP land detected. Urban or barren classification.`;
-
-//           if (val < 40) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). SPARSE vegetation. Suitable for development with minimal clearing.`;
-
-//           if (val < 60) return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). MODERATE vegetation. Agricultural or mixed land cover.`;
-
-//           return `Vegetation Index: ${val}/100 (NDVI proxy: ${ndvi.toFixed ? ndvi.toFixed(2) : ndvi}). DENSE vegetation. May indicate forest/protected area - verify zoning.`;
-
-        
-
-//         case "pollution":
-
-//           const pm25 = raw;
-
-//           if (pm25 !== null && pm25 !== undefined) {
-
-//             if (pm25 < 10) return `PM2.5: ${pm25} µg/m³. EXCELLENT air quality. Below WHO Annual Guideline (10 µg/m³). OPTIMAL for residential development.`;
-
-//             if (pm25 < 25) return `PM2.5: ${pm25} µg/m³. GOOD air quality. Acceptable for residential and commercial development.`;
-
-//             if (pm25 < 50) return `PM2.5: ${pm25} µg/m³. MODERATE air quality. Exceeds WHO guidelines. Industrial/traffic sources may be nearby.`;
-
-//             return `PM2.5: ${pm25} µg/m³. POOR air quality. Significantly exceeds safety standards. Air filtration recommended for habitation.`;
-
-//           }
-
-//           return `Air quality score: ${val}/100. Estimated using satellite aerosol data and regional baseline models.`;
-
-        
-
-//         case "soil":
-
-//           if (val >= 80) return `Soil quality score: ${val}/100. EXCELLENT bearing capacity and drainage. Ideal loam conditions for construction.`;
-
-//           if (val >= 60) return `Soil quality score: ${val}/100. GOOD soil conditions. Standard foundation design adequate.`;
-
-//           if (val >= 40) return `Soil quality score: ${val}/100. MODERATE soil quality. May require soil testing and foundation enhancement.`;
-
-//           return `Soil quality score: ${val}/100. POOR soil conditions. Clayey/waterlogged terrain. Special foundations required.`;
-
-        
-
-//         case "rainfall":
-
-//           const rainMm = raw;
-
-//           if (rainMm !== null && rainMm !== undefined) {
-
-//             if (rainMm < 300) return `Rainfall: ${rainMm}mm/year. LOW rainfall - ARID conditions. IDEAL for construction, minimal flood risk. Irrigation required for agriculture.`;
-
-//             if (rainMm < 800) return `Rainfall: ${rainMm}mm/year. MODERATE rainfall. Good balance for construction and agriculture with proper drainage.`;
-
-//             if (rainMm < 1500) return `Rainfall: ${rainMm}mm/year. HIGH rainfall. Requires robust drainage systems. Moderate flood susceptibility.`;
-
-//             return `Rainfall: ${rainMm}mm/year. EXCESSIVE rainfall. High flood and foundation damage risk. Monsoon region challenges.`;
-
-//           }
-
-//           return `Rainfall suitability score: ${val}/100. ${label}.`;
-
-        
-
-//         case "thermal":
-
-//           const tempData = raw;
-
-//           if (tempData && typeof tempData === 'object' && tempData.temperature_c !== undefined) {
-
-//             if (val >= 80) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. HIGHLY COMFORTABLE climate conditions.`;
-
-//             if (val >= 60) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. COMFORTABLE conditions with minor seasonal extremes.`;
-
-//             if (val >= 40) return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. MARGINAL comfort - consider HVAC requirements.`;
-
-//             return `Thermal Comfort Index: ${val}/100. Temperature: ${tempData.temperature_c}°C, Humidity: ${tempData.humidity_pct}%. UNCOMFORTABLE - extreme heat/cold stress.`;
-
-//           }
-
-//           return `Thermal Comfort Index: ${val}/100. ${label}.`;
-
-        
-
-//         case "intensity":
-
-//           if (val < 25) return `Heat Stress Index: ${val}/100. LOW heat stress. Comfortable thermal conditions year-round.`;
-
-//           if (val < 45) return `Heat Stress Index: ${val}/100. MODERATE heat stress. Some cooling measures recommended during peak hours.`;
-
-//           if (val < 65) return `Heat Stress Index: ${val}/100. HIGH heat stress. Active cooling and ventilation essential.`;
-
-//           return `Heat Stress Index: ${val}/100. EXTREME heat stress. Significant thermal management infrastructure required.`;
-
-        
-
-//         case "landuse":
-
-//           const classification = factor.classification || "Unknown";
-
-//           if (val <= 15) return `Land-use Classification: ${classification}. Score: ${val}/100. PROTECTED/FOREST area. Legally non-buildable. Conservation zone detected.`;
-
-//           if (val <= 40) return `Land-use Classification: ${classification}. Score: ${val}/100. RESTRICTED development potential. Environmental sensitivity detected.`;
-
-//           if (val <= 70) return `Land-use Classification: ${classification}. Score: ${val}/100. MODERATE development potential. Agricultural or mixed-use zoning.`;
-
-//           return `Land-use Classification: ${classification}. Score: ${val}/100. HIGH development potential. Urban/commercial zoning compatible.`;
-
-        
-
-//         case "infrastructure":
-//           const nearestRoad = raw?.nearest_road_m || raw?.road_distance_km || 'N/A';
-//           const nearestCity = raw?.nearest_city_km || 'N/A';
-//           const roadDensity = raw?.road_density || 'N/A';
-          
-//           if (val < 30) {
-//             return `Infrastructure Score: ${val}/100. REMOTE location. Nearest road: ${nearestRoad}km, nearest city: ${nearestCity}km. Significant infrastructure investment needed for development.`;
-//           }
-//           if (val < 50) {
-//             return `Infrastructure Score: ${val}/100. MODERATE access. Nearest road: ${nearestRoad}km, nearest city: ${nearestCity}km. May require access road development for optimal connectivity.`;
-//           }
-//           if (val < 70) {
-//             return `Infrastructure Score: ${val}/100. GOOD road access. Nearest road: ${nearestRoad}km, nearest city: ${nearestCity}km. Road density: ${roadDensity}km/km². Optimal balance of connectivity and tranquility.`;
-//           }
-//           return `Infrastructure Score: ${val}/100. EXCELLENT accessibility. Nearest road: ${nearestRoad}km, nearest city: ${nearestCity}km. Well-connected to major transportation networks.`;
-
-        
-
-//         case "population":
-
-//           const density = factor.density || raw;
-
-//           if (density !== null && density !== undefined) {
-
-//             if (density < 200) return `Population Density: ${density} people/km². SPARSE population. Rural/remote area. Limited services and labor availability.`;
-
-//             if (density < 600) return `Population Density: ${density} people/km². MODERATE population. Balanced environment with available workforce and services.`;
-
-//             if (density < 1200) return `Population Density: ${density} people/km². WELL POPULATED. Good access to services, labor, and markets.`;
-
-//             return `Population Density: ${density} people/km². HIGHLY DENSE urban area. Congestion considerations but excellent market access.`;
-
-//           }
-
-//           return `Population Score: ${val}/100. ${label}.`;
-
-//         case "drainage":
-//           if (val >= 80) return `Drainage Capacity: ${val}/100. EXCELLENT drainage. Well-drained terrain with high stream density. Low waterlogging risk.`;
-//           if (val >= 60) return `Drainage Capacity: ${val}/100. GOOD drainage. Adequate surface water flow. Minor ponding during heavy rainfall.`;
-//           if (val >= 40) return `Drainage Capacity: ${val}/100. MODERATE drainage. May require drainage improvements for construction.`;
-//           return `Drainage Capacity: ${val}/100. POOR drainage. Flat/low-lying terrain prone to waterlogging.`;
-
-//         // New Physical Factors
-//         case "ruggedness":
-//           if (val >= 80) return `Terrain Ruggedness: ${val}/100. LOW ruggedness (${(100-val).toFixed(1)}% ruggedness index). Smooth terrain ideal for construction.`;
-//           if (val >= 60) return `Terrain Ruggedness: ${val}/100. MODERATE ruggedness (${(100-val).toFixed(1)}% ruggedness index). Some terrain variation requiring grading.`;
-//           if (val >= 40) return `Terrain Ruggedness: ${val}/100. HIGH ruggedness (${(100-val).toFixed(1)}% ruggedness index). Challenging terrain requiring earthwork.`;
-//           return `Terrain Ruggedness: ${val}/100. VERY HIGH ruggedness (${(100-val).toFixed(1)}% ruggedness index). Extremely difficult terrain.`;
-
-//         case "stability":
-//           if (val >= 80) return `Ground Stability: ${val}/100. HIGH stability. Low landslide/erosion risk (${(100-val).toFixed(1)}% instability index).`;
-//           if (val >= 60) return `Ground Stability: ${val}/100. MODERATE stability. Some instability concerns (${(100-val).toFixed(1)}% instability index).`;
-//           if (val >= 40) return `Ground Stability: ${val}/100. LOW stability. Significant instability risk (${(100-val).toFixed(1)}% instability index).`;
-//           return `Ground Stability: ${val}/100. VERY LOW stability. High landslide/erosion risk (${(100-val).toFixed(1)}% instability index).`;
-
-//         // New Environmental Factors
-//         case "biodiversity":
-//           const speciesCount = raw?.species_count || raw?.biodiversity_index || 'N/A';
-//           const habitatQuality = raw?.habitat_quality || raw?.ecosystem_health || 'N/A';
-//           const protectedArea = raw?.protected_area_distance || raw?.conservation_area || 'N/A';
-          
-//           if (val >= 80) {
-//             return `Biodiversity Index: ${val}/100. HIGH biodiversity (${val.toFixed(1)}% diversity score). Species count: ${speciesCount}, Habitat quality: ${habitatQuality}. Rich ecosystem services with high conservation value. Distance to protected area: ${protectedArea}km.`;
-//           }
-//           if (val >= 60) {
-//             return `Biodiversity Index: ${val}/100. MODERATE biodiversity (${val.toFixed(1)}% diversity score). Species count: ${speciesCount}, Habitat quality: ${habitatQuality}. Balanced ecosystem with moderate conservation value. Distance to protected area: ${protectedArea}km.`;
-//           }
-//           if (val >= 40) {
-//             return `Biodiversity Index: ${val}/100. LOW biodiversity (${val.toFixed(1)}% diversity score). Species count: ${speciesCount}, Habitat quality: ${habitatQuality}. Limited ecosystem diversity with basic conservation needs. Distance to protected area: ${protectedArea}km.`;
-//           }
-//           return `Biodiversity Index: ${val}/100. VERY LOW biodiversity (${val.toFixed(1)}% diversity score). Species count: ${speciesCount}, Habitat quality: ${habitatQuality}. Poor ecosystem health requiring restoration. Distance to protected area: ${protectedArea}km.`;
-
-//         case "heatIsland":
-//           const urbanHeatIntensity = raw?.urban_heat_intensity || raw?.heat_island_index || 'N/A';
-//           const surfaceTemp = raw?.surface_temperature || raw?.land_surface_temp || 'N/A';
-//           const greenSpaceRatio = raw?.green_space_ratio || raw?.vegetation_cover || 'N/A';
-          
-//           if (val >= 80) {
-//             return `Heat Island Effect: ${val}/100. LOW heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${surfaceTemp}°C, Urban heat index: ${urbanHeatIntensity}. Green space ratio: ${greenSpaceRatio}%. Cool microclimate with minimal urban warming.`;
-//           }
-//           if (val >= 60) {
-//             return `Heat Island Effect: ${val}/100. MODERATE heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${surfaceTemp}°C, Urban heat index: ${urbanHeatIntensity}. Green space ratio: ${greenSpaceRatio}%. Some urban warming effect present.`;
-//           }
-//           if (val >= 40) {
-//             return `Heat Island Effect: ${val}/100. HIGH heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${surfaceTemp}°C, Urban heat index: ${urbanHeatIntensity}. Green space ratio: ${greenSpaceRatio}%. Significant urban warming requiring mitigation.`;
-//           }
-//           return `Heat Island Effect: ${val}/100. VERY HIGH heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${surfaceTemp}°C, Urban heat index: ${urbanHeatIntensity}. Green space ratio: ${greenSpaceRatio}%. Extreme urban heat with high cooling costs.`;
-
-//         case "heat_island":
-//           const heatIslandIntensity = raw?.urban_heat_intensity || raw?.heat_island_index || 'N/A';
-//           const heatIslandSurfaceTemp = raw?.surface_temperature || raw?.land_surface_temp || 'N/A';
-//           const heatIslandGreenSpace = raw?.green_space_ratio || raw?.vegetation_cover || 'N/A';
-          
-//           if (val >= 80) {
-//             return `Heat Island Effect: ${val}/100. LOW heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${heatIslandSurfaceTemp}°C, Urban heat index: ${heatIslandIntensity}. Green space ratio: ${heatIslandGreenSpace}%. Cool microclimate with minimal urban warming.`;
-//           }
-//           if (val >= 60) {
-//             return `Heat Island Effect: ${val}/100. MODERATE heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${heatIslandSurfaceTemp}°C, Urban heat index: ${heatIslandIntensity}. Green space ratio: ${heatIslandGreenSpace}%. Some urban warming effect present.`;
-//           }
-//           if (val >= 40) {
-//             return `Heat Island Effect: ${val}/100. HIGH heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${heatIslandSurfaceTemp}°C, Urban heat index: ${heatIslandIntensity}. Green space ratio: ${heatIslandGreenSpace}%. Significant urban warming requiring mitigation.`;
-//           }
-//           return `Heat Island Effect: ${val}/100. VERY HIGH heat island (${(100-val).toFixed(1)}% urban heat intensity). Surface temp: ${heatIslandSurfaceTemp}°C, Urban heat index: ${heatIslandIntensity}. Green space ratio: ${heatIslandGreenSpace}%. Extreme urban heat with high cooling costs.`;
-
-//         // New Hydrology Factor
-//         case "groundwater":
-//           const groundwaterLevel = raw?.depth_m || raw?.water_table_depth || 'N/A';
-//           const yieldRate = raw?.yield_rate || raw?.groundwater_yield || 'N/A';
-//           const gwQuality = raw?.water_quality_index || raw?.groundwater_quality || 'N/A';
-          
-//           if (val >= 80) {
-//             return `Groundwater Availability: ${val}/100. EXCELLENT groundwater (${groundwaterLevel}m depth). Yield rate: ${yieldRate} L/min, Quality: ${gwQuality}. Abundant subsurface water with excellent quality for development.`;
-//           }
-//           if (val >= 60) {
-//             return `Groundwater Availability: ${val}/100. GOOD groundwater (${groundwaterLevel}m depth). Yield rate: ${yieldRate} L/min, Quality: ${gwQuality}. Adequate subsurface water supply with good quality.`;
-//           }
-//           if (val >= 40) {
-//             return `Groundwater Availability: ${val}/100. POOR groundwater (${groundwaterLevel}m depth). Yield rate: ${yieldRate} L/min, Quality: ${gwQuality}. Limited groundwater availability requiring conservation measures.`;
-//           }
-//           return `Groundwater Availability: ${val}/100. VERY POOR groundwater (${groundwaterLevel}m depth). Yield rate: ${yieldRate} L/min, Quality: ${gwQuality}. Scarce groundwater resources requiring alternative water sources.`;
-
-//         // Risk & Resilience Factors
-//         case "multiHazard":
-//           const floodRisk = raw?.flood_risk || 'N/A';
-//           const erosionRisk = raw?.erosion_risk || 'N/A';
-//           if (val >= 80) return `Multi-Hazard Risk: ${val}/100. LOW risk. Minimal exposure to floods (${floodRisk}) and erosion (${erosionRisk}).`;
-//           if (val >= 60) return `Multi-Hazard Risk: ${val}/100. MODERATE risk. Some hazard exposure. Flood: ${floodRisk}, Erosion: ${erosionRisk}.`;
-//           if (val >= 40) return `Multi-Hazard Risk: ${val}/100. HIGH risk. Significant hazard exposure. Flood: ${floodRisk}, Erosion: ${erosionRisk}.`;
-//           return `Multi-Hazard Risk: ${val}/100. VERY HIGH risk. Multiple hazards. Critical flood: ${floodRisk}, erosion: ${erosionRisk}.`;
-
-//         case "multi_hazard":
-//           const mhFloodRisk = raw?.flood_risk || 'N/A';
-//           const mhErosionRisk = raw?.erosion_risk || 'N/A';
-//           if (val >= 80) return `Multi-Hazard Risk: ${val}/100. LOW risk. Minimal exposure to floods (${mhFloodRisk}) and erosion (${mhErosionRisk}).`;
-//           if (val >= 60) return `Multi-Hazard Risk: ${val}/100. MODERATE risk. Some hazard exposure. Flood: ${mhFloodRisk}, Erosion: ${mhErosionRisk}.`;
-//           if (val >= 40) return `Multi-Hazard Risk: ${val}/100. HIGH risk. Significant hazard exposure. Flood: ${mhFloodRisk}, Erosion: ${mhErosionRisk}.`;
-//           return `Multi-Hazard Risk: ${val}/100. VERY HIGH risk. Multiple hazards. Critical flood: ${mhFloodRisk}, erosion: ${mhErosionRisk}.`;
-
-//         case "climateChange":
-//           const tempRise = raw?.temp_projection || 'N/A';
-//           const seaLevelRisk = raw?.sea_level_risk || 'N/A';
-//           if (val >= 80) return `Climate Change Resilience: ${val}/100. HIGH resilience. Low climate stress. Temp: ${tempRise}°C, Sea level: ${seaLevelRisk}.`;
-//           if (val >= 60) return `Climate Change Resilience: ${val}/100. MODERATE resilience. Some adaptation needed. Temp: ${tempRise}°C, Sea level: ${seaLevelRisk}.`;
-//           if (val >= 40) return `Climate Change Resilience: ${val}/100. LOW resilience. Significant vulnerability. Temp: ${tempRise}°C, Sea level: ${seaLevelRisk}.`;
-//           return `Climate Change Resilience: ${val}/100. VERY LOW resilience. High climate impact. Temp: ${tempRise}°C, Sea level: ${seaLevelRisk}.`;
-
-//         case "climate_change":
-//           const ccTempRise = raw?.temp_projection || 'N/A';
-//           const ccSeaLevelRisk = raw?.sea_level_risk || 'N/A';
-//           if (val >= 80) return `Climate Change Resilience: ${val}/100. HIGH resilience. Low climate stress. Temp: ${ccTempRise}°C, Sea level: ${ccSeaLevelRisk}.`;
-//           if (val >= 60) return `Climate Change Resilience: ${val}/100. MODERATE resilience. Some adaptation needed. Temp: ${ccTempRise}°C, Sea level: ${ccSeaLevelRisk}.`;
-//           if (val >= 40) return `Climate Change Resilience: ${val}/100. LOW resilience. Significant vulnerability. Temp: ${ccTempRise}°C, Sea level: ${ccSeaLevelRisk}.`;
-//           return `Climate Change Resilience: ${val}/100. VERY LOW resilience. High climate impact. Temp: ${ccTempRise}°C, Sea level: ${ccSeaLevelRisk}.`;
-
-//         case "recovery":
-//           const infraAccess = raw?.infrastructure_access || 'N/A';
-//           const emergencyServices = raw?.emergency_services || 'N/A';
-//           if (val >= 80) return `Recovery Capacity: ${val}/100. EXCELLENT recovery. Strong infrastructure (${infraAccess}) and emergency response (${emergencyServices}).`;
-//           if (val >= 60) return `Recovery Capacity: ${val}/100. GOOD recovery. Adequate systems. Infrastructure: ${infraAccess}, Emergency: ${emergencyServices}.`;
-//           if (val >= 40) return `Recovery Capacity: ${val}/100. POOR recovery. Limited capabilities. Infrastructure: ${infraAccess}, Emergency: ${emergencyServices}.`;
-//           return `Recovery Capacity: ${val}/100. VERY POOR recovery. Minimal infrastructure. Infrastructure: ${infraAccess}, Emergency: ${emergencyServices}.`;
-
-//         case "habitability":
-//           const airQualityIndex = raw?.aqi || 'N/A';
-//           const habitabilityWaterQuality = raw?.water_quality || 'N/A';
-//           const livabilityScore = raw?.livability || 'N/A';
-//           if (val >= 80) return `Long-term Habitability: ${val}/100. EXCELLENT habitability. Sustainable conditions. AQI: ${airQualityIndex}, Water: ${habitabilityWaterQuality}, Livability: ${livabilityScore}.`;
-//           if (val >= 60) return `Long-term Habitability: ${val}/100. GOOD habitability. Viable settlement. AQI: ${airQualityIndex}, Water: ${habitabilityWaterQuality}, Livability: ${livabilityScore}.`;
-//           if (val >= 40) return `Long-term Habitability: ${val}/100. POOR habitability. Challenging conditions. AQI: ${airQualityIndex}, Water: ${habitabilityWaterQuality}, Livability: ${livabilityScore}.`;
-//           return `Long-term Habitability: ${val}/100. VERY POOR habitability. Unsustainable living. AQI: ${airQualityIndex}, Water: ${habitabilityWaterQuality}, Livability: ${livabilityScore}.`;
-
-//         default:
-//           return `Score: ${val}/100. ${label}`;
-//       }
-//     };
-
-//     const allFactors = [];
-
-//     Object.entries(meta).forEach(([category, factors]) => {
-
-//       Object.entries(factors).forEach(([factorKey, factor]) => {
-
-//         allFactors.push({ category, factorKey, factor });
-
-//       });
-
-//     });
-
-
-
-//     return (
-//         <div className="evidence-section-container">
-//             <h3 className="evidence-title">EVIDENCE DETAILS</h3>
-            
-//             <div className="evidence-categories">
-//                 {Object.entries(meta).map(([category, factors]) => {
-//                     // Get category score for display
-//                     const categoryScore = data?.category_scores?.[category] || 0;
-//                     const categoryColorClass = categoryScore < 40 ? "tone-red" : categoryScore < 70 ? "tone-yellow" : "tone-green";
-                    
-//                     // Calculate role-based weighted score for this category
-//                     const weightedCategoryScore = calculateRoleBasedWeightedScore(category, factors);
-                    
-//                     // Define factor order to match bar chart exactly (using backend keys)
-//                     const factorOrder = {
-//                         physical: ['elevation','ruggedness','slope',   'stability'],
-//                         environmental: ['pollution', 'soil', 'vegetation', 'biodiversity', 'heat_island'],
-//                         hydrology: ['drainage','flood','groundwater', 'water'  ],
-//                         climatic: ['intensity', 'rainfall', 'thermal'],  // Heat stress (intensity) first
-//                         socio_econ: ['infrastructure', 'landuse', 'population'],
-//                         risk_resilience: ['multi_hazard', 'climate_change', 'recovery', 'habitability']
-//                     };
-                    
-//                     // Sort factors according to bar chart order
-//                     const orderedFactors = factorOrder[category] 
-//                         ? factorOrder[category].map(key => [key, factors[key]]).filter(([_, factor]) => factor)
-//                         : Object.entries(factors);
-                    
-//                     return (
-//                         <div key={category} className="evidence-category-container">
-//                             {/* Category Header */}
-//                             <div className={`evidence-category-header-container ${categoryColorClass}`}>
-//                                 <div className="category-header-content">
-//                                     <h4 className="evidence-category-title">
-//                                         {category.replace('_', ' ').toUpperCase()}
-//                                         <span className="evidence-category-score">({categoryScore.toFixed(1)}/100)</span>
-//                                         <span className="evidence-weighted-score">Weighted: ({weightedCategoryScore.toFixed(1)}/100)</span>
-//                                     </h4>
-//                                     <p className="evidence-category-description">
-//                                         {getCategoryDescription(category)}
-//                                     </p>
-//                                     <div className="evidence-category-weights">
-//                                         <span className="weight-info">Category Weight: 16.67%</span>
-//                                     </div>
-//                                 </div>
-//                             </div>
-                            
-//                             {/* Sequential Factor Cards */}
-//                             <div className="evidence-factors-sequential">
-//                                 {orderedFactors.map(([factorKey, factor]) => {
-//                                     const displayValue = factor.value !== null && factor.value !== undefined 
-//                                         ? (typeof factor.value === 'number' ? factor.value.toFixed(1) : factor.value)
-//                                         : 'N/A';
-                                    
-//                                     const numericValue = typeof factor.value === 'number' ? factor.value : 50;
-//                                     const colorClass = numericValue < 40 ? "tone-red" : numericValue < 70 ? "tone-yellow" : "tone-green";
-//                                     const evidenceText = generateEvidence(factorKey, factor);
-                                    
-//                                     // Get role-based weight for this factor
-//                                     const factorWeight = getFactorWeight(category, factorKey);
-//                                     const globalWeight = (16.67 * factorWeight / 100).toFixed(2);
-                                    
-//                                     return (
-//                                         <div
-//                                             key={`${category}-${factorKey}`}
-//                                             className={`evidence-factor-card ${colorClass}`}
-//                                         >
-//                                             {/* Factor Header with Weighting Info */}
-//                                             <div className="factor-card-header">
-//                                                 <div className="factor-header-left">
-//                                                     <h5 className="factor-name">
-//                                                         {factorLabels[factorKey] || factorKey.replace(/([A-Z])/g, ' $1').trim().toUpperCase()}
-//                                                     </h5>
-//                                                     <div className="factor-weighting-info">
-//                                                         <span className="factor-score">{displayValue}/100</span>
-//                                                         <span className="weight-breakdown">
-//                                                             {factorWeight}% of category → {globalWeight}% global
-//                                                         </span>
-//                                                     </div>
-//                                                 </div>
-//                                                 <div className={`factor-status-badge ${colorClass}`}>
-//                                                     {numericValue >= 70 ? 'HIGH' : numericValue >= 40 ? 'MODERATE' : 'LOW'}
-//                                                 </div>
-//                                             </div>
-                                            
-//                                             {/* Evidence Content */}
-//                                             <div className="factor-card-content">
-//                                                 <div className="evidence-text">
-//                                                     {evidenceText}
-//                                                 </div>
-                                                
-//                                                 {/* Numerical Justification */}
-//                                                 {/* <div className="numerical-justification">
-//                                                     <h6>Numerical Analysis:</h6>
-//                                                     <div className="justification-details">
-//                                                         {factor.raw !== undefined && (
-//                                                             <div className="raw-data">
-//                                                                 <span className="data-label">Raw Value:</span>
-//                                                                 <span className="data-value">
-//                                                                     {typeof factor.raw === 'object' ? JSON.stringify(factor.raw) : factor.raw}
-//                                                                 </span>
-//                                                             </div>
-//                                                         )}
-//                                                         <div className="score-breakdown">
-//                                                             <span className="data-label">Score Calculation:</span>
-//                                                             <span className="data-value">
-//                                                                 {numericValue >= 70 ? 'Excellent range (70-100)' : 
-//                                                                  numericValue >= 40 ? 'Moderate range (40-69)' : 
-//                                                                  'Poor range (0-39)'}
-//                                                             </span>
-//                                                         </div>
-//                                                         <div className="weight-impact">
-//                                                             <span className="data-label">Weight Impact:</span>
-//                                                             <span className="data-value">
-//                                                                 {(numericValue * factorWeight / 100).toFixed(1)} points to category score
-//                                                             </span>
-//                                                         </div>
-//                                                     </div>
-//                                                 </div> */}
-                                                
-//                                                 {/* Metadata - Compact Single Row */}
-//                                                 <div className="factor-metadata-compact">
-//                                                     <div className="metadata-row">
-//                                                         {factor.source && (
-//                                                             <span className="metadata-item-compact">
-//                                                                 📍 {factor.source}
-//                                                             </span>
-//                                                         )}
-//                                                         {factor.unit && (
-//                                                             <span className="metadata-item-compact">
-//                                                                 📏 {factor.unit}
-//                                                             </span>
-//                                                         )}
-//                                                         <span className="metadata-item-compact">
-//                                                             ⚖️ {getFactorRole(category, factorKey)}
-//                                                         </span>
-//                                                     </div>
-//                                                 </div>
-//                                             </div>
-//                                         </div>
-//                                     );
-//                                 })}
-//                             </div>
-//                         </div>
-//                     );
-//                 })}
-//             </div>
-//         </div>
-//     );
-    
-
-// };
-const EvidenceSection = ({ data }) => {
-  // const meta = data.explanation?.factors_meta;
+  //   );
+  // };
+const EvidenceSection = ({ data, filterCategories = null }) => {
   const meta = data?.explanation?.factors_meta || data?.factors_meta || {};
 
-
-  if (!meta) {
+  if (!meta || Object.keys(meta).length === 0) {
     return (
       <div className="card evidence-card">
         <h3 className="evidence-title">EVIDENCE DETAILS</h3>
@@ -3693,7 +3085,6 @@ const EvidenceSection = ({ data }) => {
     );
   }
 
-  // ✅ FIX: Define factorLabels inside the component so it's accessible
   const factorLabels = {
     slope: "SLOPE",
     elevation: "ELEVATION",
@@ -3720,10 +3111,61 @@ const EvidenceSection = ({ data }) => {
     habitability: "HABITABILITY"
   };
 
-  // ✅ FIX: Define generateEvidence helper logic
   const generateEvidence = (factorKey, factor) => {
     if (factor.evidence) return factor.evidence;
     const val = factor.value || 0;
+    const raw = factor.raw || {};
+    
+    // Enhanced pollution evidence with detailed pollutant data
+    if (factorKey === 'pollution') {
+      const pm25 = raw.pm25_value || raw.pm25 || 'N/A';
+      const pm10 = raw.pm10_value || 'N/A';
+      const no2 = raw.no2_value || 'N/A';
+      const so2 = raw.so2_value || 'N/A';
+      const o3 = raw.o3_value || 'N/A';
+      const co = raw.co_value || 'N/A';
+      
+      const healthRisk = raw.health_risk_level || 'Unknown';
+      const aqiCategory = raw.aqi_category || 'Unknown';
+      const dominantPollutant = raw.dominant_pollutant || 'Unknown';
+      const location = raw.location || 'Unknown';
+      const city = raw.city || 'Unknown';
+      const lastUpdated = raw.last_updated || 'Unknown';
+      const dataFreshness = raw.data_freshness || 'Unknown';
+      
+      // WHO Standards for comparison
+      const pm25WhoAnnual = raw.pm25_who_standard_annual || 5;
+      const pm25Who24hr = raw.pm25_who_standard_24hr || 15;
+      const pm25EpaAnnual = raw.pm25_epa_standard_annual || 9;
+      
+      if (typeof pm25 === 'number' && pm25 > 0) {
+        const pollutantBreakdown = [];
+        if (pm10 !== 'N/A') pollutantBreakdown.push(`PM10: ${pm10} µg/m³`);
+        if (no2 !== 'N/A') pollutantBreakdown.push(`NO2: ${no2} µg/m³`);
+        if (so2 !== 'N/A') pollutantBreakdown.push(`SO2: ${so2} µg/m³`);
+        if (o3 !== 'N/A') pollutantBreakdown.push(`O3: ${o3} µg/m³`);
+        if (co !== 'N/A') pollutantBreakdown.push(`CO: ${co} µg/m³`);
+        
+        const additionalPollutants = pollutantBreakdown.length > 0 ? ` Additional pollutants: ${pollutantBreakdown.join(', ')}.` : '';
+        const standardsInfo = ` WHO standards: Annual ${pm25WhoAnnual} µg/m³, 24hr ${pm25Who24hr} µg/m³. EPA annual: ${pm25EpaAnnual} µg/m³.`;
+        
+        if (pm25 <= 5) {
+          return `Air Quality Index: ${val}/100. EXCELLENT air quality. PM2.5: ${pm25} µg/m³ (well below WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+        } else if (pm25 <= 12) {
+          return `Air Quality Index: ${val}/100. GOOD air quality. PM2.5: ${pm25} µg/m³ (below WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+        } else if (pm25 <= 25) {
+          return `Air Quality Index: ${val}/100. MODERATE air quality. PM2.5: ${pm25} µg/m³ (exceeding WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+        } else if (pm25 <= 50) {
+          return `Air Quality Index: ${val}/100. POOR air quality. PM2.5: ${pm25} µg/m³ (significantly exceeding WHO standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+        } else {
+          return `Air Quality Index: ${val}/100. VERY POOR air quality. PM2.5: ${pm25} µg/m³ (dangerously exceeding WHO standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+        }
+      } else {
+        return `Air Quality Index: ${val}/100. No real-time pollution data available. Using regional baseline estimate. Location: ${location || 'Unknown'}. More monitoring stations needed for accurate assessment.`;
+      }
+    }
+    
+    // Enhanced evidence for other factors can be added here too
     return `Score: ${val}/100. Analysis based on regional ${factorKey.replace(/_/g, ' ')} telemetry.`;
   };
 
@@ -3765,101 +3207,90 @@ const EvidenceSection = ({ data }) => {
 
   const getCategoryDescription = (category) => {
     const descriptions = {
-      physical: "Physical terrain characteristics including slope, elevation, ruggedness, and ground stability. Critical for foundation design, construction costs, and site accessibility.",
-      environmental: "Environmental conditions covering vegetation, soil quality, air pollution, biodiversity, and urban heat island effects. Essential for environmental compliance and sustainability.",
-      hydrology: "Water-related factors including flood risk, water proximity, drainage capacity, and groundwater availability. Vital for water management and flood prevention.",
-      climatic: "Climate conditions such as rainfall patterns, thermal comfort, and heat stress intensity. Important for HVAC design, energy efficiency, and climate resilience.",
-      socio_econ: "Socio-economic factors including land use classification, infrastructure access, and population density. Key for market analysis and development feasibility.",
-      risk_resilience: "Risk assessment and resilience factors covering multi-hazard risks, climate change impacts, recovery capacity, and long-term habitability. Critical for disaster preparedness and sustainable development."
+      physical: "Physical terrain characteristics including slope, elevation, ruggedness, and ground stability.",
+      environmental: "Environmental conditions covering vegetation, soil quality, air pollution, and biodiversity.",
+      hydrology: "Water-related factors including flood risk, water proximity, and drainage capacity.",
+      climatic: "Climate conditions such as rainfall patterns, thermal comfort, and heat stress.",
+      socio_econ: "Socio-economic factors including land use, infrastructure, and population density.",
+      risk_resilience: "Risk assessment and resilience factors covering hazards and climate change."
     };
     return descriptions[category] || "Category analysis and assessment.";
   };
 
   const factorOrder = {
     physical: ['elevation', 'ruggedness', 'slope', 'stability'],
-    environmental: ['biodiversity', 'heat_island','pollution', 'soil', 'vegetation' ],
+    environmental: ['biodiversity', 'heat_island', 'pollution', 'soil', 'vegetation'],
     hydrology: ['drainage', 'flood', 'groundwater', 'water'],
     climatic: ['intensity', 'rainfall', 'thermal'],
     socio_econ: ['infrastructure', 'landuse', 'population'],
-    risk_resilience: [ 'climate_change',  'habitability','multi_hazard','recovery',]
+    risk_resilience: ['climate_change', 'habitability', 'multi_hazard', 'recovery']
   };
 
   return (
     <div className="evidence-section-container">
-      <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+      {/* Hide the main section title if we are showing the "Extra" sections on the left */}
+      {!filterCategories && <h3 className="evidence-title">EVIDENCE DETAILS</h3>}
       <div className="evidence-categories">
-        {/* {Object.entries(meta).map(([category, categoryGroup]) => { */}
-        {Object.entries(meta).map(([category, categoryGroupRaw]) => {
-  const categoryGroup = categoryGroupRaw || {};
+        {Object.entries(meta)
+          .filter(([category]) => !filterCategories || filterCategories.includes(category))
+          .map(([category, categoryGroupRaw]) => {
+            const categoryGroup = categoryGroupRaw || {};
+            const categoryScore = data?.category_scores?.[category] || data?.explanation?.category_scores?.[category] || 0;
+            const weightedScore = calculateRoleBasedWeightedScore(category, categoryGroup);
+            const categoryColorClass = categoryScore < 40 ? "tone-red" : categoryScore < 70 ? "tone-yellow" : "tone-green";
+            const orderedFactorKeys = factorOrder[category] ? factorOrder[category].filter(key => categoryGroup[key]) : Object.keys(categoryGroup);
 
-          // const categoryScore = data?.category_scores?.[category] || 0;
-          const categoryScore =
-          data?.category_scores?.[category] ||
-          data?.explanation?.category_scores?.[category] ||
-          0;
-
-          const weightedScore = calculateRoleBasedWeightedScore(category, categoryGroup);
-          const categoryColorClass = categoryScore < 40 ? "tone-red" : categoryScore < 70 ? "tone-yellow" : "tone-green";
-
-          const orderedFactorKeys = factorOrder[category]
-            ? factorOrder[category].filter(key => categoryGroup[key])
-            : Object.keys(categoryGroup);
-
-          return (
-            <div key={category} className="evidence-category-container">
-              <div className={`evidence-category-header-container ${categoryColorClass}`}>
-                <div className="category-header-content">
-                  <h4 className="evidence-category-title">
-                    {/* {category.replace('_', ' ').toUpperCase()} */}
-                    {category.replaceAll('_', ' ').toUpperCase()}
-
-                    <span className="evidence-category-score">({categoryScore.toFixed(1)}/100)</span>
-                    <span className="evidence-weighted-score">Weighted: ({weightedScore.toFixed(1)}/100)</span>
-                  </h4>
-                  <p className="evidence-category-description">{getCategoryDescription(category)}</p>
+            return (
+              <div key={category} className="evidence-category-container">
+                <div className={`evidence-category-header-container ${categoryColorClass}`}>
+                  <div className="category-header-content">
+                    <h4 className="evidence-category-title">
+                      {category.replaceAll('_', ' ').toUpperCase()}
+                      <span className="evidence-category-score">({categoryScore.toFixed(1)}/100)</span>
+                      <span className="evidence-weighted-score">Weighted: ({weightedScore.toFixed(1)}/100)</span>
+                    </h4>
+                    <p className="evidence-category-description">{getCategoryDescription(category)}</p>
+                  </div>
+                </div>
+                <div className="evidence-factors-sequential">
+                  {orderedFactorKeys.map((factorKey) => {
+                    const factor = categoryGroup[factorKey];
+                    const numericValue = typeof factor.value === 'number' ? factor.value : 50;
+                    const factorColor = numericValue < 40 ? "tone-red" : numericValue < 70 ? "tone-yellow" : "tone-green";
+                    const evidenceText = factor.evidence || generateEvidence(factorKey, factor);
+                    const factorWeight = getFactorWeight(category, factorKey);
+                    const globalWeight = (16.67 * factorWeight / 100).toFixed(2);
+                    return (
+                      <div key={`${category}-${factorKey}`} className={`evidence-factor-card ${factorColor}`}>
+                        <div className="factor-card-header">
+                          <div className="factor-header-left">
+                            <h5 className="factor-name">{factorLabels[factorKey] || factorKey.replace(/_/g, ' ').toUpperCase()}</h5>
+                            <div className="factor-weighting-info">
+                              <span className="factor-score">{numericValue.toFixed(1)}/100</span>
+                              <span className="weight-breakdown">{factorWeight}% of cat → {globalWeight}% global</span>
+                            </div>
+                          </div>
+                          <div className={`factor-status-badge ${factorColor}`}>
+                            {numericValue >= 70 ? 'HIGH' : numericValue >= 40 ? 'MID' : 'LOW'}
+                          </div>
+                        </div>
+                        <div className="factor-card-content">
+                          <div className="evidence-text">{evidenceText}</div>
+                          <div className="factor-metadata-compact">
+                            <div className="metadata-row">
+                              <span className="metadata-item-compact">📍 {factor.source || 'Data Engine'}</span>
+                              {factor.unit && <span className="metadata-item-compact">📏 {factor.unit}</span>}
+                              <span className="metadata-item-compact">⚖️ {getFactorRole(category, factorKey)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-
-              <div className="evidence-factors-sequential">
-                {orderedFactorKeys.map((factorKey) => {
-                  const factor = categoryGroup[factorKey];
-                  const numericValue = typeof factor.value === 'number' ? factor.value : 50;
-                  const factorColor = numericValue < 40 ? "tone-red" : numericValue < 70 ? "tone-yellow" : "tone-green";
-                  const evidenceText = factor.evidence || generateEvidence(factorKey, factor);
-                  const factorWeight = getFactorWeight(category, factorKey);
-                  const globalWeight = (16.67 * factorWeight / 100).toFixed(2);
-
-                  return (
-                    <div key={`${category}-${factorKey}`} className={`evidence-factor-card ${factorColor}`}>
-                      <div className="factor-card-header">
-                        <div className="factor-header-left">
-                          <h5 className="factor-name">{factorLabels[factorKey] || factorKey.replace(/_/g, ' ').toUpperCase()}</h5>
-                          <div className="factor-weighting-info">
-                            <span className="factor-score">{numericValue.toFixed(1)}/100</span>
-                            <span className="weight-breakdown">{factorWeight}% of cat → {globalWeight}% global</span>
-                          </div>
-                        </div>
-                        <div className={`factor-status-badge ${factorColor}`}>
-                          {numericValue >= 70 ? 'HIGH' : numericValue >= 40 ? 'MID' : 'LOW'}
-                        </div>
-                      </div>
-                      <div className="factor-card-content">
-                        <div className="evidence-text">{evidenceText}</div>
-                        <div className="factor-metadata-compact">
-                          <div className="metadata-row">
-                            <span className="metadata-item-compact">📍 {factor.source || 'Data Engine'}</span>
-                            {factor.unit && <span className="metadata-item-compact">📏 {factor.unit}</span>}
-                            <span className="metadata-item-compact">⚖️ {getFactorRole(category, factorKey)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );
@@ -3867,243 +3298,242 @@ const EvidenceSection = ({ data }) => {
 
 
 
+  // const renderTabContent = (data, coords, name, isFullWidth) => {
+
+  //   // If isFullWidth (Single Analysis), use your 'results-grid' class
+
+  //   // If not (Compare Mode), use 'column-stack' to fit inside the narrow pane
+
+  //   const containerClass = isFullWidth ? "results-grid" : "column-stack";
+
+
+
+  //   const currentSnapshot = name === locationAName ? snapshotData : snapshotDataB;
+
+  //   if (activeTab === "suitability") {
+
+  //     return (
+
+  //       <div className={containerClass}>
+
+  //         <div className={isFullWidth ? "col-1" : ""}>
+
+
+
+  //           <FactorsSection
+
+  //             data={data}
+
+  //             latVal={coords.lat}
+
+  //             lngVal={coords.lng}
+
+  //             locationName={name}
+
+  //             isDarkMode={isDarkMode}
+
+  //             viewMode={viewMode}
+
+  //             setViewMode={setViewMode}
+
+  //             onOpenHistory={handleOpenHistory}
+
+  //             mapVariety={mapVariety}
+
+  //             isCompareMode={!isFullWidth}
+
+  //             activeSpectral={activeSpectral}
+
+  //             mapMode={mapMode}           // PASS STATE HERE
+
+  //             active3DStyle={active3DStyle}
+
+  //             currentZoom={zoom}
+
+  //             setZoom={setZoom}
+
+  //             handleZoomIn={handleZoomIn}
+
+  //             handleZoomOut={handleZoomOut}
+
+  //             /* NEW PROPS BELOW */
+
+  //             setLat={setLat}
+
+  //             setLng={setLng}
+
+  //             // currentZoom={zoom}           // Local state 'zoom' maps to 'currentZoom'
+
+  //             setCurrentZoom={setZoom}
+
+  //             onZoomIn={handleZoomIn}      // Local function maps to 'onZoomIn'
+
+  //             onZoomOut={handleZoomOut}
+
+  //             isSelectingB={isSelectingB}
+
+  //             handleCompareSelect={handleCompareSelect}
+
+  //           />
+
+  //         </div>
+
+  //         <div className={isFullWidth ? "col-2" : ""}>
+
+  //           {/* <PotentialSection factors={data.factors} score={data.suitability_score} /> */}
+
+  //           <EvidenceSection data={data} />
+
+  //         </div>
+
+  //       </div>
+
+  //     );
+
+  //   }
 const renderTabContent = (data, coords, name, isFullWidth) => {
-
-  // If isFullWidth (Single Analysis), use your 'results-grid' class
-
-  // If not (Compare Mode), use 'column-stack' to fit inside the narrow pane
-
   const containerClass = isFullWidth ? "results-grid" : "column-stack";
-
-  
-
   const currentSnapshot = name === locationAName ? snapshotData : snapshotDataB;
 
   if (activeTab === "suitability") {
-
     return (
-
       <div className={containerClass}>
-
+        {/* LEFT COLUMN: Factors (Radar/Bars) + Socio-Econ/Risk (if full width) */}
         <div className={isFullWidth ? "col-1" : ""}>
-
-          
-
           <FactorsSection 
-
             data={data} 
-
             latVal={coords.lat} 
-
             lngVal={coords.lng} 
-
             locationName={name}
-
             isDarkMode={isDarkMode} 
-
             viewMode={viewMode} 
-
             setViewMode={setViewMode} 
-
             onOpenHistory={handleOpenHistory} 
-
             mapVariety={mapVariety}
-
             isCompareMode={!isFullWidth}
-
             activeSpectral={activeSpectral}
-
-            mapMode={mapMode}           // PASS STATE HERE
-
+            mapMode={mapMode}
             active3DStyle={active3DStyle}
-
             currentZoom={zoom}
-
             setZoom={setZoom}
-
             handleZoomIn={handleZoomIn}
-
             handleZoomOut={handleZoomOut}
-
-            /* NEW PROPS BELOW */
-
             setLat={setLat}
-
             setLng={setLng}
-
-            // currentZoom={zoom}           // Local state 'zoom' maps to 'currentZoom'
-
             setCurrentZoom={setZoom}
-
-            onZoomIn={handleZoomIn}      // Local function maps to 'onZoomIn'
-
+            onZoomIn={handleZoomIn}
             onZoomOut={handleZoomOut}
-
             isSelectingB={isSelectingB}
-
             handleCompareSelect={handleCompareSelect}
-
           />
 
-        </div>
-
-        <div className={isFullWidth ? "col-2" : ""}>
-
-          {/* <PotentialSection factors={data.factors} score={data.suitability_score} /> */}
-
-          <EvidenceSection data={data} />
-
-        </div>
-
-      </div>
-
-    );
-
-  }
-
-
-
-  if (activeTab === "environmental") {
-
-    const cnn = data?.cnn_analysis;
-
-    const confidence = cnn?.confidence || 0;
-
-
-
-    // NEW: 3-Tier Tactical Color Logic
-
-    const getCnnTheme = (conf) => {
-
-      if (conf >= 70) return { color: "#10b981", label: "VERIFIED", note: "TARGET LOCKED", class: "high-conf", glow: "rgba(16, 185, 129, 0.2)" }; 
-
-      if (conf >= 40) return { color: "#3b82f6", label: "PROBABLE", note: "PATTERN RECOGNIZED", class: "mid-conf", glow: "rgba(59, 130, 246, 0.2)" }; 
-
-      return { color: "#ef4444", label: "UNCERTAIN", note: "SIGNAL INTERFERENCE", class: "low-conf", glow: "rgba(239, 68, 68, 0.2)" }; 
-
-    };
-
-
-
-    const cnnTheme = getCnnTheme(confidence);
-
-
-
-    return (
-
-      <div className="environmental-container">
-
-        {/* Landscape Full-Width Cards Layout */}
-
-        <div className="environmental-cards-grid">
-
-          {/* CNN Intelligence Card */}
-
-          <div
-
-            className={`card cnn-tactical-card glass-morphic animate-in ${cnnTheme.class}`}
-
-            style={{ "--status-color": cnnTheme.color, "--status-glow": cnnTheme.glow }}
-
-          >
-
-            <div className="cnn-tactical-header">
-
-              <div className="cnn-title-group">
-
-                <span className="live-tag">LIVE TELEMETRY</span>
-
-                <h3>Visual Intelligence Scan</h3>
-
-              </div>
-
-
-
-              <div className="tactical-header-right">
-
-                <div className="model-id-badge">
-
-                  <span className="model-label">ENGINE</span>
-
-                  <span className="model-name">CNN-V2 / MOBILE-NET</span>
-
-                </div>
-
-
-
-                <div
-
-                  className="status-indicator-pill"
-
-                  style={{ backgroundColor: cnnTheme.color }}
-
-                >
-
-                  {confidence < 40 && <span className="mini-warn">⚠️</span>}
-
-                  {cnnTheme.label}
-
-                </div>
-
-              </div>
-
+          {/* Render the lighter categories below the radar chart ONLY on full screen single mode */}
+          {isFullWidth && (
+            <div className="secondary-evidence-left" style={{ marginTop: '20px' }}>
+              <EvidenceSection 
+                data={data} 
+                filterCategories={['socio_econ', 'risk_resilience']} 
+              />
             </div>
+          )}
+        </div>
+
+        {/* RIGHT COLUMN: Heavy Technical Evidence */}
+        <div className={isFullWidth ? "col-2" : ""}>
+          <EvidenceSection 
+            data={data} 
+            filterCategories={
+              isFullWidth 
+                ? ['physical', 'hydrology', 'environmental', 'climatic'] 
+                : null // Show all in compare mode or small screens
+            } 
+          />
+        </div>
+      </div>
+    );
+  }
+ 
+    if (activeTab === "environmental") {
+
+      const cnn = data?.cnn_analysis;
+
+      const confidence = cnn?.confidence || 0;
 
 
 
-            <div className="cnn-tactical-layout">
+      // NEW: 3-Tier Tactical Color Logic
 
-              <div className="cnn-visual-container">
+      const getCnnTheme = (conf) => {
 
-                <div
+        if (conf >= 70) return { color: "#10b981", label: "VERIFIED", note: "TARGET LOCKED", class: "high-conf", glow: "rgba(16, 185, 129, 0.2)" };
 
-                  className="cnn-frame"
+        if (conf >= 40) return { color: "#3b82f6", label: "PROBABLE", note: "PATTERN RECOGNIZED", class: "mid-conf", glow: "rgba(59, 130, 246, 0.2)" };
 
-                  style={{ borderColor: cnnTheme.color }}
+        return { color: "#ef4444", label: "UNCERTAIN", note: "SIGNAL INTERFERENCE", class: "low-conf", glow: "rgba(239, 68, 68, 0.2)" };
 
-                >
+      };
 
-                  <div
 
-                    className="cnn-image-feed"
 
-                    style={{
+      const cnnTheme = getCnnTheme(confidence);
 
-                      backgroundImage: cnn?.image_sample
 
-                        ? `url(${cnn.image_sample})`
 
-                        : "none",
+      return (
 
-                      filter:
+        <div className="environmental-container">
 
-                        confidence < 40
+          {/* Landscape Full-Width Cards Layout */}
 
-                          ? "grayscale(0.4) contrast(1.1) brightness(0.9)"
+          <div className="environmental-cards-grid">
 
-                          : "none",
+            {/* CNN Intelligence Card */}
 
-                    }}
+            <div
 
-                  >
+              className={`card cnn-tactical-card glass-morphic animate-in ${cnnTheme.class}`}
 
-                    {cnn?.image_sample && (
+              style={{ "--status-color": cnnTheme.color, "--status-glow": cnnTheme.glow }}
 
-                      <div className="scan-telemetry-overlay" />
+            >
 
-                    )}
+              <div className="cnn-tactical-header">
+
+                <div className="cnn-title-group">
+
+                  <span className="live-tag">LIVE TELEMETRY</span>
+
+                  <h3>Visual Intelligence Scan</h3>
+
+                </div>
+
+
+
+                <div className="tactical-header-right">
+
+                  <div className="model-id-badge">
+
+                    <span className="model-label">ENGINE</span>
+
+                    <span className="model-name">CNN-V2 / MOBILE-NET</span>
 
                   </div>
 
 
 
-                  <div className="corner-bit tl" />
+                  <div
 
-                  <div className="corner-bit tr" />
+                    className="status-indicator-pill"
 
-                  <div className="corner-bit bl" />
+                    style={{ backgroundColor: cnnTheme.color }}
 
-                  <div className="corner-bit br" />
+                  >
+
+                    {confidence < 40 && <span className="mini-warn">⚠️</span>}
+
+                    {cnnTheme.label}
+
+                  </div>
 
                 </div>
 
@@ -4111,491 +3541,617 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 
 
 
-              <div className="cnn-data-grid">
+              <div className="cnn-tactical-layout">
 
-                <div className="cnn-stat-item">
+                <div className="cnn-visual-container">
 
-                  <label>TERRAIN CLASSIFICATION:</label>
+                  <div
 
-                  <strong
+                    className="cnn-frame"
 
-                    className="cnn-class-text"
-
-                    style={{ color: cnnTheme.color }}
+                    style={{ borderColor: cnnTheme.color }}
 
                   >
 
-                    {cnn?.class || "ANALYZING..."}
+                    <div
 
-                  </strong>
+                      className="cnn-image-feed"
+
+                      style={{
+
+                        backgroundImage: cnn?.image_sample
+
+                          ? `url(${cnn.image_sample})`
+
+                          : "none",
+
+                        filter:
+
+                          confidence < 40
+
+                            ? "grayscale(0.4) contrast(1.1) brightness(0.9)"
+
+                            : "none",
+
+                      }}
+
+                    >
+
+                      {cnn?.image_sample && (
+
+                        <div className="scan-telemetry-overlay" />
+
+                      )}
+
+                    </div>
+
+
+
+                    <div className="corner-bit tl" />
+
+                    <div className="corner-bit tr" />
+
+                    <div className="corner-bit bl" />
+
+                    <div className="corner-bit br" />
+
+                  </div>
 
                 </div>
 
 
 
-                <div className="cnn-stat-item">
+                <div className="cnn-data-grid">
 
-                  <div className="label-row">
+                  <div className="cnn-stat-item">
 
-                    <label>SPECTRAL CONFIDENCE:</label>
+                    <label>TERRAIN CLASSIFICATION:</label>
 
-                    <span
+                    <strong
 
-                      className="confidence-value"
+                      className="cnn-class-text"
 
                       style={{ color: cnnTheme.color }}
 
                     >
 
-                      {confidence}%
+                      {cnn?.class || "ANALYZING..."}
+
+                    </strong>
+
+                  </div>
+
+
+
+                  <div className="cnn-stat-item">
+
+                    <div className="label-row">
+
+                      <label>SPECTRAL CONFIDENCE:</label>
+
+                      <span
+
+                        className="confidence-value"
+
+                        style={{ color: cnnTheme.color }}
+
+                      >
+
+                        {confidence}%
+
+                      </span>
+
+                    </div>
+
+
+
+                    <div className="tactical-progress-bg">
+
+                      <div
+
+                        className="tactical-progress-fill"
+
+                        style={{
+
+                          width: `${confidence}%`,
+
+                          backgroundColor: cnnTheme.color,
+
+                        }}
+
+                      />
+
+                    </div>
+
+                  </div>
+
+
+
+                  <div
+
+                    className="cnn-alert-box"
+
+                    style={{
+
+                      borderLeftColor: cnnTheme.color,
+
+                      background: `${cnnTheme.color}15`,
+
+                    }}
+
+                  >
+
+                    <strong style={{ color: cnnTheme.color }}>
+
+                      {cnnTheme.note}
+
+                    </strong>
+
+                    <p>
+
+                      {confidence < 40
+
+                        ? "Terrain complexity exceeding standard spectral resolution."
+
+                        : `Visual markers confirm high correlation with ${cnn?.class} signatures.`}
+
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <div className="cnn-footer-telemetry">
+
+                <span>
+
+                  RES:{" "}
+
+                  {cnn?.telemetry?.resolution_m_per_px != null
+
+                    ? `${cnn.telemetry.resolution_m_per_px}m/px`
+
+                    : "10m/px"}
+
+                </span>
+
+                <span>SENSOR: {cnn?.telemetry?.tile_url_source || "SENTINEL-2 L2A"}</span>
+
+                <span>MODEL: {cnn?.telemetry?.model || "CNN-V2 / MOBILE-NET"}</span>
+
+                <span>TS: {new Date().toLocaleTimeString()}</span>
+
+                {cnn?.telemetry?.verified_by && (
+
+                  <span>✓ {cnn.telemetry.verified_by}</span>
+
+                )}
+
+              </div>
+
+            </div>
+
+
+
+            {/* Weather Card */}
+
+            <WeatherCard weather={data?.weather} />
+
+
+
+            {/* Hazards Card */}
+
+            <HazardsCard data={currentSnapshot?.hazards_analysis} loading={snapshotLoading} />
+
+
+
+            {/* Snapshot Geo Card */}
+
+            <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
+
+          </div>
+
+        </div>
+
+      );
+
+    }
+
+
+
+
+
+    if (activeTab === "infrastructure") {
+
+      const intel = data.strategic_intelligence || {};
+
+      // Use flat_factors (all 14) when available; else derive from nested data.factors
+
+      const flatF = data.flat_factors || (() => {
+
+        const f = data.factors || {};
+
+        const get = (cat, key) => {
+
+          const v = f[cat]?.[key];
+
+          return typeof v === 'object' && v !== null ? v.value : v;
+
+        };
+
+        return {
+
+          landuse: get('socio_econ', 'landuse') ?? 50,
+
+          pollution: get('environmental', 'pollution') ?? 50,
+
+          proximity: get('socio_econ', 'infrastructure') ?? 50,
+
+          soil: get('environmental', 'soil') ?? 50,
+
+          water: get('hydrology', 'water') ?? 50,
+
+          vegetation: get('environmental', 'vegetation') ?? 50
+
+        };
+
+      })();
+
+      const landuseVal = typeof flatF.landuse === 'number' ? flatF.landuse : 50;
+
+      const pollutionVal = typeof flatF.pollution === 'number' ? flatF.pollution : 50;
+
+      const proximityVal = typeof flatF.proximity === 'number' ? flatF.proximity : (typeof flatF.infrastructure === 'number' ? flatF.infrastructure : 50);
+
+      const soilVal = typeof flatF.soil === 'number' ? flatF.soil : 50;
+
+      const waterVal = typeof flatF.water === 'number' ? flatF.water : 50;
+
+      // Carbon Intelligence: Potential based on vegetation/landuse
+
+      const carbonIntelligence = (landuseVal * 0.75).toFixed(1);
+
+      const liveFootprint = ((100 - pollutionVal + (100 - proximityVal)) / 15).toFixed(1);
+
+      const esgScore = Math.round((soilVal + pollutionVal + waterVal) / 3);
+
+      const esgColorClass = esgScore > 75 ? "grade-A" : esgScore > 50 ? "grade-B" : esgScore > 35 ? "grade-C" : "grade-F";
+
+
+
+
+
+      return (
+
+        <div className="infrastructure-container">
+
+          <div className="infrastructure-cards-grid">
+
+            {/* Site Potential Analysis Card */}
+
+            <div className="card glass-morphic intel-card potential-card">
+
+              <div className="intel-header">
+
+                <div className="potential-score-badge">
+
+                  {/* <span className="score-value">{data.suitability_score?.toFixed(0) || '---'}%</span>
+
+                <span className="score-label">SCORE</span> */}
+
+                </div>
+
+              </div>
+
+
+
+              <PotentialSection factors={data.factors} score={data.suitability_score} />
+
+
+
+              <div className="potential-insights">
+
+                <h4>Development Recommendations</h4>
+
+                <div className="insights-grid">
+
+                  <div className="insight-item">
+
+                    <span className="insight-icon">🏗️</span>
+
+                    <div className="insight-content">
+
+                      <strong>Construction Viability</strong>
+
+                      <span>{data.suitability_score > 70 ? 'Excellent' : data.suitability_score > 50 ? 'Good' : 'Limited'}</span>
+
+                    </div>
+
+                  </div>
+
+                  <div className="insight-item">
+
+                    <span className="insight-icon">🌱</span>
+
+                    <div className="insight-content">
+
+                      <strong>Agricultural Potential</strong>
+
+                      <span>{data.factors?.environmental?.soil?.value > 60 ? 'High' : 'Moderate'}</span>
+
+                    </div>
+
+                  </div>
+
+                  <div className="insight-item">
+
+                    <span className="insight-icon">🏘️</span>
+
+                    <div className="insight-content">
+
+                      <strong>Residential Suitability</strong>
+
+                      <span>{data.factors?.socio_econ?.infrastructure?.value > 60 ? 'Favorable' : 'Challenging'}</span>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+            {/* Sustainability Intelligence Card */}
+
+            <div className="card glass-morphic intel-card sustainability-card">
+
+              <div className="intel-header">
+
+                <h3>🌳 Sustainability Intelligence</h3>
+
+                <div className={`esg-score-circle ${esgColorClass}`}>
+
+                  <span className="esg-val">{esgScore}</span>
+
+                  <span className="esg-lab">ESG</span>
+
+                </div>
+
+              </div>
+
+              <div className="carbon-analysis-zone">
+
+                <div className="analysis-row">
+
+                  <div className="analysis-item">
+
+                    <label>Carbon Asset</label>
+
+                    <span className="val-green">+{carbonIntelligence} <small>tCO2e/yr</small></span>
+
+                    <div className="mini-progress-bg">
+
+                      <div className="mini-progress-fill green" style={{ width: `${Math.min(carbonIntelligence * 2, 100)}%` }}></div>
+
+                    </div>
+
+                  </div>
+
+                  <div className="analysis-item">
+
+                    <label>Live Footprint</label>
+
+                    <span className="val-red">-{liveFootprint} <small>tCO2e/yr</small></span>
+
+                    <div className="mini-progress-bg">
+
+                      <div className="mini-progress-fill red" style={{ width: `${Math.min(liveFootprint * 10, 100)}%` }}></div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div className="net-impact-summary">
+
+                  <div className="impact-label">Net Ecosystem Impact</div>
+
+                  <div className="impact-value">
+
+                    {(carbonIntelligence - liveFootprint) > 0 ? "CARBON NEGATIVE" : "CARBON POSITIVE"}
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="eligibility-drawer">
+
+                <div className="drawer-item">
+
+                  <span>🌿 Conservation Credit Match:</span>
+
+                  <strong className={esgScore > 65 ? "status-ok" : "status-no"}>
+
+                    {esgScore > 65 ? "HIGHLY ELIGIBLE" : "INELIGIBLE"}
+
+                  </strong>
+
+                </div>
+
+                <div className="drawer-item">
+
+                  <span>🛡️ Biodiversity Buffer:</span>
+
+                  <strong>{landuseVal > 60 ? "PREMIUM" : "STANDARD"}</strong>
+
+                </div>
+
+              </div>
+
+              <p className="legal-disclaimer">Estimates based on biomass density and emission intensity.</p>
+
+            </div>
+
+
+
+            {/* Dynamic Improvement Roadmap Card */}
+
+            <div className="card glass-morphic intel-card roadmap-card">
+
+              <div className="intel-header">
+
+                <h3>🚧 Dynamic Improvement Roadmap</h3>
+
+                {intel.development_readiness && (
+
+                  <div className="readiness-badge">
+
+                    <span className={`status-${intel.development_readiness.status}`}>
+
+                      {intel.development_readiness.status.toUpperCase()}
 
                     </span>
 
                   </div>
 
-
-
-                  <div className="tactical-progress-bg">
-
-                    <div
-
-                      className="tactical-progress-fill"
-
-                      style={{
-
-                        width: `${confidence}%`,
-
-                        backgroundColor: cnnTheme.color,
-
-                      }}
-
-                    />
-
-                  </div>
-
-                </div>
-
-
-
-                <div
-
-                  className="cnn-alert-box"
-
-                  style={{
-
-                    borderLeftColor: cnnTheme.color,
-
-                    background: `${cnnTheme.color}15`,
-
-                  }}
-
-                >
-
-                  <strong style={{ color: cnnTheme.color }}>
-
-                    {cnnTheme.note}
-
-                  </strong>
-
-                  <p>
-
-                    {confidence < 40
-
-                      ? "Terrain complexity exceeding standard spectral resolution."
-
-                      : `Visual markers confirm high correlation with ${cnn?.class} signatures.`}
-
-                  </p>
-
-                </div>
+                )}
 
               </div>
 
-            </div>
 
-
-
-            <div className="cnn-footer-telemetry">
-
-              <span>
-
-                RES:{" "}
-
-                {cnn?.telemetry?.resolution_m_per_px != null
-
-                  ? `${cnn.telemetry.resolution_m_per_px}m/px`
-
-                  : "10m/px"}
-
-              </span>
-
-              <span>SENSOR: {cnn?.telemetry?.tile_url_source || "SENTINEL-2 L2A"}</span>
-
-              <span>MODEL: {cnn?.telemetry?.model || "CNN-V2 / MOBILE-NET"}</span>
-
-              <span>TS: {new Date().toLocaleTimeString()}</span>
-
-              {cnn?.telemetry?.verified_by && (
-
-                <span>✓ {cnn.telemetry.verified_by}</span>
-
-              )}
-
-            </div>
-
-          </div>
-
-
-
-          {/* Weather Card */}
-
-          <WeatherCard weather={data?.weather} />
-
-
-
-          {/* Hazards Card */}
-
-          <HazardsCard data={currentSnapshot?.hazards_analysis} loading={snapshotLoading} />
-
-
-
-          {/* Snapshot Geo Card */}
-
-          <SnapshotGeo data={currentSnapshot} loading={snapshotLoading} />
-
-        </div>
-
-      </div>
-
-    );
-
-  }
-
-
-
-
-
-  if (activeTab === "infrastructure") {
-
-    const intel = data.strategic_intelligence || {};
-
-    // Use flat_factors (all 14) when available; else derive from nested data.factors
-
-    const flatF = data.flat_factors || (() => {
-
-      const f = data.factors || {};
-
-      const get = (cat, key) => {
-
-        const v = f[cat]?.[key];
-
-        return typeof v === 'object' && v !== null ? v.value : v;
-
-      };
-
-      return {
-
-        landuse: get('socio_econ', 'landuse') ?? 50,
-
-        pollution: get('environmental', 'pollution') ?? 50,
-
-        proximity: get('socio_econ', 'infrastructure') ?? 50,
-
-        soil: get('environmental', 'soil') ?? 50,
-
-        water: get('hydrology', 'water') ?? 50,
-
-        vegetation: get('environmental', 'vegetation') ?? 50
-
-      };
-
-    })();
-
-    const landuseVal = typeof flatF.landuse === 'number' ? flatF.landuse : 50;
-
-    const pollutionVal = typeof flatF.pollution === 'number' ? flatF.pollution : 50;
-
-    const proximityVal = typeof flatF.proximity === 'number' ? flatF.proximity : (typeof flatF.infrastructure === 'number' ? flatF.infrastructure : 50);
-
-    const soilVal = typeof flatF.soil === 'number' ? flatF.soil : 50;
-
-    const waterVal = typeof flatF.water === 'number' ? flatF.water : 50;
-
-    // Carbon Intelligence: Potential based on vegetation/landuse
-
-    const carbonIntelligence = (landuseVal * 0.75).toFixed(1);
-
-    const liveFootprint = ((100 - pollutionVal + (100 - proximityVal)) / 15).toFixed(1);
-
-    const esgScore = Math.round((soilVal + pollutionVal + waterVal) / 3);
-
-    const esgColorClass = esgScore > 75 ? "grade-A" : esgScore > 50 ? "grade-B" : esgScore > 35 ? "grade-C" : "grade-F";
-
-  
-
-
-
-    return (
-
-      <div className="infrastructure-container">
-
-        <div className="infrastructure-cards-grid">
-
-          {/* Site Potential Analysis Card */}
-
-          <div className="card glass-morphic intel-card potential-card">
-
-            <div className="intel-header">
-
-              <div className="potential-score-badge">
-
-                {/* <span className="score-value">{data.suitability_score?.toFixed(0) || '---'}%</span>
-
-                <span className="score-label">SCORE</span> */}
-
-              </div>
-
-            </div>
-
-            
-
-            <PotentialSection factors={data.factors} score={data.suitability_score} />
-
-            
-
-            <div className="potential-insights">
-
-              <h4>Development Recommendations</h4>
-
-              <div className="insights-grid">
-
-                <div className="insight-item">
-
-                  <span className="insight-icon">🏗️</span>
-
-                  <div className="insight-content">
-
-                    <strong>Construction Viability</strong>
-
-                    <span>{data.suitability_score > 70 ? 'Excellent' : data.suitability_score > 50 ? 'Good' : 'Limited'}</span>
-
-                  </div>
-
-                </div>
-
-                <div className="insight-item">
-
-                  <span className="insight-icon">🌱</span>
-
-                  <div className="insight-content">
-
-                    <strong>Agricultural Potential</strong>
-
-                    <span>{data.factors?.environmental?.soil?.value > 60 ? 'High' : 'Moderate'}</span>
-
-                  </div>
-
-                </div>
-
-                <div className="insight-item">
-
-                  <span className="insight-icon">🏘️</span>
-
-                  <div className="insight-content">
-
-                    <strong>Residential Suitability</strong>
-
-                    <span>{data.factors?.socio_econ?.infrastructure?.value > 60 ? 'Favorable' : 'Challenging'}</span>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-
-          {/* Sustainability Intelligence Card */}
-
-          <div className="card glass-morphic intel-card sustainability-card">
-
-            <div className="intel-header">
-
-              <h3>🌳 Sustainability Intelligence</h3>
-
-              <div className={`esg-score-circle ${esgColorClass}`}>
-
-                <span className="esg-val">{esgScore}</span>
-
-                <span className="esg-lab">ESG</span>
-
-              </div>
-
-            </div>
-
-            <div className="carbon-analysis-zone">
-
-              <div className="analysis-row">
-
-                <div className="analysis-item">
-
-                  <label>Carbon Asset</label>
-
-                  <span className="val-green">+{carbonIntelligence} <small>tCO2e/yr</small></span>
-
-                  <div className="mini-progress-bg">
-
-                    <div className="mini-progress-fill green" style={{ width: `${Math.min(carbonIntelligence * 2, 100)}%` }}></div>
-
-                  </div>
-
-                </div>
-
-                <div className="analysis-item">
-
-                  <label>Live Footprint</label>
-
-                  <span className="val-red">-{liveFootprint} <small>tCO2e/yr</small></span>
-
-                  <div className="mini-progress-bg">
-
-                    <div className="mini-progress-fill red" style={{ width: `${Math.min(liveFootprint * 10, 100)}%` }}></div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="net-impact-summary">
-
-                <div className="impact-label">Net Ecosystem Impact</div>
-
-                <div className="impact-value">
-
-                  { (carbonIntelligence - liveFootprint) > 0 ? "CARBON NEGATIVE" : "CARBON POSITIVE" }
-
-                </div>
-
-              </div>
-
-            </div>
-
-            <div className="eligibility-drawer">
-
-              <div className="drawer-item">
-
-                <span>🌿 Conservation Credit Match:</span>
-
-                <strong className={esgScore > 65 ? "status-ok" : "status-no"}>
-
-                  {esgScore > 65 ? "HIGHLY ELIGIBLE" : "INELIGIBLE"}
-
-                </strong>
-
-              </div>
-
-              <div className="drawer-item">
-
-                <span>🛡️ Biodiversity Buffer:</span>
-
-                <strong>{landuseVal > 60 ? "PREMIUM" : "STANDARD"}</strong>
-
-              </div>
-
-            </div>
-
-            <p className="legal-disclaimer">Estimates based on biomass density and emission intensity.</p>
-
-          </div>
-
-
-
-          {/* Dynamic Improvement Roadmap Card */}
-
-          <div className="card glass-morphic intel-card roadmap-card">
-
-            <div className="intel-header">
-
-              <h3>🚧 Dynamic Improvement Roadmap</h3>
 
               {intel.development_readiness && (
 
-                <div className="readiness-badge">
+                <div className="readiness-summary">
 
-                  <span className={`status-${intel.development_readiness.status}`}>
+                  <div className="readiness-metrics">
 
-                    {intel.development_readiness.status.toUpperCase()}
+                    <div className="metric">
 
-                  </span>
+                      <span className="label">Total Investment:</span>
+
+                      <span className="value">{intel.development_readiness.estimated_total_investment || 'Calculating...'}</span>
+
+                    </div>
+
+                    <div className="metric">
+
+                      <span className="label">Time to Ready:</span>
+
+                      <span className="value">{intel.development_readiness.time_to_readiness || 'Calculating...'}</span>
+
+                    </div>
+
+                  </div>
 
                 </div>
 
               )}
 
-            </div>
 
-            
 
-            {intel.development_readiness && (
+              <div className="roadmap-list">
 
-              <div className="readiness-summary">
+                {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
 
-                <div className="readiness-metrics">
+                  <div key={i} className={`roadmap-item priority-${item.priority || 'medium'}`}>
 
-                  <div className="metric">
+                    <div className="roadmap-task-info">
 
-                    <span className="label">Total Investment:</span>
+                      <div className="task-header">
 
-                    <span className="value">{intel.development_readiness.estimated_total_investment || 'Calculating...'}</span>
+                        <span className="task-name">{item.task}</span>
 
-                  </div>
+                        <span className="impact-tag">{item.impact}</span>
 
-                  <div className="metric">
+                      </div>
 
-                    <span className="label">Time to Ready:</span>
+                      <p className="tiny-note">{item.note}</p>
 
-                    <span className="value">{intel.development_readiness.time_to_readiness || 'Calculating...'}</span>
+                      {item.estimated_cost && (
 
-                  </div>
+                        <div className="task-details">
 
-                </div>
+                          <span className="cost">💰 {item.estimated_cost}</span>
 
-              </div>
+                          <span className="timeline">⏱️ {item.timeline}</span>
 
-            )}
+                        </div>
 
-            
-
-            <div className="roadmap-list">
-
-              {intel.roadmap?.length > 0 ? intel.roadmap.map((item, i) => (
-
-                <div key={i} className={`roadmap-item priority-${item.priority || 'medium'}`}>
-
-                  <div className="roadmap-task-info">
-
-                    <div className="task-header">
-
-                      <span className="task-name">{item.task}</span>
-
-                      <span className="impact-tag">{item.impact}</span>
+                      )}
 
                     </div>
 
-                    <p className="tiny-note">{item.note}</p>
+                  </div>
 
-                    {item.estimated_cost && (
+                )) : <div className="nearby-empty">Analyzing location for improvement opportunities...</div>}
 
-                      <div className="task-details">
+              </div>
 
-                        <span className="cost">💰 {item.estimated_cost}</span>
+            </div>
 
-                        <span className="timeline">⏱️ {item.timeline}</span>
+
+
+            {/* AI-Driven Strategic Interventions Card */}
+
+            <div className="card glass-morphic intel-card prevention-card">
+
+              <div className="intel-header">
+
+                <h3>💡 AI-Driven Strategic Interventions</h3>
+
+                <p className="subtitle">Location-specific actionable intelligence</p>
+
+              </div>
+
+
+
+              <div className="interventions-list">
+
+                {intel.interventions?.length > 0 ? intel.interventions.map((intervention, i) => (
+
+                  <div key={i} className={`intervention-item urgency-${intervention.urgency || 'medium'}`}>
+
+                    <div className="intervention-header">
+
+                      <span className="intervention-action">{intervention.action || intervention}</span>
+
+                      {intervention.urgency && (
+
+                        <span className={`urgency-badge urgency-${intervention.urgency}`}>
+
+                          {intervention.urgency}
+
+                        </span>
+
+                      )}
+
+                    </div>
+
+                    {intervention.rationale && (
+
+                      <p className="intervention-rationale">{intervention.rationale}</p>
+
+                    )}
+
+                    {intervention.expected_impact && (
+
+                      <div className="intervention-impact">
+
+                        <span className="impact-label">Expected Impact:</span>
+
+                        <span className="impact-value">{intervention.expected_impact}</span>
 
                       </div>
 
@@ -4603,65 +4159,101 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 
                   </div>
 
-                </div>
+                )) : <div className="nearby-empty">Generating AI-powered interventions...</div>}
 
-              )) : <div className="nearby-empty">Analyzing location for improvement opportunities...</div>}
-
-            </div>
-
-          </div>
-
-
-
-          {/* AI-Driven Strategic Interventions Card */}
-
-          <div className="card glass-morphic intel-card prevention-card">
-
-            <div className="intel-header">
-
-              <h3>💡 AI-Driven Strategic Interventions</h3>
-
-              <p className="subtitle">Location-specific actionable intelligence</p>
+              </div>
 
             </div>
 
-            
 
-            <div className="interventions-list">
 
-              {intel.interventions?.length > 0 ? intel.interventions.map((intervention, i) => (
+            {/* Advanced AI Projection Card */}
 
-                <div key={i} className={`intervention-item urgency-${intervention.urgency || 'medium'}`}>
+            <div className="card glass-morphic intel-card prediction-card">
 
-                  <div className="intervention-header">
+              <div className="intel-header">
 
-                    <span className="intervention-action">{intervention.action || intervention}</span>
+                <h3>🚀 Advanced AI Projection (2036)</h3>
 
-                    {intervention.urgency && (
+                <div className="future-score-wrap">
 
-                      <span className={`urgency-badge urgency-${intervention.urgency}`}>
+                  <span className="current-mini">{data.suitability_score?.toFixed(1)}</span>
 
-                        {intervention.urgency}
+                  <span className="drift-arrow">→</span>
 
-                      </span>
+                  <span className="future-score">{intel.expected_score || 'Calculating...'}%</span>
 
-                    )}
+                  {intel.projection_analysis && (
 
-                  </div>
+                    <span className={`trend-${intel.projection_analysis.trend_direction}`}>
 
-                  {intervention.rationale && (
+                      {intel.projection_analysis.trend_direction}
 
-                    <p className="intervention-rationale">{intervention.rationale}</p>
+                    </span>
 
                   )}
 
-                  {intervention.expected_impact && (
+                </div>
 
-                    <div className="intervention-impact">
+              </div>
 
-                      <span className="impact-label">Expected Impact:</span>
 
-                      <span className="impact-value">{intervention.expected_impact}</span>
+
+              {intel.projection_analysis && (
+
+                <div className="projection-insights">
+
+                  <div className="confidence-meter">
+
+                    <span className="label">AI Confidence:</span>
+
+                    <div className="confidence-bar">
+
+                      <div
+
+                        className={`confidence-fill confidence-${intel.projection_analysis.confidence_level}`}
+
+                        style={{ width: intel.projection_analysis.confidence_level === 'high' ? '85%' : '60%' }}
+
+                      ></div>
+
+                    </div>
+
+                    <span className="confidence-value">{intel.projection_analysis.confidence_level}</span>
+
+                  </div>
+
+
+
+                  {intel.projection_analysis.key_drivers?.length > 0 && (
+
+                    <div className="key-drivers">
+
+                      <span className="label">Key Change Drivers:</span>
+
+                      <div className="drivers-list">
+
+                        {intel.projection_analysis.key_drivers.map((driver, i) => (
+
+                          <span key={i} className="driver-tag">{driver}</span>
+
+                        ))}
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+
+
+                  {intel.projection_analysis.mitigation_potential && (
+
+                    <div className="mitigation-potential">
+
+                      <span className="label">Mitigation Potential:</span>
+
+                      <span className="potential-value">+{intel.projection_analysis.mitigation_potential}%</span>
 
                     </div>
 
@@ -4669,191 +4261,89 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 
                 </div>
 
-              )) : <div className="nearby-empty">Generating AI-powered interventions...</div>}
-
-            </div>
-
-          </div>
+              )}
 
 
 
-          {/* Advanced AI Projection Card */}
-
-          <div className="card glass-morphic intel-card prediction-card">
-
-            <div className="intel-header">
-
-              <h3>🚀 Advanced AI Projection (2036)</h3>
-
-              <div className="future-score-wrap">
-
-                <span className="current-mini">{data.suitability_score?.toFixed(1)}</span>
-
-                <span className="drift-arrow">→</span>
-
-                <span className="future-score">{intel.expected_score || 'Calculating...'}%</span>
-
-                {intel.projection_analysis && (
-
-                  <span className={`trend-${intel.projection_analysis.trend_direction}`}>
-
-                    {intel.projection_analysis.trend_direction}
-
-                  </span>
-
-                )}
-
-              </div>
-
-            </div>
-
-            
-
-            {intel.projection_analysis && (
-
-              <div className="projection-insights">
-
-                <div className="confidence-meter">
-
-                  <span className="label">AI Confidence:</span>
-
-                  <div className="confidence-bar">
-
-                    <div 
-
-                      className={`confidence-fill confidence-${intel.projection_analysis.confidence_level}`}
-
-                      style={{ width: intel.projection_analysis.confidence_level === 'high' ? '85%' : '60%' }}
-
-                    ></div>
-
-                  </div>
-
-                  <span className="confidence-value">{intel.projection_analysis.confidence_level}</span>
-
-                </div>
-
-                
-
-                {intel.projection_analysis.key_drivers?.length > 0 && (
-
-                  <div className="key-drivers">
-
-                    <span className="label">Key Change Drivers:</span>
-
-                    <div className="drivers-list">
-
-                      {intel.projection_analysis.key_drivers.map((driver, i) => (
-
-                        <span key={i} className="driver-tag">{driver}</span>
-
-                      ))}
-
-                    </div>
-
-                  </div>
-
-                )}
-
-                
-
-                {intel.projection_analysis.mitigation_potential && (
-
-                  <div className="mitigation-potential">
-
-                    <span className="label">Mitigation Potential:</span>
-
-                    <span className="potential-value">+{intel.projection_analysis.mitigation_potential}%</span>
-
-                  </div>
-
-                )}
-
-              </div>
-
-            )}
-
-            
-
-            <div className="drift-metrics">
-
-              <div className="drift-row">
-
-                <span>Urbanization Risk:</span> 
-
-                <span className="val-red">{intel.metrics?.urban_sprawl || 'Calculating...'}</span>
-
-              </div>
-
-              <div className="drift-row">
-
-                <span>Vegetation Loss:</span> 
-
-                <span className="val-red">{intel.metrics?.veg_loss || 'Calculating...'}</span>
-
-              </div>
-
-              {intel.metrics?.water_security_risk && (
+              <div className="drift-metrics">
 
                 <div className="drift-row">
 
-                  <span>Water Security Risk:</span> 
+                  <span>Urbanization Risk:</span>
 
-                  <span className="val-orange">{intel.metrics.water_security_risk}</span>
+                  <span className="val-red">{intel.metrics?.urban_sprawl || 'Calculating...'}</span>
 
                 </div>
-
-              )}
-
-              {intel.metrics?.climate_resilience && (
 
                 <div className="drift-row">
 
-                  <span>Climate Resilience:</span> 
+                  <span>Vegetation Loss:</span>
 
-                  <span className="val-orange">{intel.metrics.climate_resilience}</span>
-
-                </div>
-
-              )}
-
-              {intel.metrics?.overall_risk_index && (
-
-                <div className="drift-row overall-risk">
-
-                  <span>Overall Risk Index:</span> 
-
-                  <span className={`val-${intel.metrics.overall_risk_index > 20 ? 'red' : intel.metrics.overall_risk_index > 10 ? 'orange' : 'green'}`}>
-
-                    {intel.metrics.overall_risk_index}%
-
-                  </span>
+                  <span className="val-red">{intel.metrics?.veg_loss || 'Calculating...'}</span>
 
                 </div>
 
-              )}
+                {intel.metrics?.water_security_risk && (
 
-            </div>
+                  <div className="drift-row">
 
-          </div>
+                    <span>Water Security Risk:</span>
 
+                    <span className="val-orange">{intel.metrics.water_security_risk}</span>
 
+                  </div>
 
-          {/* Terrain & Slope Analysis Card - Compact Professional Design */}
+                )}
 
-          <div className="card glass-morphic intel-card terrain-card">
+                {intel.metrics?.climate_resilience && (
 
-            <div className="intel-header">
+                  <div className="drift-row">
 
-              <div className="intel-title-section">
+                    <span>Climate Resilience:</span>
 
-                <h3>⛰️ Terrain & Slope Analysis</h3>
+                    <span className="val-orange">{intel.metrics.climate_resilience}</span>
 
-                <p className="subtitle">Professional Assessment</p>
+                  </div>
+
+                )}
+
+                {intel.metrics?.overall_risk_index && (
+
+                  <div className="drift-row overall-risk">
+
+                    <span>Overall Risk Index:</span>
+
+                    <span className={`val-${intel.metrics.overall_risk_index > 20 ? 'red' : intel.metrics.overall_risk_index > 10 ? 'orange' : 'green'}`}>
+
+                      {intel.metrics.overall_risk_index}%
+
+                    </span>
+
+                  </div>
+
+                )}
 
               </div>
 
-              {/* <div className="terrain-score-badge">
+            </div>
+
+
+
+            {/* Terrain & Slope Analysis Card - Compact Professional Design */}
+
+            <div className="card glass-morphic intel-card terrain-card">
+
+              <div className="intel-header">
+
+                <div className="intel-title-section">
+
+                  <h3>⛰️ Terrain & Slope Analysis</h3>
+
+                  <p className="subtitle">Professional Assessment</p>
+
+                </div>
+
+                {/* <div className="terrain-score-badge">
 
                 <span className="score-value">{data.factors?.physical?.slope?.value?.toFixed(1) || '---'}°</span>
 
@@ -4861,107 +4351,239 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 
               </div> */}
 
-            </div>
+              </div>
 
-            
 
-            <div className="terrain-compact-grid">
 
-              <div className="terrain-metric-row">
+              <div className="terrain-compact-grid">
 
-                <div className="terrain-metric-item">
+                <div className="terrain-metric-row">
 
-                  <div className="metric-icon">📐</div>
+                  <div className="terrain-metric-item">
 
-                  <div className="metric-info">
+                    <div className="metric-icon">📐</div>
 
-                    <strong>Slope</strong>
+                    <div className="metric-info">
 
-                    <span>{data.factors?.physical?.slope?.value?.toFixed(1) || '---'}°</span>
+                      <strong>Slope</strong>
+
+                      <span>{data.factors?.physical?.slope?.value?.toFixed(1) || '---'}°</span>
+
+                    </div>
+
+                    <div className="metric-status">
+
+                      <span className={`status-badge ${(data.factors?.physical?.slope?.value || 0) < 8 ? 'good' : (data.factors?.physical?.slope?.value || 0) < 15 ? 'moderate' : (data.factors?.physical?.slope?.value || 0) < 30 ? 'poor' : 'critical'}`}>
+
+                        {(data.factors?.physical?.slope?.value || 0) < 8 ? 'FLAT' :
+
+                          (data.factors?.physical?.slope?.value || 0) < 15 ? 'MODERATE' :
+
+                            (data.factors?.physical?.slope?.value || 0) < 30 ? 'STEEP' : 'VERY STEEP'}
+
+                      </span>
+
+                    </div>
 
                   </div>
 
-                  <div className="metric-status">
 
-                    <span className={`status-badge ${(data.factors?.physical?.slope?.value || 0) < 8 ? 'good' : (data.factors?.physical?.slope?.value || 0) < 15 ? 'moderate' : (data.factors?.physical?.slope?.value || 0) < 30 ? 'poor' : 'critical'}`}>
 
-                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'FLAT' : 
+                  <div className="terrain-metric-item">
 
-                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'MODERATE' : 
+                    <div className="metric-icon">🏔️</div>
 
-                       (data.factors?.physical?.slope?.value || 0) < 30 ? 'STEEP' : 'VERY STEEP'}
+                    <div className="metric-info">
 
-                    </span>
+                      <strong>Elevation</strong>
+
+                      <span>{data.factors?.physical?.elevation?.value?.toFixed(0) || '---'}m</span>
+
+                    </div>
+
+                    <div className="metric-status">
+
+                      <span className={`status-badge ${(data.factors?.physical?.elevation?.value || 0) < 100 ? 'low' : (data.factors?.physical?.elevation?.value || 0) < 500 ? 'medium' : (data.factors?.physical?.elevation?.value || 0) < 1500 ? 'high' : 'extreme'}`}>
+
+                        {(data.factors?.physical?.elevation?.value || 0) < 100 ? 'LOWLAND' :
+
+                          (data.factors?.physical?.elevation?.value || 0) < 500 ? 'PLAINS' :
+
+                            (data.factors?.physical?.elevation?.value || 0) < 1500 ? 'HILLS' : 'MOUNTAINS'}
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+
+
+                  <div className="terrain-metric-item">
+
+                    <div className="metric-icon">🚧</div>
+
+                    <div className="metric-info">
+
+                      <strong>Viability</strong>
+
+                      <span>
+
+                        {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Excellent' :
+
+                          (data.factors?.physical?.slope?.value || 0) < 15 ? 'Good' :
+
+                            (data.factors?.physical?.slope?.value || 0) < 30 ? 'Challenging' : 'Limited'}
+
+                      </span>
+
+                    </div>
+
+                    <div className="metric-status">
+
+                      <span className={`status-badge ${(data.factors?.physical?.slope?.value || 0) < 8 ? 'excellent' : (data.factors?.physical?.slope?.value || 0) < 15 ? 'good' : (data.factors?.physical?.slope?.value || 0) < 30 ? 'challenging' : 'not-recommended'}`}>
+
+                        {(data.factors?.physical?.slope?.value || 0) < 8 ? 'IDEAL' :
+
+                          (data.factors?.physical?.slope?.value || 0) < 15 ? 'SUITABLE' :
+
+                            (data.factors?.physical?.slope?.value || 0) < 30 ? 'DIFFICULT' : 'NOT RECOMMENDED'}
+
+                      </span>
+
+                    </div>
 
                   </div>
 
                 </div>
 
-                
+              </div>
 
-                <div className="terrain-metric-item">
 
-                  <div className="metric-icon">🏔️</div>
 
-                  <div className="metric-info">
+              <div className="terrain-quick-insights">
 
-                    <strong>Elevation</strong>
+                <div className="insight-row">
 
-                    <span>{data.factors?.physical?.elevation?.value?.toFixed(0) || '---'}m</span>
+                  <div className="insight-item">
+
+                    <span className="insight-icon">⚡</span>
+
+                    <div className="insight-content">
+
+                      <strong>Earthwork</strong>
+
+                      <span>
+
+                        {(data.factors?.physical?.slope?.value || 0) < 5 ? 'Minimal' :
+
+                          (data.factors?.physical?.slope?.value || 0) < 10 ? 'Low' :
+
+                            (data.factors?.physical?.slope?.value || 0) < 20 ? 'Moderate' : 'High'}
+
+                      </span>
+
+                    </div>
 
                   </div>
 
-                  <div className="metric-status">
+                  <div className="insight-item">
 
-                    <span className={`status-badge ${(data.factors?.physical?.elevation?.value || 0) < 100 ? 'low' : (data.factors?.physical?.elevation?.value || 0) < 500 ? 'medium' : (data.factors?.physical?.elevation?.value || 0) < 1500 ? 'high' : 'extreme'}`}>
+                    <span className="insight-icon">🛡️</span>
 
-                      {(data.factors?.physical?.elevation?.value || 0) < 100 ? 'LOWLAND' : 
+                    <div className="insight-content">
 
-                       (data.factors?.physical?.elevation?.value || 0) < 500 ? 'PLAINS' : 
+                      <strong>Walls</strong>
 
-                       (data.factors?.physical?.elevation?.value || 0) < 1500 ? 'HILLS' : 'MOUNTAINS'}
+                      <span>
 
-                    </span>
+                        {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Not Required' :
+
+                          (data.factors?.physical?.slope?.value || 0) < 15 ? 'Partial' :
+
+                            (data.factors?.physical?.slope?.value || 0) < 25 ? 'Extensive' : 'Major'}
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                  <div className="insight-item">
+
+                    <span className="insight-icon">💰</span>
+
+                    <div className="insight-content">
+
+                      <strong>Cost Impact</strong>
+
+                      <span>
+
+                        {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Standard' :
+
+                          (data.factors?.physical?.slope?.value || 0) < 15 ? 'Moderate' :
+
+                            (data.factors?.physical?.slope?.value || 0) < 30 ? 'High' : 'Very High'}
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                  <div className="insight-item">
+
+                    <span className="insight-icon">⏱️</span>
+
+                    <div className="insight-content">
+
+                      <strong>Build Time</strong>
+
+                      <span>
+
+                        {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Normal' :
+
+                          (data.factors?.physical?.slope?.value || 0) < 15 ? '+2-4 weeks' :
+
+                            (data.factors?.physical?.slope?.value || 0) < 30 ? '+1-3 months' : '+3+ months'}
+
+                      </span>
+
+                    </div>
 
                   </div>
 
                 </div>
 
-                
+              </div>
 
-                <div className="terrain-metric-item">
 
-                  <div className="metric-icon">🚧</div>
 
-                  <div className="metric-info">
+              <div className="terrain-recommendation">
 
-                    <strong>Viability</strong>
+                <div className="recommendation-header">
 
-                    <span>
+                  <span className="rec-icon">
 
-                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Excellent' : 
+                    {(data.factors?.physical?.slope?.value || 0) < 8 ? '✅' :
 
-                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'Good' : 
+                      (data.factors?.physical?.slope?.value || 0) < 15 ? '👍' :
 
-                       (data.factors?.physical?.slope?.value || 0) < 30 ? 'Challenging' : 'Limited'}
+                        (data.factors?.physical?.slope?.value || 0) < 30 ? '⚠️' : '🚫'}
 
-                    </span>
+                  </span>
 
-                  </div>
+                  <span className="rec-title">
 
-                  <div className="metric-status">
+                    {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Excellent for all development types' :
 
-                    <span className={`status-badge ${(data.factors?.physical?.slope?.value || 0) < 8 ? 'excellent' : (data.factors?.physical?.slope?.value || 0) < 15 ? 'good' : (data.factors?.physical?.slope?.value || 0) < 30 ? 'challenging' : 'not-recommended'}`}>
+                      (data.factors?.physical?.slope?.value || 0) < 15 ? 'Suitable with minor planning' :
 
-                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'IDEAL' : 
+                        (data.factors?.physical?.slope?.value || 0) < 30 ? 'Requires extensive engineering' :
 
-                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'SUITABLE' : 
+                          'Not recommended for standard construction'}
 
-                       (data.factors?.physical?.slope?.value || 0) < 30 ? 'DIFFICULT' : 'NOT RECOMMENDED'}
-
-                    </span>
-
-                  </div>
+                  </span>
 
                 </div>
 
@@ -4971,243 +4593,128 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 
 
 
-            <div className="terrain-quick-insights">
+            {/* Digital Twin Infrastructure Simulation Card - Moved to Analysis */}
 
-              <div className="insight-row">
+            <div
 
-                <div className="insight-item">
+              className={`card glass-morphic intel-card digital-twin-card draggable-digital-twin ${isDigitalTwinDragging ? 'dragging' : ''}`}
 
-                  <span className="insight-icon">⚡</span>
+              style={{
 
-                  <div className="insight-content">
+                position: 'relative',
 
-                    <strong>Earthwork</strong>
-
-                    <span>
-
-                      {(data.factors?.physical?.slope?.value || 0) < 5 ? 'Minimal' :
-
-                       (data.factors?.physical?.slope?.value || 0) < 10 ? 'Low' :
-
-                       (data.factors?.physical?.slope?.value || 0) < 20 ? 'Moderate' : 'High'}
-
-                    </span>
-
-                  </div>
-
-                </div>
-
-                <div className="insight-item">
-
-                  <span className="insight-icon">🛡️</span>
-
-                  <div className="insight-content">
-
-                    <strong>Walls</strong>
-
-                    <span>
-
-                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Not Required' :
-
-                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'Partial' :
-
-                       (data.factors?.physical?.slope?.value || 0) < 25 ? 'Extensive' : 'Major'}
-
-                    </span>
-
-                  </div>
-
-                </div>
-
-                <div className="insight-item">
-
-                  <span className="insight-icon">💰</span>
-
-                  <div className="insight-content">
-
-                    <strong>Cost Impact</strong>
-
-                    <span>
-
-                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Standard' :
-
-                       (data.factors?.physical?.slope?.value || 0) < 15 ? 'Moderate' :
-
-                       (data.factors?.physical?.slope?.value || 0) < 30 ? 'High' : 'Very High'}
-
-                    </span>
-
-                  </div>
-
-                </div>
-
-                <div className="insight-item">
-
-                  <span className="insight-icon">⏱️</span>
-
-                  <div className="insight-content">
-
-                    <strong>Build Time</strong>
-
-                    <span>
-
-                      {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Normal' :
-
-                       (data.factors?.physical?.slope?.value || 0) < 15 ? '+2-4 weeks' :
-
-                       (data.factors?.physical?.slope?.value || 0) < 30 ? '+1-3 months' : '+3+ months'}
-
-                    </span>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            <div className="terrain-recommendation">
-
-              <div className="recommendation-header">
-
-                <span className="rec-icon">
-
-                  {(data.factors?.physical?.slope?.value || 0) < 8 ? '✅' :
-
-                   (data.factors?.physical?.slope?.value || 0) < 15 ? '👍' :
-
-                   (data.factors?.physical?.slope?.value || 0) < 30 ? '⚠️' : '🚫'}
-
-                </span>
-
-                <span className="rec-title">
-
-                  {(data.factors?.physical?.slope?.value || 0) < 8 ? 'Excellent for all development types' :
-
-                   (data.factors?.physical?.slope?.value || 0) < 15 ? 'Suitable with minor planning' :
-
-                   (data.factors?.physical?.slope?.value || 0) < 30 ? 'Requires extensive engineering' :
-
-                   'Not recommended for standard construction'}
-
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-
-          {/* Digital Twin Infrastructure Simulation Card - Moved to Analysis */}
-
-          <div 
-
-            className={`card glass-morphic intel-card digital-twin-card draggable-digital-twin ${isDigitalTwinDragging ? 'dragging' : ''}`}
-
-            style={{
-
-              position: 'relative',
-
-              transform: `translate(${digitalTwinPosition.x}px, ${digitalTwinPosition.y}px)`
-
-            }}
-
-          >
-
-            <div className="intel-header">
-
-              <h3>🏗️ Digital Twin Infrastructure Simulation</h3>
-
-              <p className="subtitle">Interactive Development Impact Analysis & Planning</p>
-
-              <div className="drag-handle" onMouseDown={handleDigitalTwinMouseDown}>⋮⋮</div>
-
-            </div>
-
-            <div className="impact-info">
-
-              <p className="impact-description">
-
-                💡 <strong>Impact Simulation:</strong> This advanced digital twin allows you to simulate various development scenarios and their environmental impacts in real-time. 
-
-                Try placing buildings, roads, or infrastructure to see immediate effects on the ecosystem.
-
-              </p>
-
-            </div>
-
-            <DigitalTwin 
-
-              location={{ lat: lat, lng: lng, factors: data.factors }}
-
-              onImpactUpdate={(impactData) => {
-
-                console.log('Development impact:', impactData);
+                transform: `translate(${digitalTwinPosition.x}px, ${digitalTwinPosition.y}px)`
 
               }}
 
-            />
+            >
+
+              <div className="intel-header">
+
+                <h3>🏗️ Digital Twin Infrastructure Simulation</h3>
+
+                <p className="subtitle">Interactive Development Impact Analysis & Planning</p>
+
+                <div className="drag-handle" onMouseDown={handleDigitalTwinMouseDown}>⋮⋮</div>
+
+              </div>
+
+              <div className="impact-info">
+
+                <p className="impact-description">
+
+                  💡 <strong>Impact Simulation:</strong> This advanced digital twin allows you to simulate various development scenarios and their environmental impacts in real-time.
+
+                  Try placing buildings, roads, or infrastructure to see immediate effects on the ecosystem.
+
+                </p>
+
+              </div>
+
+              <DigitalTwin
+
+                location={{ lat: lat, lng: lng, factors: data.factors }}
+
+                onImpactUpdate={(impactData) => {
+
+                  console.log('Development impact:', impactData);
+
+                }}
+
+              />
+
+            </div>
 
           </div>
 
         </div>
 
-      </div>
+      );
 
-    );
-
-  }
+    }
 
 
 
-  // // Fallback return to avoid "undefined" errors
+    // // Fallback return to avoid "undefined" errors
 
-  // return null;
+    // return null;
 
-};
+  };
 
   return (
     <div className="app-shell">
-        <AudioLandscape 
-          // Select factors based on which site is active in compare mode
-          activeFactors={isCompareMode 
-            ? (mobileCompareSite === "A" ? result?.factors : compareResult?.factors) 
-            : result?.factors
-          } 
-          // NEW: Pass the label (e.g. "Not Suitable (Waterbody)")
-          resultLabel={isCompareMode
-            ? (mobileCompareSite === "A" ? result?.label : compareResult?.label)
-            : result?.label
-          }
-          // NEW: Pass compare factors and label for Site B audio
-          compareFactors={compareResult?.factors}
-          compareResultLabel={compareResult?.label}
-          isEnabled={isAudioEnabled}
-          isLoading={loading || compareLoading}
-          siteAPlaying={siteAPlaying}
-          siteBPlaying={siteBPlaying}
-        />
-        <TopNav 
-          isDarkMode={isDarkMode} 
-          setIsDarkMode={setIsDarkMode} 
-          isAudioEnabled={isAudioEnabled} 
-          setIsAudioEnabled={setIsAudioEnabled} 
-          siteAPlaying={siteAPlaying}
-          setSiteAPlaying={setSiteAPlaying}
-          siteBPlaying={siteBPlaying}
-          setSiteBPlaying={setSiteBPlaying}
-          analysisHistory={analysisHistory} 
-          onSearchResult={handleSearchResult} 
-          compareResult={compareResult} 
-          isCompareMode={isCompareMode} 
-        />
-      
-      
+      {/* <AudioLandscape
+
+        activeFactors={isCompareMode
+          ? (mobileCompareSite === "A" ? result?.factors : compareResult?.factors)
+          : result?.factors
+        }
+
+        resultLabel={isCompareMode
+          ? (mobileCompareSite === "A" ? result?.label : compareResult?.label)
+          : result?.label
+        }
+
+        compareFactors={compareResult?.factors}
+        compareResultLabel={compareResult?.label}
+        isEnabled={isAudioEnabled}
+        isLoading={loading || compareLoading}
+        siteAPlaying={siteAPlaying}
+        siteBPlaying={siteBPlaying}
+      /> */}
+      <AudioLandscape
+  // SITE A DATA
+  activeFactors={result?.factors}
+  resultLabel={result?.label}
+  
+  // SITE B DATA (Passing null when comparison is closed)
+  compareFactors={isCompareMode ? compareResult?.factors : null}
+  compareResultLabel={isCompareMode ? compareResult?.label : null}
+  
+  // MASTER TOGGLES
+  isEnabled={isAudioEnabled}
+  isLoading={loading || compareLoading}
+  
+  // INDIVIDUAL MUTES (Controlled by TopNav)
+  siteAPlaying={siteAPlaying}
+  siteBPlaying={siteBPlaying}
+/>
+      <TopNav
+        isDarkMode={isDarkMode}
+        setIsDarkMode={setIsDarkMode}
+        isAudioEnabled={isAudioEnabled}
+        setIsAudioEnabled={setIsAudioEnabled}
+        siteAPlaying={siteAPlaying}
+        setSiteAPlaying={setSiteAPlaying}
+        siteBPlaying={siteBPlaying}
+        setSiteBPlaying={setSiteBPlaying}
+        analysisHistory={analysisHistory}
+        onSearchResult={handleSearchResult}
+        compareResult={compareResult}
+        isCompareMode={isCompareMode}
+      />
+
+
       <SideBar
         onSearchResult={handleSearchResult}
 
@@ -5287,403 +4794,371 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 
         <section className="map-container" style={{ flex: 1, position: 'relative' }}>
 
-        {/* 🎯 MOVE THE REF TO WRAP EVERYTHING */}
+          {/* 🎯 MOVE THE REF TO WRAP EVERYTHING */}
 
-  <div
+          <div
 
-    ref={mapViewportRef}
+            ref={mapViewportRef}
 
-    className="map-viewport"
+            className="map-viewport"
 
-    style={{ height: "100%", width: "100%", position: "relative", background: "#000" }}
+            style={{ height: "100%", width: "100%", position: "relative", background: "#000" }}
 
-  >
+          >
 
-        {/* TACTICAL ZOOM CONTROLS (Left side of map) */}
+            {/* TACTICAL ZOOM CONTROLS (Left side of map) */}
 
-          <div className="tactical-zoom-hud">
+            <div className="tactical-zoom-hud">
 
-            <button onClick= {handleZoomIn}>+</button>
+              <button onClick={handleZoomIn}>+</button>
 
-            <div className="zoom-divider" />
+              <div className="zoom-divider" />
 
-            <button onClick= {handleZoomOut}>−</button>
+              <button onClick={handleZoomOut}>−</button>
+
+            </div>
+
+            {/* TACTICAL ENGINE TOGGLE */}
+
+
+
+            <div className="engine-switch-container">
+
+              <button
+
+                className={`switch-btn ${mapMode === "2D" ? "active" : ""}`}
+
+                onClick={() => setMapMode("2D")}
+
+                title="Standard 2D"
+
+              >
+
+                2D
+
+              </button>
+
+              <button
+
+                className={`switch-btn ${mapMode === "3D" ? "active" : ""}`}
+
+                onClick={() => setMapMode("3D")}
+
+                title="Tactical 3D"
+
+              >
+
+                3D
+
+              </button>
+
+              <div className="vertical-divider" />
+
+              <button className="fullscreen-btn" onClick={toggleFullScreen} title="Map Focus Mode">⛶</button>
+
+            </div>
+
+
+
+            <div className="map-variety-picker">
+
+              <label className="picker-header">🗺️ Map Variety</label>
+
+              {mapMode === "2D" ? (
+
+                <>
+
+                  <select value={mapVariety} onChange={(e) => setMapVariety(e.target.value)} className="variety-select">
+
+                    <optgroup label="Google Maps">
+
+                      <option value="hybrid">Satellite Hybrid</option>
+
+                      <option value="satellite">Pure Satellite</option>
+
+                      <option value="terrain">Physical Terrain</option>
+
+                    </optgroup>
+
+                    <optgroup label="Analysis Themes">
+
+                      <option value="dark">Dark Matter (Pro)</option>
+
+                      <option value="topo">Topographic (Technical)</option>
+
+                      <option value="streets">Standard Streets</option>
+
+                      <option value="light">Minimalist Light</option>
+
+                    </optgroup>
+
+                  </select>
+
+
+
+                  <div className="spectral-toggle-bar">
+
+                    <button className={activeSpectral === "ndvi" ? "active" : ""} onClick={() => setActiveSpectral(activeSpectral === "ndvi" ? "standard" : "ndvi")}>🌿 NDVI</button>
+
+                    <button className={activeSpectral === "thermal" ? "active" : ""} onClick={() => setActiveSpectral("thermal")}>🔥 Heat</button>
+
+                    <button className={activeSpectral === "hydrology" ? "active" : ""} onClick={() => setActiveSpectral("hydrology")}>💧 Flow</button>
+
+                  </div>
+
+                </>
+
+              ) : (
+
+                <select value={active3DStyle} onChange={(e) => setActive3DStyle(e.target.value)} className="variety-select">
+
+                  <option value="satellite">🛰️ 3D Satellite</option>
+
+                  <option value="topo">🏔️ 3D Topographic</option>
+
+                  <option value="dark">🕶️ 3D Stealth</option>
+
+                  <option value="nature">🌱 3D Nature</option>
+
+                  <option value="streets">🏙️ 3D Urban (Buildings)</option> {/* New */}
+
+                  <option value="outdoor">⛅ 3D Atmospheric</option>
+
+                </select>
+
+              )}
+
+            </div>
+
+
+
+
+
+            <div className="tactical-mode-toggle-container">
+
+
+
+              {/* Wrap the top part in a row-content div */}
+
+              <div className="toggle-row-content">
+
+                <span className="toggle-label">Geo-Triad</span>
+
+                <label className="switch-attractive">
+
+                  <input
+
+                    type="checkbox"
+
+                    checked={isTacticalMode}
+
+                    onChange={() => setIsTacticalMode(!isTacticalMode)}
+
+                  />
+
+                  <span className="slider-attractive"></span>
+
+                </label>
+
+              </div>
+
+              {isTacticalMode && (
+
+                <div className="tactical-snap-controls animate-slide-in">
+
+                  <button className="snap-btn btn-a" onClick={() => window.snapToA?.()}>A</button>
+
+                  <button className="snap-btn btn-b" onClick={() => window.snapToB?.()}>B</button>
+
+                  <button className="snap-btn btn-live" onClick={() => window.snapToLive?.()}>📍</button>
+
+                </div>
+
+              )}
+
+            </div>
+
+
+
+
+
+            {mapMode === "2D" ? (
+
+
+
+              <MapContainer
+
+                key={`map-${lat}-${lng}-${zoom}`}
+
+                center={viewCenter}
+
+                zoom={zoom}
+
+                zoomControl={false}
+
+                style={{ height: "100%", width: "100%" }}
+
+              >
+
+                <MapCenterSync setViewCenter={setViewCenter} />
+
+                <TileLayer url={varieties[mapVariety]} />
+
+
+
+                {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
+
+                  <TileLayer url={spectralLayers[activeSpectral]} opacity={0.6} />
+
+                )}
+
+
+
+                <TacticalMapController
+
+                  latA={analyzedCoords.lat}
+
+                  lngA={analyzedCoords.lng}
+
+                  latB={analyzedCoordsB.lat}
+
+                  lngB={analyzedCoordsB.lng}
+
+                  currentLat={lat}
+
+                  currentLng={lng}
+
+                  setLat={setLat}
+
+                  setLng={setLng}
+
+                  isSelectingB={isSelectingB}
+
+                  setBLatInput={setBLatInput}
+
+                  setBLngInput={setBLngInput}
+
+                  isTacticalMode={isTacticalMode}
+
+                  setViewCenter={setViewCenter}
+
+                  setZoom={setZoom}
+
+                />
+
+
+
+              </MapContainer>
+
+
+
+            ) : (
+
+              <ProMap
+
+                lat={lat}
+
+                lng={lng}
+
+                zoom={zoom}
+
+                setLat={setLat}      // ✅ REQUIRED
+
+                setLng={setLng}
+
+                factors={result?.factors}
+
+                isDarkMode={isDarkMode}
+
+                activeStyle={active3DStyle}
+
+                interactive={true}
+
+                // 🚀 ADD THESE PROPS TO SYNC WITH 3D
+
+                isTacticalMode={isTacticalMode}
+
+                latA={analyzedCoords.lat}
+
+                lngA={analyzedCoords.lng}
+
+                latB={analyzedCoordsB.lat}
+
+                lngB={analyzedCoordsB.lng}
+
+              />
+
+            )}
 
           </div>
 
-        {/* TACTICAL ENGINE TOGGLE */}
-
- 
-
-        <div className="engine-switch-container">
-
-  <button 
-
-    className={`switch-btn ${mapMode === "2D" ? "active" : ""}`}
-
-    onClick={() => setMapMode("2D")}
-
-    title="Standard 2D"
-
-  >
-
-    2D
-
-  </button>
-
-  <button 
-
-    className={`switch-btn ${mapMode === "3D" ? "active" : ""}`}
-
-    onClick={() => setMapMode("3D")}
-
-    title="Tactical 3D"
-
-  >
-
-    3D
-
-  </button>
-
-  <div className="vertical-divider" />
-
-            <button className="fullscreen-btn" onClick={toggleFullScreen} title="Map Focus Mode">⛶</button>
-
-</div>
-
-    
-
-    <div className="map-variety-picker">
-
-      <label className="picker-header">🗺️ Map Variety</label>
-
-      {mapMode === "2D" ? (
-
-        <>
-
-          <select value={mapVariety} onChange={(e) => setMapVariety(e.target.value)} className="variety-select">
-
-            <optgroup label="Google Maps">
-
-          <option value="hybrid">Satellite Hybrid</option>
-
-          <option value="satellite">Pure Satellite</option>
-
-          <option value="terrain">Physical Terrain</option>
-
-        </optgroup>
-
-        <optgroup label="Analysis Themes">
-
-          <option value="dark">Dark Matter (Pro)</option>
-
-          <option value="topo">Topographic (Technical)</option>
-
-          <option value="streets">Standard Streets</option>
-
-          <option value="light">Minimalist Light</option>
-
-        </optgroup>
-
-          </select>
-
-
-
-          <div className="spectral-toggle-bar">
-
-            <button className={activeSpectral === "ndvi" ? "active" : ""} onClick={() => setActiveSpectral(activeSpectral === "ndvi" ? "standard" : "ndvi")}>🌿 NDVI</button>
-
-            <button className={activeSpectral === "thermal" ? "active" : ""} onClick={() => setActiveSpectral("thermal")}>🔥 Heat</button>
-
-            <button className={activeSpectral === "hydrology" ? "active" : ""} onClick={() => setActiveSpectral("hydrology")}>💧 Flow</button>
-
-          </div>
-
-        </>
-
-      ) : (
-
-        <select value={active3DStyle} onChange={(e) => setActive3DStyle(e.target.value)} className="variety-select">
-
-          <option value="satellite">🛰️ 3D Satellite</option>
-
-          <option value="topo">🏔️ 3D Topographic</option>
-
-          <option value="dark">🕶️ 3D Stealth</option>
-
-          <option value="nature">🌱 3D Nature</option>
-
-          <option value="streets">🏙️ 3D Urban (Buildings)</option> {/* New */}
-
-    <option value="outdoor">⛅ 3D Atmospheric</option>
-
-        </select>
-
-      )}
-
-    </div>
-
-
-
-
-
-   <div className="tactical-mode-toggle-container">
-
-     
-
-  {/* Wrap the top part in a row-content div */}
-
-  <div className="toggle-row-content">
-
-    <span className="toggle-label">Geo-Triad</span>
-
-    <label className="switch-attractive">
-
-      <input 
-
-        type="checkbox" 
-
-        checked={isTacticalMode} 
-
-        onChange={() => setIsTacticalMode(!isTacticalMode)} 
-
-      />
-
-      <span className="slider-attractive"></span>
-
-    </label>
-
-  </div>
-
-   {isTacticalMode && (
-
-    <div className="tactical-snap-controls animate-slide-in">
-
-       <button className="snap-btn btn-a" onClick={() => window.snapToA?.()}>A</button>
-
-       <button className="snap-btn btn-b" onClick={() => window.snapToB?.()}>B</button>
-
-       <button className="snap-btn btn-live" onClick={() => window.snapToLive?.()}>📍</button>
-
-    </div>
-
-  )}
-
-</div>
-
-
-
-
-
-    {mapMode === "2D" ? (
-
-    
-
-<MapContainer
-
-key={`map-${lat}-${lng}-${zoom}`}
-
-center={viewCenter}
-
-  zoom={zoom}
-
-  zoomControl={false}
-
-  style={{ height: "100%", width: "100%" }}
-
->
-
-  <MapCenterSync setViewCenter={setViewCenter} />
-
-  <TileLayer url={varieties[mapVariety]} />
-
-
-
-  {activeSpectral !== "standard" && spectralLayers[activeSpectral] && (
-
-    <TileLayer url={spectralLayers[activeSpectral]} opacity={0.6} />
-
-  )}
-
-
-
-<TacticalMapController 
-
-    latA={analyzedCoords.lat}
-
-    lngA={analyzedCoords.lng}
-
-    latB={analyzedCoordsB.lat}
-
-    lngB={analyzedCoordsB.lng}
-
-    currentLat={lat}
-
-    currentLng={lng}
-
-    setLat={setLat}
-
-    setLng={setLng}
-
-  isSelectingB={isSelectingB}
-
-  setBLatInput={setBLatInput}
-
-  setBLngInput={setBLngInput}
-
-  isTacticalMode={isTacticalMode}
-
-  setViewCenter={setViewCenter}
-
-  setZoom={setZoom}
-
-  />
-
-
-
-</MapContainer>
-
-
-
-    ) : (
-
-      <ProMap 
-
-        lat={lat} 
-
-        lng={lng} 
-
-         zoom={zoom} 
-
-         setLat={setLat}      // ✅ REQUIRED
-
-  setLng={setLng} 
-
-        factors={result?.factors} 
-
-        isDarkMode={isDarkMode} 
-
-        activeStyle={active3DStyle} 
-
-        interactive={true}
-
-        // 🚀 ADD THESE PROPS TO SYNC WITH 3D
-
-    isTacticalMode={isTacticalMode}
-
-    latA={analyzedCoords.lat}
-
-    lngA={analyzedCoords.lng}
-
-    latB={analyzedCoordsB.lat}
-
-    lngB={analyzedCoordsB.lng}
-
-      />
-
-    )}
-
-    </div>
-
-  </section>
+        </section>
 
         <div className="horizontal-resizer" onMouseDown={startResizingBottom} />
 
 
 
-            <section className="results-container" style={{ height: `${bottomHeight}px`, flex: `0 0 ${bottomHeight}px`, overflowY: 'auto' }}>
+        <section className="results-container" style={{ height: `${bottomHeight}px`, flex: `0 0 ${bottomHeight}px`, overflowY: 'auto' }}>
 
-            
 
-            {/* The result check wraps everything below */}
 
-            {/* {result ? ( */}
+          {/* The result check wraps everything below */}
 
-            {result || loading || compareLoading ? (
+          {/* {result ? ( */}
 
-              <>
+          {result || loading || compareLoading ? (
 
-                {/* 1. Tab Bar Navigation (Visible only when result exists) - Moved outside viewport */}
+            <>
 
+              {/* 1. Tab Bar Navigation (Visible only when result exists) - Moved outside viewport */}
+
+              {/* <div className={`results-tab-bar glass-morphic ${isAnalysisFullscreen ? 'fullscreen' : ''}`}>
+
+                <div className="tab-buttons-container">
+
+                  <button className={activeTab === "suitability" ? "active" : ""} onClick={() => setActiveTab("suitability")}>🎯 Suitability</button>
+
+                  <button className={activeTab === "environmental" ? "active" : ""} onClick={() => setActiveTab("environmental")}>🌐 Locational Intelligence</button>
+
+                  <button className={activeTab === "infrastructure" ? "active" : ""} onClick={() => setActiveTab("infrastructure")}>🏗️ Strategic Utility</button>
+
+                </div> */}
                 <div className={`results-tab-bar glass-morphic ${isAnalysisFullscreen ? 'fullscreen' : ''}`}>
-
-                  <div className="tab-buttons-container">
-
-                    <button className={activeTab === "suitability" ? "active" : ""} onClick={() => setActiveTab("suitability")}>🎯 Suitability</button>
-
-                    <button className={activeTab === "environmental" ? "active" : ""} onClick={() => setActiveTab("environmental")}>🌐 Locational Intelligence</button>
-
-                    <button className={activeTab === "infrastructure" ? "active" : ""} onClick={() => setActiveTab("infrastructure")}>🏗️ Strategic Utility</button>
-
-                  </div>
-
-                  <div className="fullscreen-controls">
-
-                    {isAnalysisFullscreen ? (
-
-                      <button 
-
-                        className="close-fullscreen-btn" 
-
-                        onClick={() => setIsAnalysisFullscreen(false)}
-
-                        title="Exit Fullscreen (ESC)"
-
-                      >
-
-                        ✕
-
-                      </button>
-
-                    ) : (
-
-                      <button 
-
-                        className="fullscreen-tab-btn" 
-
-                        onClick={() => setIsAnalysisFullscreen(true)}
-
-                        title="Fullscreen Analysis (F11)"
-
-                      >
-
-                        ⛶
-
-                      </button>
-
-                    )}
-
-                  </div>
-
+                {/* Left Side: Navigation Icons */}
+                <div className="tab-buttons-container">
+                  <button className={activeTab === "suitability" ? "active" : ""} onClick={() => setActiveTab("suitability")}>
+                    <span className="tab-icon">🎯</span>
+                    <span className="tab-text">Suitability</span>
+                  </button>
+                  <button className={activeTab === "environmental" ? "active" : ""} onClick={() => setActiveTab("environmental")}>
+                    <span className="tab-icon">🌐</span>
+                    <span className="tab-text">Locational Intelligence</span>
+                  </button>
+                  <button className={activeTab === "infrastructure" ? "active" : ""} onClick={() => setActiveTab("infrastructure")}>
+                    <span className="tab-icon">🏗️</span>
+                    <span className="tab-text">Strategic Utility</span>
+                  </button>
                 </div>
 
+                {/* Right Side: Control Icons */}
+                {/* <div className="fullscreen-controls">
+                  <button
+                    className="fullscreen-tab-btn"
+                    onClick={() => setIsAnalysisFullscreen(!isAnalysisFullscreen)}
+                    title="Toggle Fullscreen"
+                  >
+                    ⛶
+                  </button>
+                </div> */}
+              
 
+                <div className="fullscreen-controls">
 
-               {/* 2. Loading Overlay: This will now appear OVER the placeholder space immediately */}
+                  {/* {isAnalysisFullscreen ? (
 
-                {(loading || compareLoading) && (
+                    <button
 
-                  <div className="loading-overlay">
-
-                    <div className="spinner"></div>
-
-                    <p>Analyzing Terrain Data...</p>
-
-                  </div>
-
-                )}
-
-                {/* 3. Data Viewport */}
-
-                <div className={`tab-viewport ${isAnalysisFullscreen ? 'fullscreen' : ''}`}>
-
-                  {/* Floating Close Button for Fullscreen */}
-
-                  {isAnalysisFullscreen && (
-
-                    <button 
-
-                      className="floating-close-btn" 
+                      className="close-fullscreen-btn"
 
                       onClick={() => setIsAnalysisFullscreen(false)}
 
@@ -5695,121 +5170,184 @@ center={viewCenter}
 
                     </button>
 
-                  )}
+                  ) : (
+
+                    <button
+
+                      className="fullscreen-tab-btn"
+
+                      onClick={() => setIsAnalysisFullscreen(true)}
+
+                      title="Fullscreen Analysis (F11)"
+
+                    >
+
+                      ⛶
+
+                    </button> */}
+                    <button className="fullscreen-tab-btn" onClick={() => setIsAnalysisFullscreen(!isAnalysisFullscreen)}>
+      {isAnalysisFullscreen ? "✕" : "⛶"}
+    </button>
 
                   
-
-                  {/* SINGLE ANALYSIS VIEW */}
-
-                  {!isCompareMode && result &&(
-
-                    <div className="single-analysis-view">
-
-                      <h4 className="pane-header">{locationAName.toUpperCase()} - FULL TERRAIN REPORT</h4>
-
-                      {renderTabContent(result, analyzedCoords, locationAName, true)}
-
-                    </div>
-
-                  )}
-
-
-
-                
-
-                  {isCompareMode && (
-
-                    <div className="mobile-location-tabs glass-morphic only-mobile">
-
-                      <button 
-
-                        className={mobileCompareSite === "A" ? "active" : ""} 
-
-                        onClick={() => setMobileCompareSite("A")}
-
-                      >
-
-                        📍 {locationAName}
-
-                      </button>
-
-                      <button 
-
-                        className={mobileCompareSite === "B" ? "active" : ""} 
-
-                        onClick={() => setMobileCompareSite("B")}
-
-                      >
-
-                        📍 {locationBName || "Site B"}
-
-                      </button>
-
-                    </div>
-
-                  )}
-
-                  {isCompareMode && (
-
-                    <div className="compare-layout-ditto">
-
-                      {/* Site A Pane */}
-
-                      <div className={`compare-pane-ditto ${mobileCompareSite === "A" ? "show-mobile" : "hide-mobile"}`}>
-
-                        <h4 className="pane-header only-desktop">{locationAName.toUpperCase()}</h4>
-
-                        {result ? renderTabContent(result, analyzedCoords, locationAName, false) : <div className="empty-results">Analyzing Site A...</div>}
-
-                      </div>
-
-
-
-                      {/* Site B Pane */}
-
-                      <div className={`compare-pane-ditto ${mobileCompareSite === "B" ? "show-mobile" : "hide-mobile"}`}>
-
-                        <h4 className="pane-header only-desktop">{locationBName.toUpperCase() || "SITE B"}</h4>
-
-                        {compareResult ? renderTabContent(compareResult, analyzedCoordsB, locationBName, false) : <div className="empty-results">Waiting for selection...</div>}
-
-                      </div>
-
-                    </div>
-
-                  )}
-
-                </div>
-
-              </>
-
-            ) : (
-
-              /* This displays when the page is freshly opened and no analysis has run */
-
-              <div className="welcome-placeholder">
-
-                <div className="placeholder-content">
-
-                    <span className="placeholder-icon">🌍</span>
-
-                    <h3>Ready for Analysis</h3>
-
-                    <p>Select a location on the map or search above to begin geospatial synthesis.</p>
 
                 </div>
 
               </div>
 
-            )}
 
-          </section>
+
+              {/* 2. Loading Overlay: This will now appear OVER the placeholder space immediately */}
+
+              {(loading || compareLoading) && (
+
+                <div className="loading-overlay">
+
+                  <div className="spinner"></div>
+
+                  <p>Analyzing Terrain Data...</p>
+
+                </div>
+
+              )}
+
+              {/* 3. Data Viewport */}
+
+              <div className={`tab-viewport ${isAnalysisFullscreen ? 'fullscreen' : ''}`}>
+
+                {/* Floating Close Button for Fullscreen */}
+
+                {isAnalysisFullscreen && (
+
+                  <button
+
+                    className="floating-close-btn"
+
+                    onClick={() => setIsAnalysisFullscreen(false)}
+
+                    title="Exit Fullscreen (ESC)"
+
+                  >
+
+                    ✕
+
+                  </button>
+
+                )}
+
+
+
+                {/* SINGLE ANALYSIS VIEW */}
+
+                {!isCompareMode && result && (
+
+                  <div className="single-analysis-view">
+
+                    <h4 className="pane-header">{locationAName.toUpperCase()} - FULL TERRAIN REPORT</h4>
+
+                    {renderTabContent(result, analyzedCoords, locationAName, true)}
+
+                  </div>
+
+                )}
+
+
+
+
+
+                {isCompareMode && (
+
+                  <div className="mobile-location-tabs glass-morphic only-mobile">
+
+                    <button
+
+                      className={mobileCompareSite === "A" ? "active" : ""}
+
+                      onClick={() => setMobileCompareSite("A")}
+
+                    >
+
+                      📍 {locationAName}
+
+                    </button>
+
+                    <button
+
+                      className={mobileCompareSite === "B" ? "active" : ""}
+
+                      onClick={() => setMobileCompareSite("B")}
+
+                    >
+
+                      📍 {locationBName || "Site B"}
+
+                    </button>
+
+                  </div>
+
+                )}
+
+                {isCompareMode && (
+
+                  <div className="compare-layout-ditto">
+
+                    {/* Site A Pane */}
+
+                    <div className={`compare-pane-ditto ${mobileCompareSite === "A" ? "show-mobile" : "hide-mobile"}`}>
+
+                      <h4 className="pane-header only-desktop">{locationAName.toUpperCase()}</h4>
+
+                      {result ? renderTabContent(result, analyzedCoords, locationAName, false) : <div className="empty-results">Analyzing Site A...</div>}
+
+                    </div>
+
+
+
+                    {/* Site B Pane */}
+
+                    <div className={`compare-pane-ditto ${mobileCompareSite === "B" ? "show-mobile" : "hide-mobile"}`}>
+
+                      <h4 className="pane-header only-desktop">{locationBName.toUpperCase() || "SITE B"}</h4>
+
+                      {compareResult ? renderTabContent(compareResult, analyzedCoordsB, locationBName, false) : <div className="empty-results">Waiting for selection...</div>}
+
+                    </div>
+
+                  </div>
+
+                )}
+
+              </div>
+
+            </>
+
+          ) : (
+
+            /* This displays when the page is freshly opened and no analysis has run */
+
+            <div className="welcome-placeholder">
+
+              <div className="placeholder-content">
+
+                <span className="placeholder-icon">🌍</span>
+
+                <h3>Ready for Analysis</h3>
+
+                <p>Select a location on the map or search above to begin geospatial synthesis.</p>
+
+              </div>
+
+            </div>
+
+          )}
+
+        </section>
 
 
 
         {/* Enhanced GeoGPT Component */}
 
-        <GeoGPT 
+        <GeoGPT
 
           isOpen={isGptOpen}
 
@@ -5829,121 +5367,121 @@ center={viewCenter}
 
       {(showNearby || showNearbyB) && (
 
-          <div className="modal-overlay" onClick={() => { setShowNearby(false); setShowNearbyB(false); }}>
+        <div className="modal-overlay" onClick={() => { setShowNearby(false); setShowNearbyB(false); }}>
 
-            <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
 
-              <div className="modal-header">
+            <div className="modal-header">
 
-                <h3>Nearby Amenities ({showNearbyB ? locationBName : locationAName})</h3>
+              <h3>Nearby Amenities ({showNearbyB ? locationBName : locationAName})</h3>
 
-                <button className="modal-close" onClick={() => { setShowNearby(false); setShowNearbyB(false); }}>✖</button>
+              <button className="modal-close" onClick={() => { setShowNearby(false); setShowNearbyB(false); }}>✖</button>
 
-              </div>
+            </div>
 
-              <div className="modal-body">
+            <div className="modal-body">
 
-                {(() => {
+              {(() => {
 
-                  const data = showNearbyB ? nearbyDataB : nearbyData;
+                const data = showNearbyB ? nearbyDataB : nearbyData;
 
-                  if (!data?.places?.length) return <div className="nearby-empty">No mapped amenities within 1.5 km.</div>;
-
-                  
-
-                  const schools = data.places.filter(p => p.type === "school");
-
-                  const hospitals = data.places.filter(p => p.type === "hospital");
-
-                  const colleges = data.places.filter(p => p.type === "college" || p.type === "university");
-
-                  const markets = data.places.filter(p => p.type === "market");
-
-                  const petrolBunks = data.places.filter(p => p.type === "petrol_bunk");
-
-                  const accessCities = data.places.filter(p => p.type === "access_city");
-
-                  const transit = data.places.filter(p => p.type === "transit");
+                if (!data?.places?.length) return <div className="nearby-empty">No mapped amenities within 1.5 km.</div>;
 
 
 
-                  // Display all categories including new ones
+                const schools = data.places.filter(p => p.type === "school");
 
-                  const allCategories = [
+                const hospitals = data.places.filter(p => p.type === "hospital");
 
-                    { title: "🏫 Schools", items: schools },
+                const colleges = data.places.filter(p => p.type === "college" || p.type === "university");
 
-                    { title: "🏥 Hospitals", items: hospitals },
+                const markets = data.places.filter(p => p.type === "market");
 
-                    { title: "🎓 Colleges & Universities", items: colleges },
+                const petrolBunks = data.places.filter(p => p.type === "petrol_bunk");
 
-                    { title: "🛒 Markets & Shopping", items: markets },
+                const accessCities = data.places.filter(p => p.type === "access_city");
 
-                    { title: "⛽ Petrol Bunks", items: petrolBunks },
-
-                    { title: "🏙️ Access Cities", items: accessCities },
-
-                    { title: "🚌 Transit", items: transit }
-
-                  ].filter(cat => cat.items.length > 0); // Only show categories with items
+                const transit = data.places.filter(p => p.type === "transit");
 
 
 
-                  const Section = ({ title, items }) => (
+                // Display all categories including new ones
 
-                    <div className="nearby-section">
+                const allCategories = [
 
-                      <h4>{title} ({items.length})</h4>
+                  { title: "🏫 Schools", items: schools },
 
-                      {items.length ? (
+                  { title: "🏥 Hospitals", items: hospitals },
 
-                        items.map((p, i) => (
+                  { title: "🎓 Colleges & Universities", items: colleges },
 
-                          <div key={i} className="nearby-item">
+                  { title: "🛒 Markets & Shopping", items: markets },
 
-                            <span className="nearby-name">{p.name}</span>
+                  { title: "⛽ Petrol Bunks", items: petrolBunks },
 
-                            <span className="nearby-distance">{p.distance_km} km</span>
+                  { title: "🏙️ Access Cities", items: accessCities },
 
-                          </div>
+                  { title: "🚌 Transit", items: transit }
 
-                        ))
-
-                      ) : (
-
-                        <div className="nearby-empty">No nearby {title.toLowerCase()} found.</div>
-
-                      )}
-
-                    </div>
-
-                  );
+                ].filter(cat => cat.items.length > 0); // Only show categories with items
 
 
 
-                  return (
+                const Section = ({ title, items }) => (
 
-                    <>
+                  <div className="nearby-section">
 
-                      {allCategories.map((category, index) => (
+                    <h4>{title} ({items.length})</h4>
 
-                        <Section key={index} title={category.title} items={category.items} />
+                    {items.length ? (
 
-                      ))}
+                      items.map((p, i) => (
 
-                    </>
+                        <div key={i} className="nearby-item">
 
-                  );
+                          <span className="nearby-name">{p.name}</span>
 
-                })()}
+                          <span className="nearby-distance">{p.distance_km} km</span>
 
-              </div>
+                        </div>
+
+                      ))
+
+                    ) : (
+
+                      <div className="nearby-empty">No nearby {title.toLowerCase()} found.</div>
+
+                    )}
+
+                  </div>
+
+                );
+
+
+
+                return (
+
+                  <>
+
+                    {allCategories.map((category, index) => (
+
+                      <Section key={index} title={category.title} items={category.items} />
+
+                    ))}
+
+                  </>
+
+                );
+
+              })()}
 
             </div>
 
           </div>
 
-        
+        </div>
+
+
 
       )}
 

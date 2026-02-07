@@ -382,18 +382,31 @@ const generateShareLink = () => {
   )} */}
   {isCompareMode && (
   <button 
-    onClick={() => {
-      setIsCompareMode(false);
-      setShowLocationB(false);      // Close comparison UI
-      setBLatInput("");
-      setBLngInput("");
-      setCompareResult(null);
-      setSnapshotDataB && setSnapshotDataB(null);
-      setLocationBName("Site B");
-      if (setAnalyzedCoordsB) setAnalyzedCoordsB({ lat: null, lng: null });  // Remove red pointer
-      localStorage.removeItem("geo_lat_b_analyzed");
-      localStorage.removeItem("geo_lng_b_analyzed");
-    }} 
+    // onClick={() => {
+    //   setIsCompareMode(false);
+    //   setShowLocationB(false);      // Close comparison UI
+    //   setBLatInput("");
+    //   setBLngInput("");
+    //   setCompareResult(null);
+    //   setSnapshotDataB && setSnapshotDataB(null);
+    //   setLocationBName("Site B");
+    //   if (setAnalyzedCoordsB) setAnalyzedCoordsB({ lat: null, lng: null });  // Remove red pointer
+    //   localStorage.removeItem("geo_lat_b_analyzed");
+    //   localStorage.removeItem("geo_lng_b_analyzed");
+    // }} 
+    onClick={(e) => {
+  if (e) e.stopPropagation(); // Prevents triggering parent clicks
+  setIsCompareMode(false);
+  setShowLocationB(false);      // Close comparison UI
+  setBLatInput("");
+  setBLngInput("");
+  setCompareResult(null);       // 🔥 TRIGGER: Kills Site B Audio
+  if (setSnapshotDataB) setSnapshotDataB(null);
+  setLocationBName("Site B");
+  if (setAnalyzedCoordsB) setAnalyzedCoordsB({ lat: null, lng: null });  // Remove red pointer
+  localStorage.removeItem("geo_lat_b_analyzed");
+  localStorage.removeItem("geo_lng_b_analyzed");
+}}
     className="btn-cross" 
     title="Exit Compare"
   >
