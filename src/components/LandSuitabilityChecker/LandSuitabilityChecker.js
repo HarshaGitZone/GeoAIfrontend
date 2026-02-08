@@ -1397,29 +1397,23 @@ const TacticalMapController = ({
 
 
 
-  // 🎨 Icon Factory
+// 🎨 Icon Factory
 
-  const createIcon = (color) => new L.Icon({
-
-    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-
-    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
-
-  });
+const createIcon = (color) => new L.Icon({
+iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+});
 
 
 
-  // Convert inputs to numbers safely for rendering
+// Convert inputs to numbers safely for rendering
 
-  const posA = [parseFloat(latA), parseFloat(lngA)];
+const posA = [parseFloat(latA), parseFloat(lngA)];
+const posB = [parseFloat(latB), parseFloat(lngB)];
+const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
 
-  const posB = [parseFloat(latB), parseFloat(lngB)];
-
-  const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
-
-
+// ... (rest of the code remains the same)
 
   // 🚀 THE FIXED RETURN: Properly contained within the function braces
 
@@ -1478,6 +1472,8 @@ const TacticalMapController = ({
 export default function LandSuitabilityChecker() {
 
 
+const [analysisComplete, setAnalysisComplete] = useState(false);
+
 
   const handleZoomIn = () => {
 
@@ -1521,6 +1517,7 @@ export default function LandSuitabilityChecker() {
 
   };
 
+
   const [isTacticalMode, setIsTacticalMode] = useState(false);
 
   const [mapMode, setMapMode] = useState("2D"); // "2D" or "3D"
@@ -1542,6 +1539,7 @@ export default function LandSuitabilityChecker() {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true); // Default ON
   const [siteAPlaying, setSiteAPlaying] = useState(true); // Default ON
   const [siteBPlaying, setSiteBPlaying] = useState(true); // Default ON when available
+
 
 
 
@@ -1598,7 +1596,11 @@ export default function LandSuitabilityChecker() {
 
   const isResizingBottom = useRef(false);
 
-
+useEffect(() => {
+  if (!isCompareMode) {
+    setSiteBPlaying(false);
+  }
+}, [isCompareMode, setSiteBPlaying]);
 
   // const [isCompareMode, setIsCompareMode] = useState(false);
 
@@ -1996,7 +1998,7 @@ export default function LandSuitabilityChecker() {
     // Don't clear snapshot data - keep cards persistent
     // setSnapshotData(null);
     // if (setSnapshotDataB) setSnapshotDataB(null);
-
+setAnalysisComplete(false); 
     setLoading(true);
 
     setSnapshotLoading(true);
@@ -2074,7 +2076,7 @@ export default function LandSuitabilityChecker() {
         const analysisData = results[0].value;
 
         setResult(analysisData);
-
+        setAnalysisComplete(true); 
         // const coordsA = { lat, lng };
 
         setAnalyzedCoords({ lat, lng });
@@ -4682,7 +4684,7 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
         siteAPlaying={siteAPlaying}
         siteBPlaying={siteBPlaying}
       /> */}
-      <AudioLandscape
+      {/* <AudioLandscape
   // SITE A DATA
   activeFactors={result?.factors}
   resultLabel={result?.label}
@@ -4698,7 +4700,21 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
   // INDIVIDUAL MUTES (Controlled by TopNav)
   siteAPlaying={siteAPlaying}
   siteBPlaying={siteBPlaying}
-/>
+/> */}
+      <AudioLandscape
+        activeFactors={result?.factors}
+        resultLabel={result?.label}
+
+        compareFactors={isCompareMode ? compareResult?.factors : null}
+        compareResultLabel={isCompareMode ? compareResult?.label : null}
+
+        isEnabled={isAudioEnabled}
+
+        siteAPlaying={siteAPlaying}
+        siteBPlaying={siteBPlaying}
+        analysisComplete={analysisComplete}
+      />
+
       <TopNav
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}

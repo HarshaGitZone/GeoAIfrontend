@@ -10,10 +10,16 @@ export default function TopNav({
   analysisHistory = [],
   compareResult,
   isCompareMode,
-  siteAPlaying,
-  setSiteAPlaying,
-  siteBPlaying,
-  setSiteBPlaying
+//   siteAPlaying,
+//   setSiteAPlaying,
+//   siteBPlaying,
+//   setSiteBPlaying
+// }) {
+  siteAPlaying = false,
+  setSiteAPlaying = () => {},
+
+  siteBPlaying = false,
+  setSiteBPlaying = () => {},
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const [showTeam, setShowTeam] = useState(false);
@@ -81,6 +87,13 @@ export default function TopNav({
       setShowPalette(true);
     }
   };
+   // ✅ If master audio is turned off → force both sites muted
+  useEffect(() => {
+    if (!isAudioEnabled) {
+      setSiteAPlaying(false);
+      setSiteBPlaying(false);
+    }
+  }, [isAudioEnabled, setSiteAPlaying, setSiteBPlaying]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -101,6 +114,9 @@ export default function TopNav({
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+   // Compare B speaker should only appear when compare is valid
+     const showBSpeaker = isAudioEnabled && isCompareMode && !!compareResult;
 
   return (
     <>
@@ -156,52 +172,54 @@ export default function TopNav({
             </div>
 
 
-{/* 
-            <button
-              className={`icon-btn audio-toggle ${siteAPlaying ? "active" : ""}`}
-              onClick={() => setSiteAPlaying(!siteAPlaying)}
-              title={siteAPlaying ? "Mute Site A Audio" : "Play Site A Audio"}
-              style={{ fontSize: '1.2rem' }}
-            >
-              {siteAPlaying ? "🔊" : "🔇"}
-            </button>
 
-            {isCompareMode && compareResult && compareResult.factors && (
+  {/* {isAudioEnabled && (
+    <button 
+      className={`icon-btn audio-toggle ${siteAPlaying ? "active" : "muted"}`} 
+      onClick={() => setSiteAPlaying(!siteAPlaying)}
+      title={siteAPlaying ? "Mute Site A" : "Unmute Site A"}
+    >
+      {siteAPlaying ? "🔊" : "🔇"}
+      <span className="audio-label">A</span>
+    </button>
+  )}
+
+
+  {isAudioEnabled && isCompareMode && compareResult && (
+    <button 
+      className={`icon-btn audio-toggle-b ${siteBPlaying ? "active" : "muted"}`} 
+      onClick={() => setSiteBPlaying(!siteBPlaying)}
+      title={siteBPlaying ? "Mute Site B" : "Unmute Site B"}
+    >
+      {siteBPlaying ? "🔊" : "🔇"}
+      <span className="audio-label">B</span>
+    </button>
+  )} */}
+  
+            {/* 🔊 SITE A SPEAKER */}
+            {isAudioEnabled && (
               <button
-                className={`icon-btn audio-toggle-b ${siteBPlaying ? "active" : ""}`}
-                onClick={() => {
-                  console.log('🔇 Site B button clicked, current state:', siteBPlaying);
-                  setSiteBPlaying(!siteBPlaying);
-                }}
-                title={siteBPlaying ? "Mute Site B Audio" : "Play Site B Audio"}
-                style={{ fontSize: '1.2rem' }}
+                className={`icon-btn audio-toggle ${siteAPlaying ? "active" : "muted"}`}
+                onClick={() => setSiteAPlaying((p) => !p)}
+                title={siteAPlaying ? "Mute Site A" : "Unmute Site A"}
+              >
+                {siteAPlaying ? "🔊" : "🔇"}
+                <span className="audio-label">A</span>
+              </button>
+            )}
+
+            {/* 🔊 SITE B SPEAKER */}
+            {showBSpeaker && (
+              <button
+                className={`icon-btn audio-toggle-b ${siteBPlaying ? "active" : "muted"}`}
+                onClick={() => setSiteBPlaying((p) => !p)}
+                title={siteBPlaying ? "Mute Site B" : "Unmute Site B"}
               >
                 {siteBPlaying ? "🔊" : "🔇"}
+                <span className="audio-label">B</span>
               </button>
-            )} */}
-            {/* SITE A AUDIO BUTTON (Always visible if audio is globally enabled) */}
-{isAudioEnabled && (
-  <button 
-    className={`icon-btn audio-toggle ${siteAPlaying ? "active" : "muted"}`} 
-    onClick={() => setSiteAPlaying(!siteAPlaying)}
-    title={siteAPlaying ? "Mute Site A" : "Unmute Site A"}
-  >
-    {siteAPlaying ? "🔊" : "🔇"}
-    <span className="audio-label">A</span>
-  </button>
-)}
-
-{/* SITE B AUDIO BUTTON (Only visible during active comparison with data) */}
-{isAudioEnabled && isCompareMode && compareResult && (
-  <button 
-    className={`icon-btn audio-toggle-b ${siteBPlaying ? "active" : "muted"}`} 
-    onClick={() => setSiteBPlaying(!siteBPlaying)}
-    title={siteBPlaying ? "Mute Site B" : "Unmute Site B"}
-  >
-    {siteBPlaying ? "🔊" : "🔇"}
-    <span className="audio-label">B</span>
-  </button>
-)}
+            )}
+            
             <div className="palette-wrapper"
               onMouseEnter={handleMouseEnterPalette}
               onMouseLeave={handleMouseLeavePalette}>
