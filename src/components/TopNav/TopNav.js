@@ -161,7 +161,7 @@ export default function TopNav({
 
 
               <button className={`icon-btn ${showHistoryTable ? "active" : ""}`} onClick={() => setShowHistoryTable(true)}>🕒</button>
-              <a href="/wild-facts" className="icon-btn" title="Wild World Facts" style={{ textDecoration: 'none', color: 'inherit' }}>🌍</a>
+              <a href="/wild-facts" target="_blank" rel="noopener noreferrer" className="icon-btn" title="Wild World Facts" style={{ textDecoration: 'none', color: 'inherit' }}>🌍</a>
             </div>
 
             <div className="nav-group center">
