@@ -12186,3 +12186,392 @@ html body [data-theme='light'] .digital-twin-card *[style*="color:#fff"] {
 }
 
 
+.analysis-time-badge {
+  margin-left: 12px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(45,138,138,0.15);
+  color: #2d8a8a;
+  font-weight: 600;
+}
+
+.analysis-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* pushes time to extreme right */
+  width: 100%;
+}
+
+.analysis-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.analysis-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.analysis-time-badge {
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(45,138,138,0.15);
+  color: #2d8a8a;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+
+.results-tab-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  width: 100%;
+  padding: 8px 16px;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.tab-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+
+.tab-buttons-container button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.analysis-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: end;
+}
+
+@media (max-width: 768px) {
+  .tab-text {
+    display: none;
+  }
+
+  .tab-buttons-container {
+    gap: 10px;
+  }
+
+  .analysis-time-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tab-buttons-container {
+    gap: 24px;
+  }
+
+  .analysis-time-badge {
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+}
+.results-tab-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  width: 100%;
+  padding: 12px 24px;
+}
+
+/* Center the 3 tabs */
+.tab-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+/* Make tabs a bit larger */
+.tab-buttons-container button {
+  padding: 10px 20px;
+  font-size: 15px;
+  border-radius: 14px;
+}
+
+/* Right side: fullscreen + time */
+.analysis-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-self: end;   /* pushes to extreme right */
+}
+
+/* Fullscreen should be icon-sized */
+.fullscreen-tab-btn {
+  padding: 8px 10px;
+  width: auto;
+}
+
+/* Time badge */
+.analysis-time-badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+
+.fullscreen-tab-btn {
+  width: fit-content !important;
+  min-width: unset !important;
+  max-width: unset !important;
+  padding: 6px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.analysis-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: end;
+  width: auto;        /* important */
+  flex-shrink: 0;
+}
+
+
+
+
+
+.fullscreen-tab-btn {
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.fullscreen-tab-btn:hover {
+  background: #e5e7eb;
+}
+.close-btn {
+  background: #fee2e2;          /* light red */
+  border: 1px solid #fca5a5;
+  color: #b91c1c;               /* deep red */
+  font-weight: 700;
+}
+
+.close-btn:hover {
+  background: #ef4444;          /* strong red */
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+.close-btn {
+  background-color: #ef4444 !important;   /* solid red */
+  border: 1px solid #ef4444 !important;
+  color: white !important;
+  font-weight: 700;
+}
+
+.close-btn:hover {
+  background-color: #dc2626 !important;   /* darker red */
+  border-color: #dc2626 !important;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+
+
+@media (min-width: 1024px) {
+  .results-tab-bar {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+    padding: 12px 24px;
+  }
+
+  /* Center the 3 tabs */
+  .tab-buttons-container {
+    grid-column: 2;
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+  }
+
+  /* Push controls to extreme right */
+  .analysis-header {
+    grid-column: 3;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+
+
+.results-tab-bar.fullscreen {
+  /* background: rgba(255, 255, 255, 0.95) !important; */
+  backdrop-filter: none !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+}
+
+/* When analysis is fullscreen, push everything down */
+.results-container {
+  position: relative;
+}
+
+.results-tab-bar.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 88px;        /* your header height */
+  z-index: 1000;
+}
+
+/* THIS is the key fix */
+.results-tab-bar.fullscreen + .tab-viewport.fullscreen {
+  margin-top: 88px;
+}
+
+
+
+
+/* Default (large screens) */
+.results-tab-bar.fullscreen {
+  height: 88px;
+}
+
+/* Push content correctly */
+.results-tab-bar.fullscreen + .tab-viewport.fullscreen {
+  margin-top: 88px;
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 768px) {
+  .results-tab-bar.fullscreen {
+    height: 110px;          /* taller header */
+    padding: 12px 12px;     /* breathing space */
+  }
+
+  .results-tab-bar.fullscreen + .tab-viewport.fullscreen {
+    margin-top: 110px;     /* match height */
+  }
+
+  .tab-buttons-container button {
+    min-height: 44px;      /* touch-friendly */
+  }
+
+  .analysis-header {
+    gap: 8px;
+  }
+}
+
+
+
+
+
+/* ---------- DARK THEME ---------- */
+[data-theme="dark"] .results-tab-bar.fullscreen {
+  background: rgba(15, 23, 42, 0.95);   /* slate-900 glass */
+  color: #e5e7eb;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  backdrop-filter: blur(12px);
+}
+
+/* ---------- LIGHT THEME ---------- */
+[data-theme="light"] .results-tab-bar.fullscreen {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f2937;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  backdrop-filter: blur(12px);
+}
+
+/* Dark */
+[data-theme="dark"] .results-tab-bar {
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .analysis-time-badge {
+  background: rgba(59,130,246,0.15);
+  color: #93c5fd;
+}
+
+/* Light */
+[data-theme="light"] .results-tab-bar {
+  color: #1f2937;
+}
+
+[data-theme="light"] .analysis-time-badge {
+  background: rgba(45,138,138,0.15);
+  color: #2d8a8a;
+}
+
+
+/* Base fullscreen header */
+.results-tab-bar.fullscreen {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  backdrop-filter: blur(14px);
+}
+
+/* Light theme */
+[data-theme="light"] .results-tab-bar.fullscreen {
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+/* Dark theme */
+[data-theme="dark"] .results-tab-bar.fullscreen {
+  background: rgba(15, 23, 42, 0.92) !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+}
+
+/* Fullscreen header – solid */
+.results-tab-bar.fullscreen {
+  position: sticky !;
+  top: 0;
+  z-index: 9999;
+}
+
+/* Light theme */
+[data-theme="light"] .results-tab-bar.fullscreen {
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+/* Dark theme */
+[data-theme="dark"] .results-tab-bar.fullscreen {
+  background: #0f172a; /* slate-900 */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+}
+
+/* HARD OVERRIDE: kill glass in fullscreen */
+.results-tab-bar.fullscreen {
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Dark mode */
+[data-theme="dark"] .results-tab-bar.fullscreen {
+  background: #0b1220 !important; /* deep solid dark */
+}
+[data-theme="light"] .results-tab-bar.fullscreen {
+  background: #ffffff !important;
+}

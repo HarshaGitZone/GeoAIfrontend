@@ -26,21 +26,28 @@ export default function SideBar({
   setSavedPlaces,
   sidebarWidth, startResizingSide,
   onSearchResult,
-  setCompareResult,    // <--- Add this
-  setSnapshotDataB,    // <--- Add this
+  setCompareResult,    
+  setSnapshotDataB,    
+  snapshotData,        
+  snapshotDataB,        
   setLocationBName,
+  closeSiteA, setCloseSiteA,
+  setResult, setAnalyzedCoords,
+  analyzedCoords,
+  onProjectImport,
 }) {
-
+  const [saveProjectLoading, setSaveProjectLoading] = useState(false);
+  const [projectName, setProjectName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
-  // const [showSharePopup, setShowSharePopup] = useState(false);
-// const [currentShareUrl, setCurrentShareUrl] = useState("");
   const searchContainerRef = useRef(null);
-  // Add this state to your SideBar.js component
-const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-const [shareUrl, setShareUrl] = useState("");
+  const [shareModalMode, setShareModalMode] = useState("share"); 
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState("");
+  const importFileRef = useRef(null);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
@@ -50,6 +57,146 @@ const [shareUrl, setShareUrl] = useState("");
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const exportProjectFile = () => {
+  if (!result) {
+    alert("Analyze Location A first.");
+    return;
+  }
+
+  const payload = {
+    projectName: projectName?.trim() || `${locationAName} Analysis`,
+    siteA: {
+      lat: parseFloat(lat),
+      lng: parseFloat(lng),
+      name: locationAName,
+      result: result,
+      snapshotData: snapshotData  // Add snapshot data for Site A
+    },
+    compare: {
+      enabled: Boolean(isCompareMode && compareResult),
+    },
+    siteB: isCompareMode && compareResult ? {
+      lat: parseFloat(bLatInput),
+      lng: parseFloat(bLngInput),
+      name: locationBName,
+      result: compareResult,
+      snapshotData: snapshotDataB  // Add snapshot data for Site B
+    } : null,
+    meta: {
+      exportedAt: new Date().toISOString(),
+      app: "CERES GEOAI",
+      version: "geoai-v1",
+    },
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    type: "application/json",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+
+  const safeName = (payload.projectName || "GeoAI_Project")
+    .replace(/[^a-z0-9]/gi, "_")
+    .slice(0, 60);
+
+  a.download = `${safeName}.json`;
+  document.body.appendChild(a);
+  a.click();
+
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 100);
+};
+const importProjectFile = async (file) => {
+  try {
+    const text = await file.text();
+
+    let payload;
+    try {
+      payload = JSON.parse(text);
+    } catch (parseError) {
+      alert("Invalid JSON format. File may be corrupted.");
+      return;
+    }
+
+    if (!payload || typeof payload !== "object") {
+      alert("Invalid project file format.");
+      return;
+    }
+
+    if (
+      !payload.siteA ||
+      payload.siteA.lat === undefined ||
+      payload.siteA.lng === undefined
+    ) {
+      alert("Invalid project file: missing Site A coordinates.");
+      return;
+    }
+
+    // --- Restore Site A ---
+    setLat(String(payload.siteA.lat));
+    setLng(String(payload.siteA.lng));
+    setLocationAName(payload.siteA.name || "Site A");
+
+    // Restore Site A analysis result (IMPORTANT)
+    if (payload.siteA.result) {
+      if (setResult) setResult(payload.siteA.result);
+      if (onProjectImport) onProjectImport(payload.siteA.result);
+    }
+
+    // Restore analyzed coords (marker)
+    if (setAnalyzedCoords) {
+      setAnalyzedCoords({
+        lat: payload.siteA.lat,
+        lng: payload.siteA.lng,
+      });
+    }
+
+    // --- Restore Compare Mode ---
+    const hasB =
+      payload?.compare?.enabled &&
+      payload?.siteB?.lat !== undefined &&
+      payload?.siteB?.lng !== undefined;
+
+    if (hasB) {
+      setShowLocationB(true);
+      setIsCompareMode(true);
+
+      setBLatInput(String(payload.siteB.lat));
+      setBLngInput(String(payload.siteB.lng));
+
+      if (setLocationBName) setLocationBName(payload.siteB.name || "Site B");
+
+      if (payload.siteB.result) {
+        if (setCompareResult) setCompareResult(payload.siteB.result);
+      }
+
+
+      if (setSnapshotDataB) {
+        setSnapshotDataB(payload.siteB.snapshotData || null);
+      }
+    } else {
+      setShowLocationB(false);
+      setIsCompareMode(false);
+      if (setCompareResult) setCompareResult(null);
+      if (setSnapshotDataB) setSnapshotDataB(null);
+      if (setAnalyzedCoordsB) setAnalyzedCoordsB({ lat: null, lng: null });
+    }
+
+    setProjectName(payload.projectName || "");
+
+    alert("✅ Project imported successfully!");
+  } catch (err) {
+    console.error("Import failed:", err);
+    alert("Import failed. File may be corrupted.");
+  }
+};
+
+
 
   const handleSearch = async (val) => {
     setSearchQuery(val);
@@ -127,11 +274,85 @@ const [shareUrl, setShareUrl] = useState("");
 //   setIsShareModalOpen(true); // Open the center modal
 // };
 // ... inside SideBar function
+const openProjectManager = () => {
+  setShareModalMode("project");
+  setShareUrl(""); // clear old link (optional but clean)
+  setIsShareModalOpen(true);
+};
+
 const generateShareLink = () => {
   const url = `${window.location.origin}${window.location.pathname}?lat=${lat}&lng=${lng}&nameA=${encodeURIComponent(locationAName)}${isCompareMode && bLatInput && bLngInput ? `&bLat=${encodeURIComponent(bLatInput)}&bLng=${encodeURIComponent(bLngInput)}&nameB=${encodeURIComponent(locationBName)}&compare=true` : ''}`;
   
   setShareUrl(url);
+  setShareModalMode("share");
   setIsShareModalOpen(true);
+};
+  const saveAsProject = async () => {
+  if (!result) {
+    alert("Analyze a location first.");
+    return;
+  }
+
+  setSaveProjectLoading(true);
+
+  try {
+    const payload = {
+      siteA: {
+        lat: parseFloat(lat),
+        lng: parseFloat(lng),
+        name: locationAName,
+        result: result,
+        snapshotData: snapshotData  // Add snapshot data for Site A
+      },
+      compare: {
+        enabled: Boolean(isCompareMode && compareResult)
+      },
+      siteB: isCompareMode && compareResult ? {
+        lat: parseFloat(bLatInput),
+        lng: parseFloat(bLngInput),
+        name: locationBName,
+        result: compareResult,
+        snapshotData: snapshotDataB  // Add snapshot data for Site B
+      } : null,
+      meta: {
+        savedAt: new Date().toISOString(),
+        app: "CERES GEOAI"
+      }
+    };
+
+    const res = await fetch(`${API_BASE}/projects`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        projectName: projectName?.trim() || (isCompareMode ? `${locationAName} vs ${locationBName}` : locationAName),
+
+        payload
+      })
+    });
+
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || "Save failed");
+
+    // Create share URL
+    const finalUrl = `${window.location.origin}${json.shareUrl}`;
+
+    setShareUrl(finalUrl);
+    setShareModalMode("project");
+    setIsShareModalOpen(true);
+
+    // auto copy
+    try {
+      await navigator.clipboard.writeText(finalUrl);
+    } catch {
+      // ignore
+    }
+
+  } catch (e) {
+    console.error("Save project failed:", e);
+    alert("Saving project failed. Check backend logs.");
+  } finally {
+    setSaveProjectLoading(false);
+  }
 };
 
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -186,6 +407,7 @@ const generateShareLink = () => {
         const link = document.createElement("a");
         link.href = downloadUrl;
         
+
         const cleanName = locationAName.replace(/\s+/g, '_');
         const fileName = isCompareMode ? 
             `Comparison_${cleanName}_vs_${locationBName.replace(/\s+/g, '_')}.pdf` : 
@@ -282,6 +504,31 @@ const generateShareLink = () => {
             <button type="button" className="btn-save" onClick={generateShareLink} style={{ flex: 1, padding: '6px 8px', fontSize: '11px' }}>
               🔗 Share this Link
             </button>
+            {/* <button
+  type="button"
+  className="btn-save"
+  // onClick={saveAsProject}
+  onClick={openProjectManager}
+  // disabled={!result || saveProjectLoading}
+  disabled={saveProjectLoading}
+  style={{ flex: 1, padding: "6px 8px", fontSize: "11px" }}
+>
+  {saveProjectLoading ? "⏳ Saving..." : "💾 Save / Import Project"}
+</button> */}
+<button
+  type="button"
+  className="btn-save"
+  onClick={openProjectManager}
+  disabled={saveProjectLoading}
+  style={{ flex: 1, padding: "6px 8px", fontSize: "11px" }}
+>
+  {saveProjectLoading
+    ? "⏳ Saving..."
+    : result
+      ? "💾 Project Manager"
+      : "📥 Import Project"}
+</button>
+
             
           
           </div>
@@ -296,6 +543,16 @@ const generateShareLink = () => {
       <div className="field"><label>Lat</label><input value={lat} onChange={(e) => setLat(e.target.value)} className="highlighted-box" /></div>
       <div className="field"><label>Lng</label><input value={lng} onChange={(e) => setLng(e.target.value)} className="highlighted-box" /></div>
       <button type="submit" className="btn-analyze" disabled={loading}>{loading ? "..." : "Analyze"}</button>
+      {result && (
+        <button 
+          type="button" 
+          onClick={() => setCloseSiteA(true)}
+          className="btn-close-site-a"
+          title="Close Site A Analysis"
+        >
+          ✕
+        </button>
+      )}
     </div>
 
     {/* ROW 2: My Loc, Save, and Nearby in one compact line */}
@@ -609,16 +866,41 @@ const generateShareLink = () => {
           <div className="share-modal-card" onClick={(e) => e.stopPropagation()}>
             <button className="share-modal-close-top" onClick={() => setIsShareModalOpen(false)}>✕</button>
             <div className="share-modal-content">
-              <h3 className="share-title">Share Analysis</h3>
+              {/* <h3 className="share-title">Share Analysis</h3> */}
+              {/* <h3 className="share-title">
+  {shareModalMode === "project" ? "Project Saved" : "Share Analysis"}
+</h3> */}
+<h3 className="share-title">
+  {shareModalMode === "share"
+    ? "Share Analysis"
+    : result
+      ? "Save Project"
+      : "Import Project"}
+</h3>
+
+
+
               <div className="share-qr-section">
-                <div className="qr-container-box">
+                {/* <div className="qr-container-box">
                   <QRCode value={shareUrl} size={180} level="M" />
-                </div>
+                </div> */}
+                <div className="qr-container-box">
+  {shareUrl ? (
+    <QRCode value={shareUrl} size={180} level="M" />
+  ) : (
+    <div style={{ fontSize: "12px", opacity: 0.6, textAlign: "center" }}>
+      No saved project link yet.
+      <br />
+      Click "Save to Cloud" after analysis.
+    </div>
+  )}
+</div>
+
                 <p className="share-subtitle">
                   {isCompareMode ? `${locationAName} vs ${locationBName}` : locationAName}
                 </p>
               </div>
-              <div className="share-actions-vertical">
+              {/* <div className="share-actions-vertical">
                 <button 
                   className="share-action-primary" 
                   onClick={async () => {
@@ -629,11 +911,157 @@ const generateShareLink = () => {
                   Copy Link
                 </button>
                 <button className="share-action-secondary" onClick={() => setIsShareModalOpen(false)}>Close</button>
-              </div>
+              </div> */}
+              <div className="share-actions-vertical">
+
+  {/* Copy */}
+  {/* <button 
+    className="share-action-primary" 
+    onClick={async () => {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Link copied!");
+    }}
+  >
+    Copy Link
+  </button> */}
+
+  {/* Rename Project */}
+  {/* <div style={{ width: "100%", marginTop: "10px" }}>
+    <label style={{ fontSize: "11px", opacity: 0.7, display: "block", marginBottom: "6px" }}>
+      Project Name
+    </label>
+    <input
+      value={projectName}
+      onChange={(e) => setProjectName(e.target.value)}
+      placeholder="Rename project..."
+      className="sidebar-search-input"
+      style={{ width: "100%", fontSize: "12px", padding: "10px" }}
+    />
+  </div>
+
+  <div style={{ display: "flex", gap: "8px", width: "100%", marginTop: "10px" }}>
+    <button
+      className="share-action-secondary"
+      onClick={exportProjectFile}
+      style={{ flex: 1 }}
+    >
+      📦 Export JSON
+    </button>
+
+    <button
+      className="share-action-secondary"
+      onClick={() => importFileRef.current?.click()}
+      style={{ flex: 1 }}
+    >
+      📥 Import JSON
+    </button>
+  </div> */}
+  {/* ============ SHARE MODE ============ */}
+  {shareModalMode === "share" && (
+    <>
+      <button
+        className="share-action-primary"
+        disabled={!shareUrl}
+        style={{ opacity: !shareUrl ? 0.5 : 1 }}
+        onClick={async () => {
+          if (!shareUrl) return;
+          await navigator.clipboard.writeText(shareUrl);
+          alert("Link copied!");
+        }}
+      >
+        Copy Link
+      </button>
+    </>
+  )}
+  {/* ============ PROJECT MODE ============ */}
+  {shareModalMode === "project" && (
+    <>
+      {/* Save to Cloud */}
+      <button
+        className="share-action-primary"
+        onClick={saveAsProject}
+        disabled={!result || saveProjectLoading}
+        style={{ marginTop: "10px", opacity: !result ? 0.5 : 1 }}
+      >
+        {saveProjectLoading ? "⏳ Saving..." : "☁️ Save to Cloud"}
+      </button>
+
+      {/* Copy Cloud Link only if it exists */}
+      <button
+        className="share-action-primary"
+        disabled={!shareUrl}
+        style={{ opacity: !shareUrl ? 0.5 : 1 }}
+        onClick={async () => {
+          if (!shareUrl) return;
+          await navigator.clipboard.writeText(shareUrl);
+          alert("Project link copied!");
+        }}
+      >
+        Copy Saved Project Link
+      </button>
+
+    {/* Rename Project */}
+    <div style={{ width: "100%", marginTop: "10px" }}>
+      <label style={{ fontSize: "11px", opacity: 0.7, display: "block", marginBottom: "6px" }}>
+        Project Name
+      </label>
+      <input
+        value={projectName}
+        onChange={(e) => setProjectName(e.target.value)}
+        placeholder="Rename project..."
+        className="sidebar-search-input"
+        style={{ width: "100%", fontSize: "12px", padding: "10px" }}
+      />
+    </div>
+
+    {/* Export / Import Row */}
+    <div style={{ display: "flex", gap: "8px", width: "100%", marginTop: "10px" }}>
+      <button
+        className="share-action-secondary"
+        onClick={exportProjectFile}
+        style={{ flex: 1 }}
+      >
+        📦 Export JSON
+      </button>
+
+      <button
+        className="share-action-secondary"
+        onClick={() => importFileRef.current?.click()}
+        style={{ flex: 1 }}
+      >
+        📥 Import JSON
+      </button>
+    </div>
+  </>
+)}
+
+
+  {/* Close */}
+  <button 
+    className="share-action-secondary" 
+    onClick={() => setIsShareModalOpen(false)}
+    style={{ marginTop: "10px" }}
+  >
+    Close
+  </button>
+</div>
+
             </div>
           </div>
         </div>
       )}
+      <input
+  ref={importFileRef}
+  type="file"
+  accept="application/json"
+  style={{ display: "none" }}
+  onChange={(e) => {
+    const file = e.target.files?.[0];
+    if (file) importProjectFile(file);
+    e.target.value = "";
+  }}
+/>
+
       </>
   );
 }

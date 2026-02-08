@@ -947,13 +947,43 @@ input:focus {
 }
 
 /* 5. Ensure "Analyze" and "Go" Hover logic remains Blue (as per previous request) 
-   or if you want them to match the palette too, uncomment below: */
-/*
-.btn-analyze:hover {
-    background: var(--accent-primary) !important;
-    filter: contrast(1.2) !important;
-}
+.btn-analyze:hover { background: var(--accent-primary) !important; }
 */
+
+/* ============================================================
+   CLOSE SITE A BUTTON STYLING
+   ============================================================ */
+
+.btn-close-site-a {
+  background: rgba(239, 68, 68, 0.9) !important;
+  border: 1px solid rgba(239, 68, 68, 0.8) !important;
+  color: #ffffff !important;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+  min-width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close-site-a:hover {
+  background: rgba(220, 38, 38, 1) !important;
+  border-color: rgba(220, 38, 38, 1) !important;
+  color: #ffffff !important;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-close-site-a:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+} 
 
 /* 6. Button Active State (Click effect) */
 .btn-save:active, .mini:active {

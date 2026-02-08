@@ -1395,23 +1395,23 @@ const TacticalMapController = ({
 
 
 
-// 🎨 Icon Factory
+  // 🎨 Icon Factory
 
-const createIcon = (color) => new L.Icon({
-iconUrl: `https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-${color}.png`,
-shadowUrl: 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',
-iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
-});
+  const createIcon = (color) => new L.Icon({
+    iconUrl: `https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-${color}.png`,
+    shadowUrl: 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+  });
 
 
 
-// Convert inputs to numbers safely for rendering
+  // Convert inputs to numbers safely for rendering
 
-const posA = [parseFloat(latA), parseFloat(lngA)];
-const posB = [parseFloat(latB), parseFloat(lngB)];
-const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
+  const posA = [parseFloat(latA), parseFloat(lngA)];
+  const posB = [parseFloat(latB), parseFloat(lngB)];
+  const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
 
-// ... (rest of the code remains the same)
+  // ... (rest of the code remains the same)
 
   // 🚀 THE FIXED RETURN: Properly contained within the function braces
 
@@ -1469,24 +1469,88 @@ const posLive = [parseFloat(currentLat), parseFloat(currentLng)];
 
 export default function LandSuitabilityChecker() {
 
-
-const [analysisComplete, setAnalysisComplete] = useState(false);
-
+  const [analysisComplete, setAnalysisComplete] = useState(false);
 
   const handleZoomIn = () => {
-
     setZoom(z => Math.min(z + 1, 20));
-
   };
-
-
 
   const handleZoomOut = () => {
-
     setZoom(z => Math.max(z - 1, 0));
-
   };
 
+  const onProjectImport = (payload) => {
+    // Restore Location A
+    if (payload?.siteA?.lat != null) setLat(String(payload.siteA.lat));
+    if (payload?.siteA?.lng != null) setLng(String(payload.siteA.lng));
+    if (payload?.siteA?.name) setLocationAName(payload.siteA.name);
+    
+    // Restore Result A
+    if (payload?.siteA?.result) {
+      setResult(payload.siteA.result);
+      setAnalyzedCoords({ lat: payload.siteA.lat, lng: payload.siteA.lng });
+    }
+    
+    // Restore Compare Mode
+    if (payload?.compare?.enabled && payload?.siteB?.lat && payload?.siteB?.lng) {
+      setShowLocationB(true);
+      setIsCompareMode(true);
+      if (payload?.siteB?.lat != null) setBLatInput(String(payload.siteB.lat));
+      if (payload?.siteB?.lng != null) setBLngInput(String(payload.siteB.lng));
+      if (payload?.siteB?.name) setLocationBName(payload.siteB.name);
+      if (payload?.siteB?.result) setCompareResult(payload.siteB.result);
+      if (payload?.siteB?.lat != null && payload?.siteB?.lng != null) {
+        setAnalyzedCoordsB({ lat: payload.siteB.lat, lng: payload.siteB.lng });
+      }
+    } else {
+      setShowLocationB(false);
+      setIsCompareMode(false);
+      setCompareResult(null);
+      setSnapshotDataB(null);
+    }
+  };
+
+  useEffect(() => {
+    const raw = localStorage.getItem("geoai_restore_project_payload");
+    if (!raw) return;
+
+    try {
+      const payload = JSON.parse(raw);
+
+      // --- Restore Location A
+      if (payload?.siteA?.lat != null) setLat(String(payload.siteA.lat));
+      if (payload?.siteA?.lng != null) setLng(String(payload.siteA.lng));
+      if (payload?.siteA?.name) setLocationAName(payload.siteA.name);
+
+      // --- Restore Result A
+      if (payload?.siteA?.result) setResult(payload.siteA.result);
+
+      // --- Restore Compare mode
+      if (payload?.compare?.enabled) {
+        setShowLocationB(true);
+        setIsCompareMode(true);
+
+        if (payload?.siteB?.lat != null) setBLatInput(String(payload.siteB.lat));
+        if (payload?.siteB?.lng != null) setBLngInput(String(payload.siteB.lng));
+        if (payload?.siteB?.name) setLocationBName(payload.siteB.name);
+
+        if (payload?.siteB?.result) setCompareResult(payload.siteB.result);
+
+        if (payload?.siteB?.lat != null && payload?.siteB?.lng != null) {
+          setAnalyzedCoordsB({ lat: payload.siteB.lat, lng: payload.siteB.lng });
+        }
+      } else {
+        setShowLocationB(false);
+        setIsCompareMode(false);
+      }
+
+    } catch (e) {
+      console.error("Restore project failed:", e);
+    } finally {
+      localStorage.removeItem("geoai_restore_project_payload");
+      localStorage.removeItem("geoai_restore_project_name");
+    }
+  }, []);
 
 
   // 3. FULLSCREEN FIX: Add a null check to avoid the error you saw
@@ -1568,6 +1632,20 @@ const [analysisComplete, setAnalysisComplete] = useState(false);
   // const [result, setResult] = useState(null);
 
   const [result, setResult] = useState(() => JSON.parse(localStorage.getItem("geo_last_result")) || null);
+  const [closeSiteA, setCloseSiteA] = useState(false);
+  
+  // Handle Site A close action
+  useEffect(() => {
+    if (closeSiteA) {
+      setResult(null);
+      setAnalyzedCoords({ lat: null, lng: null });
+      setCloseSiteA(false);
+    }
+  }, [closeSiteA]);
+  
+  const [analysisTime, setAnalysisTime] = useState(() => {
+    return localStorage.getItem("geo_last_analysis_time");
+  });
 
   const [compareResult, setCompareResult] = useState(() => JSON.parse(localStorage.getItem("geo_last_compare_result")) || null);
 
@@ -1594,11 +1672,11 @@ const [analysisComplete, setAnalysisComplete] = useState(false);
 
   const isResizingBottom = useRef(false);
 
-useEffect(() => {
-  if (!isCompareMode) {
-    setSiteBPlaying(false);
-  }
-}, [isCompareMode, setSiteBPlaying]);
+  useEffect(() => {
+    if (!isCompareMode) {
+      setSiteBPlaying(false);
+    }
+  }, [isCompareMode, setSiteBPlaying]);
 
   // const [isCompareMode, setIsCompareMode] = useState(false);
 
@@ -1672,6 +1750,10 @@ useEffect(() => {
 
   const [showNearbyB, setShowNearbyB] = useState(false);
 
+  const [snapshotData, setSnapshotData] = useState(null);
+  const [snapshotDataB, setSnapshotDataB] = useState(null);
+  const [snapshotLoading, setSnapshotLoading] = useState(false);
+
 
 
   const [isGptOpen, setIsGptOpen] = useState(false);
@@ -1685,7 +1767,48 @@ useEffect(() => {
   const [digitalTwinPosition, setDigitalTwinPosition] = useState({ x: 0, y: 0 });
   const [digitalTwinStart, setDigitalTwinStart] = useState({ x: 0, y: 0 });
 
-  // Chat history for GeoGPT (kept for compatibility)
+  // Digital twin event handlers (moved here to fix variable scope)
+  const handleDigitalTwinMouseDown = useCallback((e) => {
+    e.preventDefault();
+    setIsDigitalTwinDragging(true);
+    setDigitalTwinStart({
+      x: e.clientX - digitalTwinPosition.x,
+      y: e.clientY - digitalTwinPosition.y,
+    });
+  }, [digitalTwinPosition]);
+
+  const handleDigitalTwinMouseMove = useCallback((e) => {
+    if (!isDigitalTwinDragging) return;
+    
+    const newX = e.clientX - digitalTwinStart.x;
+    const newY = e.clientY - digitalTwinStart.y;
+    
+    setDigitalTwinPosition({ x: newX, y: newY });
+  }, [isDigitalTwinDragging, digitalTwinStart]);
+
+  const handleDigitalTwinMouseUp = useCallback(() => {
+    setIsDigitalTwinDragging(false);
+  }, []);
+
+  // Manage digital twin event listeners
+  useEffect(() => {
+    if (isDigitalTwinDragging) {
+      document.addEventListener("mousemove", handleDigitalTwinMouseMove);
+      document.addEventListener("mouseup", handleDigitalTwinMouseUp);
+      document.body.style.cursor = "grabbing";
+    } else {
+      document.removeEventListener("mousemove", handleDigitalTwinMouseMove);
+      document.removeEventListener("mouseup", handleDigitalTwinMouseUp);
+      document.body.style.cursor = "default";
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleDigitalTwinMouseMove);
+      document.removeEventListener("mouseup", handleDigitalTwinMouseUp);
+      document.body.style.cursor = "default";
+    };
+  }, [isDigitalTwinDragging, handleDigitalTwinMouseMove, handleDigitalTwinMouseUp]);
+
   const [chatHistory] = useState([{ role: 'assistant', content: 'Hello! I\'m GeoGPT Intelligence. What would you like to know about our geospatial analysis?' }]);
   const chatEndRef = useRef(null);
 
@@ -1695,73 +1818,14 @@ useEffect(() => {
 
   useEffect(() => { scrollToBottom(); }, [chatHistory, scrollToBottom]);
 
-  const handleDigitalTwinMouseDown = useCallback((e) => {
-    e.preventDefault();
-    setIsDigitalTwinDragging(true);
-    setDigitalTwinStart({
-      x: e.clientX - digitalTwinPosition.x,
-      y: e.clientY - digitalTwinPosition.y
-    });
-  }, [digitalTwinPosition]);
-
-  const handleDigitalTwinMouseMove = useCallback((e) => {
-    if (isDigitalTwinDragging) {
-      const newX = e.clientX - digitalTwinStart.x;
-      const newY = e.clientY - digitalTwinStart.y;
-      setDigitalTwinPosition({
-        x: newX,
-        y: newY
-      });
-    }
-  }, [isDigitalTwinDragging, digitalTwinStart]);
-
-  const handleDigitalTwinMouseUp = useCallback(() => {
-    setIsDigitalTwinDragging(false);
-  }, []);
-
-  useEffect(() => {
-    if (isDigitalTwinDragging) {
-      document.addEventListener('mousemove', handleDigitalTwinMouseMove);
-      document.addEventListener('mouseup', handleDigitalTwinMouseUp);
-      return () => {
-        document.removeEventListener('mousemove', handleDigitalTwinMouseMove);
-        document.removeEventListener('mouseup', handleDigitalTwinMouseUp);
-      };
-    }
-  }, [isDigitalTwinDragging, handleDigitalTwinMouseMove, handleDigitalTwinMouseUp]);
-
-  // Snapshot States
-
-  const [snapshotData, setSnapshotData] = useState(null);       // Site A
-
-  // const [setSnapshotDataB] = useState(null); 
-
-  const [snapshotDataB, setSnapshotDataB] = useState(null);   // Site B
-
-  const [snapshotLoading, setSnapshotLoading] = useState(false);
-
-
-
-  // --- UTILITY FUNCTIONS DEFINED FIRST TO AVOID NO-UNDEF ERRORS ---
-
-
-
   const fetchSnapshot = useCallback(async (tLat, tLng) => {
-
     try {
-
       const res = await fetch(`${API_BASE}/snapshot_identity`, {
-
         method: "POST",
-
         headers: { "Content-Type": "application/json" },
-
         body: JSON.stringify({ latitude: parseFloat(tLat), longitude: parseFloat(tLng) })
-
       });
-
       return await res.json();
-
     } catch (err) {
 
       console.error("Snapshot error:", err);
@@ -1945,6 +2009,104 @@ useEffect(() => {
   }, []);
 
 
+  const restoreFromProjectPayload = useCallback((payload) => {
+    if (!payload) return;
+
+    // ---- Site A
+    if (payload?.siteA?.lat != null) {
+      const v = String(payload.siteA.lat);
+      setLat(v);
+      localStorage.setItem("geo_lat", v);
+    }
+
+    if (payload?.siteA?.lng != null) {
+      const v = String(payload.siteA.lng);
+      setLng(v);
+      localStorage.setItem("geo_lng", v);
+    }
+
+    if (payload?.siteA?.name) {
+      setLocationAName(payload.siteA.name);
+      localStorage.setItem("geo_name_a", payload.siteA.name);
+    }
+
+    if (payload?.siteA?.result) {
+      setResult(payload.siteA.result);
+      localStorage.setItem("geo_last_result", JSON.stringify(payload.siteA.result));
+    }
+
+    if (payload?.siteA?.lat != null && payload?.siteA?.lng != null) {
+      const coordsA = { lat: String(payload.siteA.lat), lng: String(payload.siteA.lng) };
+      setAnalyzedCoords(coordsA);
+      localStorage.setItem("geo_lat_analyzed", coordsA.lat);
+      localStorage.setItem("geo_lng_analyzed", coordsA.lng);
+    }
+
+    // ---- Compare
+    const compareEnabled = Boolean(payload?.compare?.enabled);
+
+    if (!compareEnabled) {
+      setIsCompareMode(false);
+      setShowLocationB(false);
+      setCompareResult(null);
+      setSnapshotDataB(null);
+      localStorage.setItem("geo_is_compare", "false");
+      localStorage.setItem("geo_show_b", "false");
+      localStorage.removeItem("geo_last_compare_result");
+      return;
+    }
+
+    // Compare ON
+    setIsCompareMode(true);
+    setShowLocationB(true);
+    localStorage.setItem("geo_is_compare", "true");
+    localStorage.setItem("geo_show_b", "true");
+
+    // ---- Site B
+    if (payload?.siteB?.lat != null) {
+      const v = String(payload.siteB.lat);
+      setBLatInput(v);
+      localStorage.setItem("geo_lat_b", v);
+    }
+
+    if (payload?.siteB?.lng != null) {
+      const v = String(payload.siteB.lng);
+      setBLngInput(v);
+      localStorage.setItem("geo_lng_b", v);
+    }
+
+    if (payload?.siteB?.name) {
+      setLocationBName(payload.siteB.name);
+      setCompareName(payload.siteB.name);
+      localStorage.setItem("geo_name_b", payload.siteB.name);
+    }
+
+    if (payload?.siteB?.result) {
+      setCompareResult(payload.siteB.result);
+      localStorage.setItem("geo_last_compare_result", JSON.stringify(payload.siteB.result));
+    }
+
+    if (payload?.siteB?.lat != null && payload?.siteB?.lng != null) {
+      const coordsB = { lat: String(payload.siteB.lat), lng: String(payload.siteB.lng) };
+      setAnalyzedCoordsB(coordsB);
+      localStorage.setItem("geo_lat_b_analyzed", coordsB.lat);
+      localStorage.setItem("geo_lng_b_analyzed", coordsB.lng);
+    }
+
+  }, [
+    setLat, setLng,
+    setLocationAName,
+    setResult,
+    setAnalyzedCoords,
+    setIsCompareMode,
+    setShowLocationB,
+    setCompareResult,
+    setSnapshotDataB,
+    setBLatInput, setBLngInput,
+    setLocationBName,
+    setCompareName,
+    setAnalyzedCoordsB
+  ]);
 
 
 
@@ -1992,11 +2154,14 @@ useEffect(() => {
     setResult(null);
 
     setCompareResult(null);
+    setAnalysisTime(null);
+    localStorage.removeItem("geo_last_analysis_time");
+
 
     // Don't clear snapshot data - keep cards persistent
     // setSnapshotData(null);
     // if (setSnapshotDataB) setSnapshotDataB(null);
-setAnalysisComplete(false); 
+    setAnalysisComplete(false);
     setLoading(true);
 
     setSnapshotLoading(true);
@@ -2022,13 +2187,8 @@ setAnalysisComplete(false);
       const nameB = (locationBName && locationBName !== "Site B")
 
         ? locationBName
-
         : resolveLocationName(bLatInput, bLngInput, "Site B");
-
-
-
       setLocationBName(nameB);
-
       setCompareName(nameB);
 
     } else {
@@ -2074,7 +2234,21 @@ setAnalysisComplete(false);
         const analysisData = results[0].value;
 
         setResult(analysisData);
-        setAnalysisComplete(true); 
+        setAnalysisComplete(true);
+        // ⏱️ ADD THIS (TIME STAMP)
+        // const now = new Date().toLocaleString();
+        const now = new Date().toLocaleString('en-GB', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false
+});
+
+        setAnalysisTime(now);
+        localStorage.setItem("geo_last_analysis_time", now);
         // const coordsA = { lat, lng };
 
         setAnalyzedCoords({ lat, lng });
@@ -2327,6 +2501,39 @@ setAnalysisComplete(false);
 
   }, [lat, lng, analyzedCoords, savedPlaces]); // Added savedPlaces to dependencies
 
+  useEffect(() => {
+    // Check if we already handled the URL analysis to prevent loops
+    if (initialAnalysisRef.current) return;
+    // const params = new URLSearchParams(window.location.search);
+    // TODO: parse params here
+  }, [handleCompareSelect, handleSubmit]);
+
+  useEffect(() => {
+    // 1) Restore from saved Project payload (from /project/:id loader page)
+    const raw = localStorage.getItem("geoai_restore_project_payload");
+    if (!raw) return;
+
+    try {
+      const payload = JSON.parse(raw);
+
+      // Prevent URL share logic from firing immediately
+      initialAnalysisRef.current = true;
+
+      restoreFromProjectPayload(payload);
+
+      // Optional: mark analysis complete so AudioLandscape behaves correctly
+      setAnalysisComplete(true);
+
+    } catch (e) {
+      console.error("Project restore failed:", e);
+    } finally {
+      localStorage.removeItem("geoai_restore_project_payload");
+      localStorage.removeItem("geoai_restore_project_name");
+
+      // Clean URL if it has old query params
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, [restoreFromProjectPayload]);
 
 
   useEffect(() => {
@@ -3073,228 +3280,228 @@ setAnalysisComplete(false);
   //     </div>
   //   );
   // };
-const EvidenceSection = ({ data, filterCategories = null }) => {
-  const meta = data?.explanation?.factors_meta || data?.factors_meta || {};
+  const EvidenceSection = ({ data, filterCategories = null }) => {
+    const meta = data?.explanation?.factors_meta || data?.factors_meta || {};
 
-  if (!meta || Object.keys(meta).length === 0) {
-    return (
-      <div className="card evidence-card">
-        <h3 className="evidence-title">EVIDENCE DETAILS</h3>
-        <p>No evidence metadata available.</p>
-      </div>
-    );
-  }
-
-  const factorLabels = {
-    slope: "SLOPE",
-    elevation: "ELEVATION",
-    ruggedness: "RUGGEDNESS",
-    stability: "STABILITY",
-    flood: "FLOOD RISK",
-    water: "WATER PROXIMITY",
-    drainage: "DRAINAGE",
-    groundwater: "GROUNDWATER",
-    vegetation: "VEGETATION",
-    soil: "SOIL QUALITY",
-    pollution: "AIR POLLUTION",
-    biodiversity: "BIODIVERSITY",
-    heat_island: "HEAT ISLAND",
-    rainfall: "RAINFALL",
-    thermal: "THERMAL COMFORT",
-    intensity: "HEAT STRESS",
-    landuse: "LANDUSE",
-    infrastructure: "PROXIMITY",
-    population: "POPULATION",
-    multi_hazard: "MULTI-HAZARD",
-    climate_change: "CLIMATE CHANGE",
-    recovery: "RECOVERY CAPACITY",
-    habitability: "HABITABILITY"
-  };
-
-  const generateEvidence = (factorKey, factor) => {
-    if (factor.evidence) return factor.evidence;
-    const val = factor.value || 0;
-    const raw = factor.raw || {};
-    
-    // Enhanced pollution evidence with detailed pollutant data
-    if (factorKey === 'pollution') {
-      const pm25 = raw.pm25_value || raw.pm25 || 'N/A';
-      const pm10 = raw.pm10_value || 'N/A';
-      const no2 = raw.no2_value || 'N/A';
-      const so2 = raw.so2_value || 'N/A';
-      const o3 = raw.o3_value || 'N/A';
-      const co = raw.co_value || 'N/A';
-      
-      const healthRisk = raw.health_risk_level || 'Unknown';
-      const aqiCategory = raw.aqi_category || 'Unknown';
-      const dominantPollutant = raw.dominant_pollutant || 'Unknown';
-      const location = raw.location || 'Unknown';
-      const city = raw.city || 'Unknown';
-      const lastUpdated = raw.last_updated || 'Unknown';
-      const dataFreshness = raw.data_freshness || 'Unknown';
-      
-      // WHO Standards for comparison
-      const pm25WhoAnnual = raw.pm25_who_standard_annual || 5;
-      const pm25Who24hr = raw.pm25_who_standard_24hr || 15;
-      const pm25EpaAnnual = raw.pm25_epa_standard_annual || 9;
-      
-      if (typeof pm25 === 'number' && pm25 > 0) {
-        const pollutantBreakdown = [];
-        if (pm10 !== 'N/A') pollutantBreakdown.push(`PM10: ${pm10} µg/m³`);
-        if (no2 !== 'N/A') pollutantBreakdown.push(`NO2: ${no2} µg/m³`);
-        if (so2 !== 'N/A') pollutantBreakdown.push(`SO2: ${so2} µg/m³`);
-        if (o3 !== 'N/A') pollutantBreakdown.push(`O3: ${o3} µg/m³`);
-        if (co !== 'N/A') pollutantBreakdown.push(`CO: ${co} µg/m³`);
-        
-        const additionalPollutants = pollutantBreakdown.length > 0 ? ` Additional pollutants: ${pollutantBreakdown.join(', ')}.` : '';
-        const standardsInfo = ` WHO standards: Annual ${pm25WhoAnnual} µg/m³, 24hr ${pm25Who24hr} µg/m³. EPA annual: ${pm25EpaAnnual} µg/m³.`;
-        
-        if (pm25 <= 5) {
-          return `Air Quality Index: ${val}/100. EXCELLENT air quality. PM2.5: ${pm25} µg/m³ (well below WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
-        } else if (pm25 <= 12) {
-          return `Air Quality Index: ${val}/100. GOOD air quality. PM2.5: ${pm25} µg/m³ (below WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
-        } else if (pm25 <= 25) {
-          return `Air Quality Index: ${val}/100. MODERATE air quality. PM2.5: ${pm25} µg/m³ (exceeding WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
-        } else if (pm25 <= 50) {
-          return `Air Quality Index: ${val}/100. POOR air quality. PM2.5: ${pm25} µg/m³ (significantly exceeding WHO standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
-        } else {
-          return `Air Quality Index: ${val}/100. VERY POOR air quality. PM2.5: ${pm25} µg/m³ (dangerously exceeding WHO standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
-        }
-      } else {
-        return `Air Quality Index: ${val}/100. No real-time pollution data available. Using regional baseline estimate. Location: ${location || 'Unknown'}. More monitoring stations needed for accurate assessment.`;
-      }
+    if (!meta || Object.keys(meta).length === 0) {
+      return (
+        <div className="card evidence-card">
+          <h3 className="evidence-title">EVIDENCE DETAILS</h3>
+          <p>No evidence metadata available.</p>
+        </div>
+      );
     }
-    
-    // Enhanced evidence for other factors can be added here too
-    return `Score: ${val}/100. Analysis based on regional ${factorKey.replace(/_/g, ' ')} telemetry.`;
-  };
 
-  const getFactorWeight = (category, factorKey) => {
-    const weights = {
-      physical: { slope: 30, stability: 25, elevation: 25, ruggedness: 20 },
-      hydrology: { flood: 35, groundwater: 25, drainage: 20, water: 20 },
-      environmental: { biodiversity: 25, pollution: 25, soil: 20, heat_island: 15, vegetation: 15 },
-      climatic: { thermal: 40, intensity: 35, rainfall: 25 },
-      socio_econ: { infrastructure: 40, landuse: 30, population: 30 },
-      risk_resilience: { multi_hazard: 35, climate_change: 25, habitability: 20, recovery: 20 }
+    const factorLabels = {
+      slope: "SLOPE",
+      elevation: "ELEVATION",
+      ruggedness: "RUGGEDNESS",
+      stability: "STABILITY",
+      flood: "FLOOD RISK",
+      water: "WATER PROXIMITY",
+      drainage: "DRAINAGE",
+      groundwater: "GROUNDWATER",
+      vegetation: "VEGETATION",
+      soil: "SOIL QUALITY",
+      pollution: "AIR POLLUTION",
+      biodiversity: "BIODIVERSITY",
+      heat_island: "HEAT ISLAND",
+      rainfall: "RAINFALL",
+      thermal: "THERMAL COMFORT",
+      intensity: "HEAT STRESS",
+      landuse: "LANDUSE",
+      infrastructure: "PROXIMITY",
+      population: "POPULATION",
+      multi_hazard: "MULTI-HAZARD",
+      climate_change: "CLIMATE CHANGE",
+      recovery: "RECOVERY CAPACITY",
+      habitability: "HABITABILITY"
     };
-    return weights[category]?.[factorKey] || 0;
-  };
 
-  const calculateRoleBasedWeightedScore = (category, factors) => {
-    let weightedSum = 0;
-    let totalWeight = 0;
-    Object.entries(factors).forEach(([factorKey, factor]) => {
-      const weight = getFactorWeight(category, factorKey);
-      const value = typeof factor.value === 'number' ? factor.value : 50;
-      weightedSum += value * weight;
-      totalWeight += weight;
-    });
-    return totalWeight > 0 ? weightedSum / totalWeight : 0;
-  };
+    const generateEvidence = (factorKey, factor) => {
+      if (factor.evidence) return factor.evidence;
+      const val = factor.value || 0;
+      const raw = factor.raw || {};
 
-  const getFactorRole = (category, factorKey) => {
-    const roles = {
-      physical: { slope: "Primary construction constraint", stability: "Landslide/erosion safety", elevation: "Flood & climate baseline", ruggedness: "Construction difficulty" },
-      hydrology: { flood: "Catastrophic failure driver", water: "Resource + flood modifier", drainage: "Surface runoff handling", groundwater: "Foundation durability" },
-      environmental: { vegetation: "Surface cover indicator", soil: "Semi-permanent land constraint", pollution: "Human health impact", biodiversity: "Legal/ecological constraint", heat_island: "Urban stress indicator" },
-      climatic: { rainfall: "Flood & water balance", thermal: "Human livability", intensity: "Peak stress risk" },
-      socio_econ: { landuse: "Legal feasibility", infrastructure: "Development enabler", population: "Demand & pressure" },
-      risk_resilience: { multi_hazard: "Compound disaster risk", climate_change: "Long-term exposure", recovery: "Post-event resilience", habitability: "Sustained livability" }
+      // Enhanced pollution evidence with detailed pollutant data
+      if (factorKey === 'pollution') {
+        const pm25 = raw.pm25_value || raw.pm25 || 'N/A';
+        const pm10 = raw.pm10_value || 'N/A';
+        const no2 = raw.no2_value || 'N/A';
+        const so2 = raw.so2_value || 'N/A';
+        const o3 = raw.o3_value || 'N/A';
+        const co = raw.co_value || 'N/A';
+
+        const healthRisk = raw.health_risk_level || 'Unknown';
+        const aqiCategory = raw.aqi_category || 'Unknown';
+        const dominantPollutant = raw.dominant_pollutant || 'Unknown';
+        const location = raw.location || 'Unknown';
+        const city = raw.city || 'Unknown';
+        const lastUpdated = raw.last_updated || 'Unknown';
+        const dataFreshness = raw.data_freshness || 'Unknown';
+
+        // WHO Standards for comparison
+        const pm25WhoAnnual = raw.pm25_who_standard_annual || 5;
+        const pm25Who24hr = raw.pm25_who_standard_24hr || 15;
+        const pm25EpaAnnual = raw.pm25_epa_standard_annual || 9;
+
+        if (typeof pm25 === 'number' && pm25 > 0) {
+          const pollutantBreakdown = [];
+          if (pm10 !== 'N/A') pollutantBreakdown.push(`PM10: ${pm10} µg/m³`);
+          if (no2 !== 'N/A') pollutantBreakdown.push(`NO2: ${no2} µg/m³`);
+          if (so2 !== 'N/A') pollutantBreakdown.push(`SO2: ${so2} µg/m³`);
+          if (o3 !== 'N/A') pollutantBreakdown.push(`O3: ${o3} µg/m³`);
+          if (co !== 'N/A') pollutantBreakdown.push(`CO: ${co} µg/m³`);
+
+          const additionalPollutants = pollutantBreakdown.length > 0 ? ` Additional pollutants: ${pollutantBreakdown.join(', ')}.` : '';
+          const standardsInfo = ` WHO standards: Annual ${pm25WhoAnnual} µg/m³, 24hr ${pm25Who24hr} µg/m³. EPA annual: ${pm25EpaAnnual} µg/m³.`;
+
+          if (pm25 <= 5) {
+            return `Air Quality Index: ${val}/100. EXCELLENT air quality. PM2.5: ${pm25} µg/m³ (well below WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+          } else if (pm25 <= 12) {
+            return `Air Quality Index: ${val}/100. GOOD air quality. PM2.5: ${pm25} µg/m³ (below WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+          } else if (pm25 <= 25) {
+            return `Air Quality Index: ${val}/100. MODERATE air quality. PM2.5: ${pm25} µg/m³ (exceeding WHO annual standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+          } else if (pm25 <= 50) {
+            return `Air Quality Index: ${val}/100. POOR air quality. PM2.5: ${pm25} µg/m³ (significantly exceeding WHO standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+          } else {
+            return `Air Quality Index: ${val}/100. VERY POOR air quality. PM2.5: ${pm25} µg/m³ (dangerously exceeding WHO standard of ${pm25WhoAnnual} µg/m³).${standardsInfo} Health risk: ${healthRisk}. AQI Category: ${aqiCategory}. Location: ${location}, ${city}. Data source: ${raw.dataset_source || 'OpenAQ'}. Last updated: ${lastUpdated} (${dataFreshness}). Dominant pollutant: ${dominantPollutant}.${additionalPollutants} Multi-pollutant impact: ${raw.multi_pollutant_impact || 'Normal'}.`;
+          }
+        } else {
+          return `Air Quality Index: ${val}/100. No real-time pollution data available. Using regional baseline estimate. Location: ${location || 'Unknown'}. More monitoring stations needed for accurate assessment.`;
+        }
+      }
+
+      // Enhanced evidence for other factors can be added here too
+      return `Score: ${val}/100. Analysis based on regional ${factorKey.replace(/_/g, ' ')} telemetry.`;
     };
-    return roles[category]?.[factorKey] || "Supporting factor";
-  };
 
-  const getCategoryDescription = (category) => {
-    const descriptions = {
-      physical: "Physical terrain characteristics including slope, elevation, ruggedness, and ground stability.",
-      environmental: "Environmental conditions covering vegetation, soil quality, air pollution, and biodiversity.",
-      hydrology: "Water-related factors including flood risk, water proximity, and drainage capacity.",
-      climatic: "Climate conditions such as rainfall patterns, thermal comfort, and heat stress.",
-      socio_econ: "Socio-economic factors including land use, infrastructure, and population density.",
-      risk_resilience: "Risk assessment and resilience factors covering hazards and climate change."
+    const getFactorWeight = (category, factorKey) => {
+      const weights = {
+        physical: { slope: 30, stability: 25, elevation: 25, ruggedness: 20 },
+        hydrology: { flood: 35, groundwater: 25, drainage: 20, water: 20 },
+        environmental: { biodiversity: 25, pollution: 25, soil: 20, heat_island: 15, vegetation: 15 },
+        climatic: { thermal: 40, intensity: 35, rainfall: 25 },
+        socio_econ: { infrastructure: 40, landuse: 30, population: 30 },
+        risk_resilience: { multi_hazard: 35, climate_change: 25, habitability: 20, recovery: 20 }
+      };
+      return weights[category]?.[factorKey] || 0;
     };
-    return descriptions[category] || "Category analysis and assessment.";
-  };
 
-  const factorOrder = {
-    physical: ['elevation', 'ruggedness', 'slope', 'stability'],
-    environmental: ['biodiversity', 'heat_island', 'pollution', 'soil', 'vegetation'],
-    hydrology: ['drainage', 'flood', 'groundwater', 'water'],
-    climatic: ['intensity', 'rainfall', 'thermal'],
-    socio_econ: ['infrastructure', 'landuse', 'population'],
-    risk_resilience: ['climate_change', 'habitability', 'multi_hazard', 'recovery']
-  };
+    const calculateRoleBasedWeightedScore = (category, factors) => {
+      let weightedSum = 0;
+      let totalWeight = 0;
+      Object.entries(factors).forEach(([factorKey, factor]) => {
+        const weight = getFactorWeight(category, factorKey);
+        const value = typeof factor.value === 'number' ? factor.value : 50;
+        weightedSum += value * weight;
+        totalWeight += weight;
+      });
+      return totalWeight > 0 ? weightedSum / totalWeight : 0;
+    };
 
-  return (
-    <div className="evidence-section-container">
-      {/* Hide the main section title if we are showing the "Extra" sections on the left */}
-      {!filterCategories && <h3 className="evidence-title">EVIDENCE DETAILS</h3>}
-      <div className="evidence-categories">
-        {Object.entries(meta)
-          .filter(([category]) => !filterCategories || filterCategories.includes(category))
-          .map(([category, categoryGroupRaw]) => {
-            const categoryGroup = categoryGroupRaw || {};
-            const categoryScore = data?.category_scores?.[category] || data?.explanation?.category_scores?.[category] || 0;
-            const weightedScore = calculateRoleBasedWeightedScore(category, categoryGroup);
-            const categoryColorClass = categoryScore < 40 ? "tone-red" : categoryScore < 70 ? "tone-yellow" : "tone-green";
-            const orderedFactorKeys = factorOrder[category] ? factorOrder[category].filter(key => categoryGroup[key]) : Object.keys(categoryGroup);
+    const getFactorRole = (category, factorKey) => {
+      const roles = {
+        physical: { slope: "Primary construction constraint", stability: "Landslide/erosion safety", elevation: "Flood & climate baseline", ruggedness: "Construction difficulty" },
+        hydrology: { flood: "Catastrophic failure driver", water: "Resource + flood modifier", drainage: "Surface runoff handling", groundwater: "Foundation durability" },
+        environmental: { vegetation: "Surface cover indicator", soil: "Semi-permanent land constraint", pollution: "Human health impact", biodiversity: "Legal/ecological constraint", heat_island: "Urban stress indicator" },
+        climatic: { rainfall: "Flood & water balance", thermal: "Human livability", intensity: "Peak stress risk" },
+        socio_econ: { landuse: "Legal feasibility", infrastructure: "Development enabler", population: "Demand & pressure" },
+        risk_resilience: { multi_hazard: "Compound disaster risk", climate_change: "Long-term exposure", recovery: "Post-event resilience", habitability: "Sustained livability" }
+      };
+      return roles[category]?.[factorKey] || "Supporting factor";
+    };
 
-            return (
-              <div key={category} className="evidence-category-container">
-                <div className={`evidence-category-header-container ${categoryColorClass}`}>
-                  <div className="category-header-content">
-                    <h4 className="evidence-category-title">
-                      {category.replaceAll('_', ' ').toUpperCase()}
-                      <span className="evidence-category-score">({categoryScore.toFixed(1)}/100)</span>
-                      <span className="evidence-weighted-score">Weighted: ({weightedScore.toFixed(1)}/100)</span>
-                    </h4>
-                    <p className="evidence-category-description">{getCategoryDescription(category)}</p>
+    const getCategoryDescription = (category) => {
+      const descriptions = {
+        physical: "Physical terrain characteristics including slope, elevation, ruggedness, and ground stability.",
+        environmental: "Environmental conditions covering vegetation, soil quality, air pollution, and biodiversity.",
+        hydrology: "Water-related factors including flood risk, water proximity, and drainage capacity.",
+        climatic: "Climate conditions such as rainfall patterns, thermal comfort, and heat stress.",
+        socio_econ: "Socio-economic factors including land use, infrastructure, and population density.",
+        risk_resilience: "Risk assessment and resilience factors covering hazards and climate change."
+      };
+      return descriptions[category] || "Category analysis and assessment.";
+    };
+
+    const factorOrder = {
+      physical: ['elevation', 'ruggedness', 'slope', 'stability'],
+      environmental: ['biodiversity', 'heat_island', 'pollution', 'soil', 'vegetation'],
+      hydrology: ['drainage', 'flood', 'groundwater', 'water'],
+      climatic: ['intensity', 'rainfall', 'thermal'],
+      socio_econ: ['infrastructure', 'landuse', 'population'],
+      risk_resilience: ['climate_change', 'habitability', 'multi_hazard', 'recovery']
+    };
+
+    return (
+      <div className="evidence-section-container">
+        {/* Hide the main section title if we are showing the "Extra" sections on the left */}
+        {!filterCategories && <h3 className="evidence-title">EVIDENCE DETAILS</h3>}
+        <div className="evidence-categories">
+          {Object.entries(meta)
+            .filter(([category]) => !filterCategories || filterCategories.includes(category))
+            .map(([category, categoryGroupRaw]) => {
+              const categoryGroup = categoryGroupRaw || {};
+              const categoryScore = data?.category_scores?.[category] || data?.explanation?.category_scores?.[category] || 0;
+              const weightedScore = calculateRoleBasedWeightedScore(category, categoryGroup);
+              const categoryColorClass = categoryScore < 40 ? "tone-red" : categoryScore < 70 ? "tone-yellow" : "tone-green";
+              const orderedFactorKeys = factorOrder[category] ? factorOrder[category].filter(key => categoryGroup[key]) : Object.keys(categoryGroup);
+
+              return (
+                <div key={category} className="evidence-category-container">
+                  <div className={`evidence-category-header-container ${categoryColorClass}`}>
+                    <div className="category-header-content">
+                      <h4 className="evidence-category-title">
+                        {category.replaceAll('_', ' ').toUpperCase()}
+                        <span className="evidence-category-score">({categoryScore.toFixed(1)}/100)</span>
+                        <span className="evidence-weighted-score">Weighted: ({weightedScore.toFixed(1)}/100)</span>
+                      </h4>
+                      <p className="evidence-category-description">{getCategoryDescription(category)}</p>
+                    </div>
+                  </div>
+                  <div className="evidence-factors-sequential">
+                    {orderedFactorKeys.map((factorKey) => {
+                      const factor = categoryGroup[factorKey];
+                      const numericValue = typeof factor.value === 'number' ? factor.value : 50;
+                      const factorColor = numericValue < 40 ? "tone-red" : numericValue < 70 ? "tone-yellow" : "tone-green";
+                      const evidenceText = factor.evidence || generateEvidence(factorKey, factor);
+                      const factorWeight = getFactorWeight(category, factorKey);
+                      const globalWeight = (16.67 * factorWeight / 100).toFixed(2);
+                      return (
+                        <div key={`${category}-${factorKey}`} className={`evidence-factor-card ${factorColor}`}>
+                          <div className="factor-card-header">
+                            <div className="factor-header-left">
+                              <h5 className="factor-name">{factorLabels[factorKey] || factorKey.replace(/_/g, ' ').toUpperCase()}</h5>
+                              <div className="factor-weighting-info">
+                                <span className="factor-score">{numericValue.toFixed(1)}/100</span>
+                                <span className="weight-breakdown">{factorWeight}% of cat → {globalWeight}% global</span>
+                              </div>
+                            </div>
+                            <div className={`factor-status-badge ${factorColor}`}>
+                              {numericValue >= 70 ? 'HIGH' : numericValue >= 40 ? 'MID' : 'LOW'}
+                            </div>
+                          </div>
+                          <div className="factor-card-content">
+                            <div className="evidence-text">{evidenceText}</div>
+                            <div className="factor-metadata-compact">
+                              <div className="metadata-row">
+                                <span className="metadata-item-compact">📍 {factor.source || 'Data Engine'}</span>
+                                {factor.unit && <span className="metadata-item-compact">📏 {factor.unit}</span>}
+                                <span className="metadata-item-compact">⚖️ {getFactorRole(category, factorKey)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="evidence-factors-sequential">
-                  {orderedFactorKeys.map((factorKey) => {
-                    const factor = categoryGroup[factorKey];
-                    const numericValue = typeof factor.value === 'number' ? factor.value : 50;
-                    const factorColor = numericValue < 40 ? "tone-red" : numericValue < 70 ? "tone-yellow" : "tone-green";
-                    const evidenceText = factor.evidence || generateEvidence(factorKey, factor);
-                    const factorWeight = getFactorWeight(category, factorKey);
-                    const globalWeight = (16.67 * factorWeight / 100).toFixed(2);
-                    return (
-                      <div key={`${category}-${factorKey}`} className={`evidence-factor-card ${factorColor}`}>
-                        <div className="factor-card-header">
-                          <div className="factor-header-left">
-                            <h5 className="factor-name">{factorLabels[factorKey] || factorKey.replace(/_/g, ' ').toUpperCase()}</h5>
-                            <div className="factor-weighting-info">
-                              <span className="factor-score">{numericValue.toFixed(1)}/100</span>
-                              <span className="weight-breakdown">{factorWeight}% of cat → {globalWeight}% global</span>
-                            </div>
-                          </div>
-                          <div className={`factor-status-badge ${factorColor}`}>
-                            {numericValue >= 70 ? 'HIGH' : numericValue >= 40 ? 'MID' : 'LOW'}
-                          </div>
-                        </div>
-                        <div className="factor-card-content">
-                          <div className="evidence-text">{evidenceText}</div>
-                          <div className="factor-metadata-compact">
-                            <div className="metadata-row">
-                              <span className="metadata-item-compact">📍 {factor.source || 'Data Engine'}</span>
-                              {factor.unit && <span className="metadata-item-compact">📏 {factor.unit}</span>}
-                              <span className="metadata-item-compact">⚖️ {getFactorRole(category, factorKey)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 
 
@@ -3391,68 +3598,68 @@ const EvidenceSection = ({ data, filterCategories = null }) => {
   //     );
 
   //   }
-const renderTabContent = (data, coords, name, isFullWidth) => {
-  const containerClass = isFullWidth ? "results-grid" : "column-stack";
-  const currentSnapshot = name === locationAName ? snapshotData : snapshotDataB;
+  const renderTabContent = (data, coords, name, isFullWidth) => {
+    const containerClass = isFullWidth ? "results-grid" : "column-stack";
+    const currentSnapshot = name === locationAName ? snapshotData : snapshotDataB;
 
-  if (activeTab === "suitability") {
-    return (
-      <div className={containerClass}>
-        {/* LEFT COLUMN: Factors (Radar/Bars) + Socio-Econ/Risk (if full width) */}
-        <div className={isFullWidth ? "col-1" : ""}>
-          <FactorsSection 
-            data={data} 
-            latVal={coords.lat} 
-            lngVal={coords.lng} 
-            locationName={name}
-            isDarkMode={isDarkMode} 
-            viewMode={viewMode} 
-            setViewMode={setViewMode} 
-            onOpenHistory={handleOpenHistory} 
-            mapVariety={mapVariety}
-            isCompareMode={!isFullWidth}
-            activeSpectral={activeSpectral}
-            mapMode={mapMode}
-            active3DStyle={active3DStyle}
-            currentZoom={zoom}
-            setZoom={setZoom}
-            handleZoomIn={handleZoomIn}
-            handleZoomOut={handleZoomOut}
-            setLat={setLat}
-            setLng={setLng}
-            setCurrentZoom={setZoom}
-            onZoomIn={handleZoomIn}
-            onZoomOut={handleZoomOut}
-            isSelectingB={isSelectingB}
-            handleCompareSelect={handleCompareSelect}
-          />
+    if (activeTab === "suitability") {
+      return (
+        <div className={containerClass}>
+          {/* LEFT COLUMN: Factors (Radar/Bars) + Socio-Econ/Risk (if full width) */}
+          <div className={isFullWidth ? "col-1" : ""}>
+            <FactorsSection
+              data={data}
+              latVal={coords.lat}
+              lngVal={coords.lng}
+              locationName={name}
+              isDarkMode={isDarkMode}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+              onOpenHistory={handleOpenHistory}
+              mapVariety={mapVariety}
+              isCompareMode={!isFullWidth}
+              activeSpectral={activeSpectral}
+              mapMode={mapMode}
+              active3DStyle={active3DStyle}
+              currentZoom={zoom}
+              setZoom={setZoom}
+              handleZoomIn={handleZoomIn}
+              handleZoomOut={handleZoomOut}
+              setLat={setLat}
+              setLng={setLng}
+              setCurrentZoom={setZoom}
+              onZoomIn={handleZoomIn}
+              onZoomOut={handleZoomOut}
+              isSelectingB={isSelectingB}
+              handleCompareSelect={handleCompareSelect}
+            />
 
-          {/* Render the lighter categories below the radar chart ONLY on full screen single mode */}
-          {isFullWidth && (
-            <div className="secondary-evidence-left" style={{ marginTop: '20px' }}>
-              <EvidenceSection 
-                data={data} 
-                filterCategories={['socio_econ', 'risk_resilience']} 
-              />
-            </div>
-          )}
+            {/* Render the lighter categories below the radar chart ONLY on full screen single mode */}
+            {isFullWidth && (
+              <div className="secondary-evidence-left" style={{ marginTop: '20px' }}>
+                <EvidenceSection
+                  data={data}
+                  filterCategories={['socio_econ', 'risk_resilience']}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT COLUMN: Heavy Technical Evidence */}
+          <div className={isFullWidth ? "col-2" : ""}>
+            <EvidenceSection
+              data={data}
+              filterCategories={
+                isFullWidth
+                  ? ['physical', 'hydrology', 'environmental', 'climatic']
+                  : null // Show all in compare mode or small screens
+              }
+            />
+          </div>
         </div>
+      );
+    }
 
-        {/* RIGHT COLUMN: Heavy Technical Evidence */}
-        <div className={isFullWidth ? "col-2" : ""}>
-          <EvidenceSection 
-            data={data} 
-            filterCategories={
-              isFullWidth 
-                ? ['physical', 'hydrology', 'environmental', 'climatic'] 
-                : null // Show all in compare mode or small screens
-            } 
-          />
-        </div>
-      </div>
-    );
-  }
- 
     if (activeTab === "environmental") {
 
       const cnn = data?.cnn_analysis;
@@ -4780,6 +4987,14 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
 
         analyzedCoordsB={analyzedCoordsB}
 
+        analyzedCoords={analyzedCoords}
+
+        closeSiteA={closeSiteA} setCloseSiteA={setCloseSiteA}
+
+        setResult={setResult} setAnalyzedCoords={setAnalyzedCoords}
+
+        onProjectImport={onProjectImport}
+
         nearbyLoadingB={nearbyLoadingB}
 
         handleNearbyPlacesB={handleNearbyPlacesB}
@@ -5137,8 +5352,49 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
                   <button className={activeTab === "infrastructure" ? "active" : ""} onClick={() => setActiveTab("infrastructure")}>🏗️ Strategic Utility</button>
 
                 </div> */}
+
+
                 <div className={`results-tab-bar glass-morphic ${isAnalysisFullscreen ? 'fullscreen' : ''}`}>
-                {/* Left Side: Navigation Icons */}
+
+  {/* Center Tabs */}
+  <div className="tab-buttons-container">
+    <button className={activeTab === "suitability" ? "active" : ""} onClick={() => setActiveTab("suitability")}>
+      <span className="tab-icon">🎯</span>
+      <span className="tab-text">Suitability</span>
+    </button>
+    <button className={activeTab === "environmental" ? "active" : ""} onClick={() => setActiveTab("environmental")}>
+      <span className="tab-icon">🌐</span>
+      <span className="tab-text">Locational Intelligence</span>
+    </button>
+    <button className={activeTab === "infrastructure" ? "active" : ""} onClick={() => setActiveTab("infrastructure")}>
+      <span className="tab-icon">🏗️</span>
+      <span className="tab-text">Strategic Utility</span>
+    </button>
+  </div>
+
+  {/* Right Controls */}
+  <div className="analysis-header">
+    {/* <button className="fullscreen-tab-btn" onClick={() => setIsAnalysisFullscreen(!isAnalysisFullscreen)}>
+      {isAnalysisFullscreen ? "✕" : "⛶"}
+    </button> */}
+    <button
+  className={`fullscreen-tab-btn ${isAnalysisFullscreen ? "close-btn" : ""}`}
+  onClick={() => setIsAnalysisFullscreen(!isAnalysisFullscreen)}
+>
+  {isAnalysisFullscreen ? "✕" : "⛶"}
+</button>
+
+
+    {analysisTime && result && (
+      <span className="analysis-time-badge">
+        🕒 {analysisTime}
+      </span>
+    )}
+  </div>
+</div>
+
+              {/* <div className={`results-tab-bar glass-morphic ${isAnalysisFullscreen ? 'fullscreen' : ''}`}>
+            
                 <div className="tab-buttons-container">
                   <button className={activeTab === "suitability" ? "active" : ""} onClick={() => setActiveTab("suitability")}>
                     <span className="tab-icon">🎯</span>
@@ -5152,7 +5408,7 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
                     <span className="tab-icon">🏗️</span>
                     <span className="tab-text">Strategic Utility</span>
                   </button>
-                </div>
+                </div> */}
 
                 {/* Right Side: Control Icons */}
                 {/* <div className="fullscreen-controls">
@@ -5164,50 +5420,39 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
                     ⛶
                   </button>
                 </div> */}
-              
 
-                <div className="fullscreen-controls">
 
-                  {/* {isAnalysisFullscreen ? (
+                {/* <div className="fullscreen-controls">
+                  <button className="fullscreen-tab-btn" onClick={() => setIsAnalysisFullscreen(!isAnalysisFullscreen)}>
+                    {isAnalysisFullscreen ? "✕" : "⛶"}
+                  </button>
+                  {analysisTime && result && (
+                    <span className="analysis-time-badge">
+                      🕒 {analysisTime}
+                    </span>
+                  )}
 
-                    <button
 
-                      className="close-fullscreen-btn"
 
-                      onClick={() => setIsAnalysisFullscreen(false)}
+                </div> */}
 
-                      title="Exit Fullscreen (ESC)"
+                  {/* <div className="analysis-header">
+  <div className="analysis-header-left">
+     <button className="fullscreen-tab-btn" onClick={() => setIsAnalysisFullscreen(!isAnalysisFullscreen)}>
+                    {isAnalysisFullscreen ? "✕" : "⛶"}
+                  </button>
+  </div>
 
-                    >
+  <div className="analysis-header-right">
+    {analysisTime && result && (
+      <span className="analysis-time-badge">
+        🕒 {analysisTime}
+      </span>
+    )}
+  </div>
+</div> */}
 
-                      ✕
-
-                    </button>
-
-                  ) : (
-
-                    <button
-
-                      className="fullscreen-tab-btn"
-
-                      onClick={() => setIsAnalysisFullscreen(true)}
-
-                      title="Fullscreen Analysis (F11)"
-
-                    >
-
-                      ⛶
-
-                    </button> */}
-                    <button className="fullscreen-tab-btn" onClick={() => setIsAnalysisFullscreen(!isAnalysisFullscreen)}>
-      {isAnalysisFullscreen ? "✕" : "⛶"}
-    </button>
-
-                  
-
-                </div>
-
-              </div>
+              {/* </div> */}
 
 
 
@@ -5502,6 +5747,4 @@ const renderTabContent = (data, coords, name, isFullWidth) => {
     </div>
 
   );
-
 }
-

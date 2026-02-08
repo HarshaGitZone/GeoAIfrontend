@@ -15,11 +15,11 @@ ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, 
 // 23 factors in order of 6 categories (same as bar view)
 const FACTOR_ORDER = [
   'slope', 'elevation', 'ruggedness', 'stability',           // Physical Terrain (4)
-  'vegetation', 'soil', 'pollution', 'biodiversity', 'heatIsland', // Environmental (5)
+  'vegetation', 'soil', 'pollution', 'biodiversity', 'heat_island', // Environmental (5)
   'flood', 'water', 'drainage', 'groundwater',                   // Hydrology (4)
   'rainfall', 'thermal', 'intensity',                            // Climatic (3)
   'landuse', 'infrastructure', 'population',                      // Socio-Economic (3)
-  'multiHazard', 'climateChange', 'recovery', 'habitability'     // Risk & Resilience (4)
+  'multi_hazard', 'climate_change', 'recovery', 'habitability'     // Risk & Resilience (4)
 ];
 const FACTOR_LABELS = {
   slope: 'Slope', elevation: 'Elevation', ruggedness: 'Ruggedness', stability: 'Stability',

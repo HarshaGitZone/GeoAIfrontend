@@ -4,6 +4,7 @@ import './App.css';
 import LandSuitabilityChecker from './components/LandSuitabilityChecker/LandSuitabilityChecker';
 import HistoryPage from './pages/HistoryPage';
 import WildFactsPage from './components/WildFactsPage/WildFactsPage';
+import ProjectLoaderPage from "./pages/ProjectLoaderPage";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<LandSuitabilityChecker />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/wild-facts" element={<WildFactsPage />} />
+        <Route path="/project/:id" element={<ProjectLoaderPage />} />
       </Routes>
     </div>
   );
