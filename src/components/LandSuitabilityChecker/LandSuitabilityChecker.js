@@ -22,19 +22,17 @@ import { API_BASE } from '../../config/api';
 // 🎵 Audio Context for Global Audio Management
 
 
-// Fix Leaflet marker icons
-
+// Fix Leaflet marker icons with local fallback
 delete L.Icon.Default.prototype._getIconUrl;
 
-L.Icon.Default.mergeOptions({
+// Use jsdelivr CDN (less likely to be blocked by tracking prevention)
+const iconUrls = {
+  iconRetinaUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png",
+};
 
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-
-});
+L.Icon.Default.mergeOptions(iconUrls);
 
 // const spectralLayers = {
 
@@ -1400,8 +1398,8 @@ const TacticalMapController = ({
 // 🎨 Icon Factory
 
 const createIcon = (color) => new L.Icon({
-iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+iconUrl: `https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-2x-${color}.png`,
+shadowUrl: 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',
 iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
 });
 
